@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.security.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -15,8 +17,7 @@ import java.util.UUID;
 @Setter
 public class User {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name= "UUID",strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
     private UUID id;
 
     @Column(nullable = false,unique = true)
@@ -38,4 +39,11 @@ public class User {
 
     @CreationTimestamp
     private Timestamp updatedAt;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 }
