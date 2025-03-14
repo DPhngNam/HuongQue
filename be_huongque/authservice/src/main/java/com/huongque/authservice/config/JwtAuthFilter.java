@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -36,10 +37,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
-        String username = jwtUtils.extractUsername(token);
+        UUID userId = jwtUtils.extractUserId(token);
 
-        if ( username != null && SecurityContextHolder.getContext().getAuthentication() == null ){
-            UserDetails userDetails = userService.loadUserByUsername(username);
+        if ( userId!= null && SecurityContextHolder.getContext().getAuthentication() == null ){
+            UserDetails userDetails = userService.loadUserById(userId);
             if(jwtUtils.validateToken(token,userDetails)){
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

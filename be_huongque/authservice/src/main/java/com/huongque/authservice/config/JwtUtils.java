@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 import java.util.function.Function;
 @Component
 public class JwtUtils {
@@ -61,6 +62,10 @@ public class JwtUtils {
 
     private Key getSigningKey(){
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    }
+
+    public UUID extractUserId(String token){
+        return UUID.fromString(extractClaim(token, Claims::getSubject));
     }
 
 
