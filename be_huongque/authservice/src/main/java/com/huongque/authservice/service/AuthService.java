@@ -3,6 +3,7 @@ package com.huongque.authservice.service;
 import com.huongque.authservice.config.JwtUtils;
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
+import com.huongque.authservice.dto.RegisterRequest;
 import com.huongque.authservice.entity.User;
 import com.huongque.authservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class AuthService {
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
 
-    public void register(AuthRequest request){
+    public void register(RegisterRequest request){
         if(userRepository.existsByUsername(request.getUsername())){
             throw new RuntimeException("Username is already taken!");
         }
