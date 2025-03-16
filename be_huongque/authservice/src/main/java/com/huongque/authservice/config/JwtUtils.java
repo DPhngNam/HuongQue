@@ -68,5 +68,15 @@ public class JwtUtils {
         return UUID.fromString(extractClaim(token, Claims::getSubject));
     }
 
+    public boolean isTokenValid(String token ){
+        try{
+            Jwts.parser().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
+            return true;
+        }
+        catch (Exception e){
+            return false;
+        }
+    }
+
 
 }
