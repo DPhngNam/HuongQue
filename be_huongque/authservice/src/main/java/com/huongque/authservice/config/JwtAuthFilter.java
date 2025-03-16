@@ -25,6 +25,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         this.userService = userService;
     }
 
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request)
+        throws ServletException {
+            String requestPath = request.getServletPath();
+
+            return  requestPath.startsWith("/auth/");
+        }
+
+
     @Override
     protected  void doFilterInternal(HttpServletRequest request,
                                      HttpServletResponse response,
