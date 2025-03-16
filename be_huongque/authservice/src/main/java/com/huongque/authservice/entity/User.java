@@ -11,29 +11,27 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Table(name = "users")
-@Getter
-@Setter
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
-    @Column(nullable = false,unique = true)
-    private  String username;
+    @Column(nullable = false, unique = true)
+    private String username;
+
     @Column(nullable = false)
-    private  String passwordHash;
+    private String passwordHash;
 
-    @Column(nullable = false,unique = true)
-    private  String email;
+    @Column(nullable = false, unique = true)
+    private String email;
 
-    @Column(name = "oauth2_provider")
     private String oauth2Provider;
-
-    @Column(name = "oauth2_id")
     private String oauth2Id;
 
     @CreationTimestamp
@@ -41,9 +39,10 @@ public class User {
 
     @CreationTimestamp
     private Timestamp updatedAt;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "user_role",
+            name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )

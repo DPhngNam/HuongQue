@@ -1,16 +1,39 @@
+version: '3.8'
 
 services:
-  postgres:
+  postgres_db:
     image: postgres:latest
     container_name: postgres_db
-    environment:
-      POSTGRES_USER: your_user
-      POSTGRES_PASSWORD: your_password
-      POSTGRES_DB: your_db
+    restart: always
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: auth_db
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+
+  auth_service:
+    build: .
+    container_name: auth_service
     restart: always
+    depends_on:
+      - postgres_db
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_db:5432/auth_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+    networks:
+      - app_network
+
 volumes:
-  pgdata:
+  postgres_data:
+
+networks:
+  app_network:

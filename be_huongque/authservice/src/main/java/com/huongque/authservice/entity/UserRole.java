@@ -1,26 +1,41 @@
 package com.huongque.authservice.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
+import java.io.Serializable;
+import java.util.UUID;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "user_roles")
 public class UserRole {
-    @Id
+    @EmbeddedId
+    private UserRoleId id;
+
     @ManyToOne
+    @MapsId("userId")
     @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
+    @MapsId("roleId")
     @JoinColumn(name = "role_id")
     private Role role;
 
     @CreationTimestamp
     private Timestamp createdAt;
+}
+
+@Embeddable
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+class UserRoleId implements Serializable {
+    private UUID userId;
+    private UUID roleId;
 }
