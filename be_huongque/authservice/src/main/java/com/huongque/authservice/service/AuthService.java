@@ -52,4 +52,11 @@ public class AuthService {
 
         return  new AuthResponse(newAccessToken,newRefreshToken);
     }
+
+    public String logout(String refreshToken){
+        if(!jwtUtils.isTokenValid(refreshToken)){
+            throw new RuntimeException("Invalid refresh token");
+        }
+        return "Logout success";
+    }
 }
