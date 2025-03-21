@@ -17,7 +17,6 @@ public class NewController {
 
     @Autowired
     private NewService newService;
-    @SuppressWarnings("null")
     @PostMapping
     public ResponseEntity<New> createNew(@RequestBody NewDto newDto) {
         try {
@@ -27,7 +26,7 @@ public class NewController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @SuppressWarnings("null")
+    
     @PutMapping
     public ResponseEntity<New> updateNew(@RequestBody NewDto newDto) {
         try {
@@ -47,7 +46,7 @@ public class NewController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @SuppressWarnings("null")
+    
     @GetMapping("/title/{title}")
     public ResponseEntity<New> getNewByTitle(@PathVariable("title") String title) {
         try {
@@ -61,7 +60,7 @@ public class NewController {
         }
     }
 
-    @SuppressWarnings("null")
+    
     @GetMapping("/{id}")
     public ResponseEntity<New> getNewById(@PathVariable("id") UUID id) {
         try {
@@ -74,7 +73,7 @@ public class NewController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @SuppressWarnings("null")
+    
     @PatchMapping("/{id}/{field}")
     public ResponseEntity<New> patchUpdateNew(
             @PathVariable("id") UUID id,
@@ -89,7 +88,7 @@ public class NewController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @SuppressWarnings("null")
+    
     @GetMapping("/created/{createdAt}")
     public ResponseEntity<New> getNewByCreatedAt(@PathVariable("createdAt") ZonedDateTime createdAt) {
         try {
@@ -102,7 +101,7 @@ public class NewController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @SuppressWarnings("null")
+    
     @GetMapping("/updated/{updatedAt}")
     public ResponseEntity<New> getNewByUpdatedAt(@PathVariable("updatedAt") ZonedDateTime updatedAt) {
         try {

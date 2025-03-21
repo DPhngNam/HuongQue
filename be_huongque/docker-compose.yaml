@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  adminservice:
+    build: ./adminservice
+    ports:
+      - "8081:8080"
+    depends_on:
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+networks:
+  default:
+    driver: bridge
