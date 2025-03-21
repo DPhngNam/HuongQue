@@ -2,10 +2,10 @@
 FROM openjdk:17-jdk-slim
 
 # Set the working directory inside the container
-WORKDIR /app
+WORKDIR /
 
 # Copy the built JAR file into the container
-COPY target/myservice.jar app.jar
+COPY target/adminservice-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the application port (change it based on your service configuration)
 EXPOSE 8080

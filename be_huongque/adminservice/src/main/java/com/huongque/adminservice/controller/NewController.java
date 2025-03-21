@@ -1,6 +1,7 @@
 package com.huongque.adminservice.controller;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,7 @@ import com.huongque.adminservice.model.New;
 import com.huongque.adminservice.service.NewService;
 
 @RestController
-@RequestMapping("/api/news")
+@RequestMapping("/news")
 @CrossOrigin(origins = "*")
 public class NewController {
 
@@ -46,7 +47,16 @@ public class NewController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+    @GetMapping()
+    public ResponseEntity<List<New>> getAllNews() {
+        try {
+            List<New> news = newService.getAllNews();
+            return new ResponseEntity<>(news, HttpStatus.OK);
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     @GetMapping("/title/{title}")
     public ResponseEntity<New> getNewByTitle(@PathVariable("title") String title) {
         try {

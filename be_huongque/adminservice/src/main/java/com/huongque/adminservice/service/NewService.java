@@ -1,6 +1,7 @@
 package com.huongque.adminservice.service;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +75,9 @@ public class NewService {
         }
 
         return newRepository.save(existingNew);
+    }
+
+    public List<New> getAllNews() {
+        return newRepository.findAll();
     }
 }
