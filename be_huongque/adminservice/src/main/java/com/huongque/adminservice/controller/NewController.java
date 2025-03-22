@@ -1,7 +1,6 @@
 package com.huongque.adminservice.controller;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,14 +47,8 @@ public class NewController {
         }
     }
     @GetMapping()
-    public ResponseEntity<List<New>> getAllNews() {
-        try {
-            List<New> news = newService.getAllNews();
-            return new ResponseEntity<>(news, HttpStatus.OK);
-        } catch (Exception e) {
-            System.err.println("Error: " + e);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<String> getAllNews() {
+        return new ResponseEntity<>("Hello World", HttpStatus.OK);
     }
     @GetMapping("/title/{title}")
     public ResponseEntity<New> getNewByTitle(@PathVariable("title") String title) {
