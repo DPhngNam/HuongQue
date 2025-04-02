@@ -1,0 +1,2 @@
+export const REGISTER_REPOSITORY = Symbol('REGISTER_REPOSITORY');
+export const REGISTER_SERVICE = Symbol('REGISTER_SERVICE');
