@@ -11,12 +11,7 @@ export interface IRegisterService {
 export interface IRegisterQueryRepository {
   findById(id: string): Promise<Registration | null>;
   list(dto: RegisterCondDTO,paging: PagingDTO):  Promise<Paginated<Registration>>;
-  findByCond(cond: RegisterCondDTO): Promise<Paginated<Registration>>;
-  findByIds(
-    ids: string[],
-    field: string,
-    limit?: number,
-  ): Promise<Array<Registration>>;
+  findByCond(cond: RegisterCondDTO): Promise<Registration>;
 }
 export interface IRegisterCommandRepository {
   insert(dto: Registration):Promise<void>;

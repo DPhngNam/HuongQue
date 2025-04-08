@@ -1,9 +1,9 @@
 import z from 'zod';
 
 export enum RegistrationStatus {
-  PENDING = 'pending',
-  APPROVED = 'approved',
-  REJECTED = 'rejected',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
 }
 
 export const ErrInvalidContent = new Error(
