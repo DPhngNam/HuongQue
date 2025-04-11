@@ -9,6 +9,26 @@ services:
       - rabbitmq
     env_file:
       - ./adminservice/.env
+  authservice:
+    build:
+      context: ./authservice
+      dockerfile: dockerfile
+    ports:
+      - "8082:8080"
+    depends_on:
+      - rabbitmq
+    env_file:
+      - ./authservice/.env
+  userservice:
+    build:
+      context: ./userservice
+      dockerfile: dockerfile
+    ports:
+      - "8083:8080"
+    depends_on:
+      - rabbitmq
+    env_file:
+      - ./userservice/.env
 
   rabbitmq:
     image: rabbitmq:latest
