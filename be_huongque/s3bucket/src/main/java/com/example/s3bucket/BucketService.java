@@ -1,20 +1,19 @@
 package com.example.s3bucket;
 
 import java.util.UUID;
-
 import org.springframework.stereotype.Service;
-
+import io.github.cdimascio.dotenv.Dotenv;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
-
 @Service
 public class BucketService {
     private final S3Client s3Client;
-    private final String bucketName = System.getenv("AWS_S3_BUCKET_NAME");
+    private final Dotenv dotenv;
 
-    public BucketService(S3Client s3Client) {
+    public BucketService(S3Client s3Client, Dotenv dotenv) {
+        this.dotenv = dotenv;
         this.s3Client = s3Client;
     }
 
@@ -31,7 +30,7 @@ public class BucketService {
 
         try {
             PutObjectRequest request = PutObjectRequest.builder()
-                    .bucket(bucketName)
+                    .bucket(dotenv.get("AWS_S3_BUCKET_NAME")) // Ensure this is set in your .env
                     .key(key)
                     .contentType(contentType)
                     .build();

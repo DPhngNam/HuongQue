@@ -1,14 +1,14 @@
 services:
-  # adminservice:
-  #   build:
-  #     context: ./adminservice
-  #     dockerfile: dockerfile
-  #   ports:
-  #     - "8081:8080"
-  #   depends_on:
-  #     - rabbitmq
-  #   env_file:
-  #     - ./adminservice/.env
+  adminservice:
+    build:
+      context: ./adminservice
+      dockerfile: dockerfile
+    ports:
+      - "8081:8080"
+    depends_on:
+      - rabbitmq
+    env_file:
+      - ./adminservice/.env
   authservice:
     build:
       context: ./authservice
@@ -29,6 +29,26 @@ services:
       - rabbitmq
     env_file:
       - ./userservice/.env
+  registerservice:
+    build:
+      context: ./registerservice
+      dockerfile: dockerfile
+    ports:
+      - "8084:8080"
+    depends_on:
+      - rabbitmq
+    env_file:
+      - ./registerservice/.env
+  s3bucket:
+    build:
+      context: ./s3bucket
+      dockerfile: dockerfile
+    ports:
+      - "8085:8080"
+    depends_on:
+      - rabbitmq
+    env_file:
+      - ./s3bucket/.env
 
   rabbitmq:
     image: rabbitmq:latest
