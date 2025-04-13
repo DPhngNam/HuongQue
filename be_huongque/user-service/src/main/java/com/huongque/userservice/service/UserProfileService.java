@@ -38,4 +38,19 @@ public class UserProfileService {
         userProfileRepository.save(user);
         return userDto;
     }
+    public UserProfileDto createUserProfile(UserProfileDto userDto) {
+        UserProfile user = new UserProfile();
+        user.setFullName(userDto.getFullName());
+        user.setDob(userDto.getDob());
+        user.setGmail(userDto.getGmail());
+        user.setPhone(userDto.getPhone());
+        userProfileRepository.save(user);
+        return new UserProfileDto(
+                user.getId(),
+                user.getFullName(),
+                user.getDob(),
+                user.getGmail(),
+                user.getPhone()
+        );
+    }
 }

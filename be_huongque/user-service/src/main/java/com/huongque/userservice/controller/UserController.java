@@ -23,4 +23,8 @@ public class UserController {
     public ResponseEntity<UserProfileDto> updateUserProfile(@PathVariable UUID id, @RequestBody UserProfileDto userProfileDto){
         return ResponseEntity.ok(userProfileService.updateUserProfile(id, userProfileDto));
     }
+    @PostMapping
+    public ResponseEntity<UserProfileDto> createUserProfile(@RequestBody UserProfileDto userProfileDto) {
+        return ResponseEntity.ok(userProfileService.createUserProfile(userProfileDto));
+    }
 }
