@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { TenantService } from './tenant.service';
 
 @Controller('tenant')
@@ -17,13 +17,13 @@ export class TenantController {
     async findAll(){
         return this.tenantService.findAll();
     }
-    @Get(':domain')
-    async findByDomain(@Body('domain') domain: string){
+    @Get('domain/:domain')
+    async findByDomain(@Param('domain') domain: string){
         return this.tenantService.findByDomain(domain);
     }
-    @Get(':id')
-    async findById(@Body('id') id: string){
+    @Get('id/:id')
+    async findById(@Param('id') id: string){
         return this.tenantService.findById(id);
     }
-    
+
 }
