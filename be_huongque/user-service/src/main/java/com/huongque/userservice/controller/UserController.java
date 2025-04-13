@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -13,6 +14,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserController {
     private final UserProfileService userProfileService;
+    @GetMapping
+    public ResponseEntity<List<UserProfileDto>> getAllUserProfiles() {
+        return ResponseEntity.ok(userProfileService.getAllUserProfiles());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserProfileDto> getUserProfile(@PathVariable UUID id){

@@ -1,8 +1,6 @@
 package com.huongque.userservice.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -17,6 +15,7 @@ import java.util.UUID;
 @Table(name = "user_profile")
 public class UserProfile {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String fullName;

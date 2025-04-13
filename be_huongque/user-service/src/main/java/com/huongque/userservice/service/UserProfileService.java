@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,5 +55,17 @@ public class UserProfileService {
                 user.getGmail(),
                 user.getPhone()
         );
+    }
+    public List<UserProfileDto> getAllUserProfiles() {
+        return userProfileRepository.findAll()
+                .stream()
+                .map(user -> new UserProfileDto(
+                        user.getId(),
+                        user.getFullName(),
+                        user.getDob(),
+                        user.getGmail(),
+                        user.getPhone()
+                ))
+                .collect(Collectors.toList());
     }
 }
