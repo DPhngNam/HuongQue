@@ -1,0 +1,26 @@
+jwt:
+  token:
+    validity: 18000
+  signing-key: 0Fdo7skQSpDpkW/ydOWOZuPEqvgxVcL7/kITm/uSEKRvrY6vxsfIwhrob6FkiAxe2gdzApoATeX8E3mCe3ipSw==
+  authorities-key: roles
+  token-prefix: Bearer
+  header-string: Authorization
+
+spring:
+  application:
+    name: authservice
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth_db
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8080

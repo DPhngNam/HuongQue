@@ -18,7 +18,7 @@ import java.util.function.Function;
 public class JwtUtils {
 
     // Lấy secret key từ application.properties
-    @Value("${jwt.signing.key}")
+    @Value("${jwt.signing-key}")
     private String SECRET_KEY;
 
     private SecretKey getSigningKey() {
