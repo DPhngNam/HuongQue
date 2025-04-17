@@ -37,4 +37,5 @@ public class UserController {
         userProfileService.deleteUserProfile(id);
         return ResponseEntity.noContent().build();
     }
+
 }

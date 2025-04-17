@@ -20,6 +20,7 @@ public class UserProfile {
 
     private String fullName;
     private LocalDate dob;
+
     @Column(unique = true)
     private  String gmail;
     private String phone;
