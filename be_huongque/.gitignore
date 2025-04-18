@@ -186,3 +186,4 @@ dist
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/java,node,visualstudiocode
+*.idea
