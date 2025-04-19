@@ -4,11 +4,9 @@ import com.huongque.userservice.dto.UserProfileDto;
 import com.huongque.userservice.entity.UserProfile;
 import com.huongque.userservice.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -68,4 +66,10 @@ public class UserProfileService {
                 ))
                 .collect(Collectors.toList());
     }
+        public void deleteUserProfile(UUID id) {
+                UserProfile user = userProfileRepository.findById(id)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                userProfileRepository.delete(user);
+        }
+    
 }

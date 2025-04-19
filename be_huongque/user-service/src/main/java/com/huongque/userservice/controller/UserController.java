@@ -32,4 +32,10 @@ public class UserController {
     public ResponseEntity<UserProfileDto> createUserProfile(@RequestBody UserProfileDto userProfileDto) {
         return ResponseEntity.ok(userProfileService.createUserProfile(userProfileDto));
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUserProfile(@PathVariable UUID id) {
+        userProfileService.deleteUserProfile(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
