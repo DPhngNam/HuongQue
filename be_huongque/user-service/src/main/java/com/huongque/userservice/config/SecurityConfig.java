@@ -16,7 +16,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws  Exception{
         http.csrf((AbstractHttpConfigurer::disable))
                 .authorizeHttpRequests(auth->auth
-                        .anyRequest().permitAll()
+                        .requestMatchers("/users").permitAll()
+                        .requestMatchers("/users/**").permitAll()
+                        .anyRequest().authenticated()
+
                 )
                 .sessionManagement(sess->sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
