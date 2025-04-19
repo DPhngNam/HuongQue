@@ -1,12 +1,15 @@
 package com.huongque.authservice.service;
 
+import com.huongque.authservice.client.UserProfileService;
 import com.huongque.authservice.config.JwtUtils;
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
 import com.huongque.authservice.dto.RegisterRequest;
+import com.huongque.authservice.dto.UserProfileDto;
 import com.huongque.authservice.entity.User;
 import com.huongque.authservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,10 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
+    private final UserProfileService userProfileService;
+
+
+
 
     public void register(RegisterRequest request){
         if(userRepository.existsByUsername(request.getUsername())){
@@ -30,6 +37,12 @@ public class AuthService {
                 .build();
         userRepository.save(user);
 
+        UserProfileDto userProfileDto = UserProfileDto.builder()
+                .id(user.getId())
+                .gmail(user.getEmail())
+                .fullName(user.getUsername())
+                .build();
+        userProfileService.createUserProfile(userProfileDto);
     }
 
     public AuthResponse login(AuthRequest request){
