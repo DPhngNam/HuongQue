@@ -7,6 +7,7 @@ import com.huongque.authservice.dto.AuthResponse;
 import com.huongque.authservice.dto.RegisterRequest;
 import com.huongque.authservice.dto.UserProfileDto;
 import com.huongque.authservice.entity.User;
+import com.huongque.authservice.exception.UsernameAlreadyTakenException;
 import com.huongque.authservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class AuthService {
 
     public void register(RegisterRequest request){
         if(userRepository.existsByUsername(request.getUsername())){
-            throw new RuntimeException("Username is already taken!");
+            throw new UsernameAlreadyTakenException("Username is already taken!");
         }
 
         User user = User.builder()
