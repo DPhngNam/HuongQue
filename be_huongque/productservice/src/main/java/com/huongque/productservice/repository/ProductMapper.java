@@ -4,8 +4,7 @@ import com.huongque.productservice.dto.ProductRequestDTO;
 import com.huongque.productservice.dto.ProductResponseDTO;
 import com.huongque.productservice.entity.Category;
 import com.huongque.productservice.entity.Product;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
