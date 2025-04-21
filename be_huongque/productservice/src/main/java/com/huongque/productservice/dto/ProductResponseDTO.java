@@ -2,7 +2,7 @@ package com.huongque.productservice.dto;
 
 import lombok.Data;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
