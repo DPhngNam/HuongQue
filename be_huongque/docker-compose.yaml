@@ -1,20 +1,4 @@
 services:
-  # API Gateway
-  apigateway:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    depends_on:
-      - adminservice
-      - authservice
-      - userservice
-      - registerservice
-      - s3bucket
-      - searchservice
-    restart: always
-
   adminservice:
     build:
       context: ./adminservice
