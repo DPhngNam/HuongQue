@@ -23,7 +23,7 @@ public class NewController {
             New createdNew = newService.createNew(newDto);
             return new ResponseEntity<>(createdNew, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
@@ -33,7 +33,7 @@ public class NewController {
             New updatedNew = newService.updateNew(newDto);
             return new ResponseEntity<>(updatedNew, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -59,7 +59,7 @@ public class NewController {
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -73,7 +73,7 @@ public class NewController {
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
@@ -86,9 +86,9 @@ public class NewController {
             New patchedNew = newService.patchUpdateNew(id, field, value);
             return new ResponseEntity<>(patchedNew, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
@@ -101,7 +101,7 @@ public class NewController {
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
@@ -114,7 +114,7 @@ public class NewController {
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

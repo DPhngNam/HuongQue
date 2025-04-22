@@ -1,4 +1,20 @@
 services:
+  # API Gateway
+  apigateway:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - adminservice
+      - authservice
+      - userservice
+      - registerservice
+      - s3bucket
+      - searchservice
+    restart: always
+
   adminservice:
     build:
       context: ./adminservice
@@ -49,6 +65,17 @@ services:
       - rabbitmq
     env_file:
       - ./s3bucket/.env
+
+  searchservice:
+    build:
+      context: ./searchservice
+      dockerfile: dockerfile
+    ports:
+      - "8086:8080"
+    depends_on:
+      - rabbitmq
+    env_file:
+      - ./searchservice/.env
 
   rabbitmq:
     image: rabbitmq:latest

@@ -19,10 +19,11 @@ async function bootstrap() {
 
   // Connect microservice
   app.connectMicroservice({
+    name: 'REGISTER_SERVICE',
     transport: Transport.RMQ,
     options: {
       urls: ['amqp://localhost:5672'],
-      queue: 'cats_queue',
+      queue: 'registrations_queue',
       queueOptions: {
         durable: false
       },

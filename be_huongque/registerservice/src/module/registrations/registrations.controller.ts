@@ -3,11 +3,11 @@ import { RegistrationsService } from './registrations.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { UpdateRegistrationDto } from './dto/update-registration.dto';
 
-@Controller('registrations')
+@Controller('/registrations')
 export class RegistrationsController {
   constructor(private readonly registrationsService: RegistrationsService) {}
 
-  @Post()
+  @Post('/create')
   create(@Body() createRegistrationDto: CreateRegistrationDto) {
     return this.registrationsService.create(createRegistrationDto);
   }
