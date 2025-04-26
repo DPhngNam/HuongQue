@@ -1,5 +1,6 @@
 package com.huongque.productservice.controller;
 
+import com.huongque.productservice.dto.CategoryRequestDTO;
 import com.huongque.productservice.entity.Category;
 import com.huongque.productservice.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -22,19 +22,17 @@ public class CategoryController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable UUID id) {
-        Optional<Category> category = Optional.ofNullable(categoryService.getCategoryById(id));
-        return category.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        return ResponseEntity.ok(categoryService.createCategory(category));
+    public ResponseEntity<Category> createCategory(@RequestBody CategoryRequestDTO dto) {
+        return ResponseEntity.ok(categoryService.createCategory(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable UUID id, @RequestBody Category updatedCategory) {
-        return ResponseEntity.ok(categoryService.updateCategory(id, updatedCategory));
+    public ResponseEntity<Category> updateCategory(@PathVariable UUID id, @RequestBody CategoryRequestDTO dto) {
+        return ResponseEntity.ok(categoryService.updateCategory(id, dto));
     }
 
     @DeleteMapping("/{id}")
@@ -42,6 +40,5 @@ public class CategoryController {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
-
 
 }

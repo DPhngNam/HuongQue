@@ -41,8 +41,6 @@ public class ProductService {
         product.setId(UUID.randomUUID());
         product.setCreatedAt(Timestamp.from(Instant.now()));
         product.setUpdatedAt(Timestamp.from(Instant.now()));
-
-
         Product savedProduct = productRepository.save(product);
         return productMapper.toDto(savedProduct);
 

@@ -3,7 +3,7 @@ package com.huongque.productservice.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity

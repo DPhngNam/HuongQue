@@ -1,11 +1,11 @@
 package com.huongque.productservice.dto;
 
+
 import lombok.Data;
 
-import java.util.UUID;
-
 @Data
-public class CategoryDTO {
+public class CategoryRequestDTO {
     private String name;
     private String description;
 }
+
