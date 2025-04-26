@@ -1,11 +1,15 @@
-import { CategoryProps } from "../models/Category.model"
-import { categories } from "../utils/homeData"
-function Category({ id, name, imageSrc, imageAlt }: CategoryProps){
+import { CategoryProps } from "../../models/Category.model"
+import { categories } from "../../utils/homeData"
+import Image from "next/image"
+
+function Category({ name, imageSrc, imageAlt }: CategoryProps){
     return (
-        <div key={id} className="group relative">
-            <img
+        <div className="group relative">
+            <Image
                 alt={imageAlt}
                 src={imageSrc}
+                width={500}
+                height={500}
                 className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
             />
             <div className="mt-4 flex justify-between">
@@ -21,7 +25,8 @@ function Category({ id, name, imageSrc, imageAlt }: CategoryProps){
         </div>
     )
 }
-export default function HomeCategories({ id, name, imageSrc, imageAlt }: CategoryProps) {
+
+export default function HomeCategories() {
     return (
         <div className="bg-white">
             <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
@@ -32,8 +37,10 @@ export default function HomeCategories({ id, name, imageSrc, imageAlt }: Categor
                         <Category
                             key={category.id}
                             id={category.id}
-                            name={category.name} imageSrc={category.imageSrc} imageAlt={category.imageAlt}
-                            />
+                            name={category.name} 
+                            imageSrc={category.imageSrc} 
+                            imageAlt={category.imageAlt}
+                        />
                     ))}
                 </div>
             </div>

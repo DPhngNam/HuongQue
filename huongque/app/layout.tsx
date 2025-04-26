@@ -1,6 +1,12 @@
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
 import "./globals.css";
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Huong Que',
+  description: 'Huong Que - Your trusted source for quality products',
+}
 
 export default function RootLayout({
   children,
@@ -9,10 +15,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-    {/* == */}
-      <head>
-        <title>Huong Que</title>
-      </head>
       <body>
         <Header />
         {children}

@@ -1,6 +1,5 @@
-import Image from "next/image";
-import HomeBanner from "./components/HomeBanner";
-import HomeProducts from "./components/HomeProducts";
+import HomeBanner from "./components/home/HomeBanner";
+import HomeProducts from "./components/home/HomeProducts";
 
 export default function Home() {
   return (

@@ -1,31 +1,19 @@
 'use client'
 
 import { products } from "@/app/utils/homeData";
-import Product from "@/app/components/Product";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+import Product from "@/app/components/products/Product";
+import BreadcrumbNav from "@/app/components/ui/breadcrumb-nav";
 
 export default function ProductsPage() {
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Products" }
+  ];
+
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="w-full max-w-7xl px-4 py-4">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Products</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        <BreadcrumbNav items={breadcrumbItems} />
       </div>
 
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">

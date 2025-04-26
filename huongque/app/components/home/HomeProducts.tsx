@@ -1,7 +1,7 @@
 'use client'
 
-import { products } from "../utils/homeData";
-import Product from "./Product";
+import { products } from "../../utils/homeData";
+import Product from "../products/Product";
 import { useState, useEffect, useCallback, memo } from "react";
 import { Skeleton } from "@/components/ui/skeleton"
 

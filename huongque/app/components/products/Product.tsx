@@ -1,14 +1,17 @@
-import { ProductProps } from "../models/Product.model"
+import { ProductProps } from "../../models/Product.model"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function Product({ id, name, label, imageSrc, imageAlt, price, color }: ProductProps) {
     return (
-        <div key={id} className="group relative">
+        <div className="group relative">
             <div className="relative">
                 <Link href={`/products/${id}`}>
-                    <img
+                    <Image
                         alt={imageAlt}
                         src={imageSrc}
+                        width={500}
+                        height={500}
                         className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
                     />
                 </Link>
