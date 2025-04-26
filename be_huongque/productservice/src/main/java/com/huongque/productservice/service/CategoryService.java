@@ -25,7 +25,6 @@ public class CategoryService {
     }
     public Category createCategory(CategoryRequestDTO dto) {
         Category category = new Category();
-        category.setId(UUID.randomUUID());
         category.setName(dto.getName());
         category.setDescription(dto.getDescription());
         category.setCreatedAt(Timestamp.from(Instant.now()));

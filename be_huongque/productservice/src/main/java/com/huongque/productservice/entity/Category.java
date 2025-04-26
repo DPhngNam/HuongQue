@@ -21,4 +21,6 @@ public class Category {
 
     private Timestamp createdAt;
     private Timestamp updatedAt;
+
+
 }

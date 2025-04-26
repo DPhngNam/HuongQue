@@ -38,7 +38,6 @@ public class ProductService {
         Category category = categoryRepository.findById(productRequestDTO.getCategoryId()).orElseThrow(()-> new RuntimeException("Category not found"));
         Product product = productMapper.toEntity(productRequestDTO, category);
         product.setTenantId(TenantContext.getTenantId());
-        product.setId(UUID.randomUUID());
         product.setCreatedAt(Timestamp.from(Instant.now()));
         product.setUpdatedAt(Timestamp.from(Instant.now()));
         Product savedProduct = productRepository.save(product);

@@ -12,7 +12,6 @@ public class ProductRequestDTO {
 
     @NotBlank
     private String name;
-
     private String description;
 
     @NotNull
@@ -25,4 +24,5 @@ public class ProductRequestDTO {
 
     @NotNull
     private UUID categoryId;
+
 }
