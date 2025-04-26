@@ -19,6 +19,6 @@ public class Category {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private Timestamp createTime;
-    private Timestamp updateTime;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 }

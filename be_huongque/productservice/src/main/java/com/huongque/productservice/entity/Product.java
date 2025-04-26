@@ -35,6 +35,6 @@ public class Product {
     @Column(name="tenant_id",nullable = false)
     private UUID tenantId;
 
-    private Timestamp createAt;
-    private Timestamp updateAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 }

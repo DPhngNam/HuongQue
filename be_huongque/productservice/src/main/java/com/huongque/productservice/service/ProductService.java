@@ -39,8 +39,8 @@ public class ProductService {
         Product product = productMapper.toEntity(productRequestDTO, category);
         product.setTenantId(TenantContext.getTenantId());
         product.setId(UUID.randomUUID());
-        product.setCreateAt(Timestamp.from(Instant.now()));
-        product.setUpdateAt(Timestamp.from(Instant.now()));
+        product.setCreatedAt(Timestamp.from(Instant.now()));
+        product.setUpdatedAt(Timestamp.from(Instant.now()));
 
 
         Product savedProduct = productRepository.save(product);

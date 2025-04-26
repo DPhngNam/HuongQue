@@ -4,9 +4,12 @@ import com.huongque.productservice.dto.ProductRequestDTO;
 import com.huongque.productservice.dto.ProductResponseDTO;
 import com.huongque.productservice.entity.Category;
 import com.huongque.productservice.entity.Product;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 
 @Mapper(componentModel = "spring")
+
 public interface ProductMapper {
 
     // Map từ RequestDTO sang Entity
@@ -15,6 +18,9 @@ public interface ProductMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "tenantId", ignore = true)
     @Mapping(target = "category", source = "category")
+    @Mapping(source = "dto.description", target = "description")
+    @Mapping(source = "dto.name",target = "name")
+
     Product toEntity(ProductRequestDTO dto, Category category);
 
     // Map từ Entity sang ResponseDTO
