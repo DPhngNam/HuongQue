@@ -4,23 +4,30 @@ import com.huongque.authservice.client.UserProfileService;
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
 import com.huongque.authservice.dto.RegisterRequest;
+import com.huongque.authservice.entity.EmailVerificationToken;
+import com.huongque.authservice.entity.User;
+import com.huongque.authservice.repository.EmailVerificationTokenRepository;
+import com.huongque.authservice.repository.UserRepository;
 import com.huongque.authservice.service.AuthService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final EmailVerificationTokenRepository emailVerificationTokenRepository;
 
     @Autowired
     private UserProfileService userProfileService;
+    @Autowired
+    private UserRepository userRepository;
 
 
     @PostMapping("/register")
@@ -40,6 +47,26 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout (@RequestBody String refreshToken){
         return  ResponseEntity.ok(authService.logout(refreshToken));
+    }
+
+    @GetMapping("/verify-email")
+    public ResponseEntity<String> verifyEmail(@RequestParam("token") String token){
+        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token).orElseThrow(()->new RuntimeException("Invalid token"));
+
+        User user = verificationToken.getUser();
+        if (user.isEnabled()) {
+            return ResponseEntity.ok("Email already verified");
+        }
+        if (verificationToken.getExpirationTime().before(new java.util.Date())) {
+            return  ResponseEntity.badRequest().body("Token expired");
+
+        }
+        user.setEnabled(true);
+        userRepository.save(user);
+
+        emailVerificationTokenRepository.delete(verificationToken);
+        return ResponseEntity.ok("Email verified successfully");
+
     }
 
 }
