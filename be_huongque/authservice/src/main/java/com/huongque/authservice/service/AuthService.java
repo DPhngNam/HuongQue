@@ -11,6 +11,7 @@ import com.huongque.authservice.entity.User;
 import com.huongque.authservice.exception.UsernameAlreadyTakenException;
 import com.huongque.authservice.repository.EmailVerificationTokenRepository;
 import com.huongque.authservice.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -34,7 +35,7 @@ public class AuthService {
 
 
 
-
+    @Transactional
     public void register(RegisterRequest request){
         if(userRepository.existsByUsername(request.getUsername())){
             throw new UsernameAlreadyTakenException("Username is already taken!");
@@ -54,7 +55,12 @@ public class AuthService {
         verificationToken.setExpirationTime(new Date(System.currentTimeMillis()+24*60*60*1000)); // 24h
         emailVerificationTokenRepository.save(verificationToken);
 
-        sendVerificationEmail(user.getEmail(), token);
+        try {
+            sendVerificationEmail(user.getEmail(), token);
+        }
+        catch (Exception e){
+            throw  new RuntimeException("Failed to send verification email", e);
+        }
 
 
 
