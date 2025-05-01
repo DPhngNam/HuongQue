@@ -1,5 +1,6 @@
 package com.huongque.authservice.config;
 
+import com.huongque.authservice.service.Oauth2Service;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,19 +19,28 @@ import com.huongque.authservice.service.UserService;
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final UserService userService;
+    private final Oauth2Service oauth2Service;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserService userService) {
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserService userService, Oauth2Service oauth2Service) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.userService = userService;
+        this.oauth2Service= oauth2Service;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws  Exception{
         http.csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/**","/","oauth2/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .oauth2Login(oauth2->oauth2
+                        .loginPage("/auth/login")
+                                .defaultSuccessUrl("/auth/success",true)
+                        .userInfoEndpoint(userInfo->userInfo
+                                .userService(oauth2Service))
+                        )
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -53,5 +63,5 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    
+
 }

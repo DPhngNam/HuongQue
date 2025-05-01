@@ -1,6 +1,7 @@
 package com.huongque.authservice.controller;
 
 import com.huongque.authservice.client.UserProfileService;
+import com.huongque.authservice.config.JwtUtils;
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
 import com.huongque.authservice.dto.RegisterRequest;
@@ -13,6 +14,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -23,6 +26,7 @@ import java.util.Optional;
 public class AuthController {
     private final AuthService authService;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+
 
     @Autowired
     private UserProfileService userProfileService;
@@ -68,5 +72,8 @@ public class AuthController {
         return ResponseEntity.ok("Email verified successfully");
 
     }
+
+
+
 
 }
