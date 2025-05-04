@@ -3,6 +3,7 @@ package com.huongque.authservice.config;
 import com.huongque.authservice.service.Oauth2Service;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -21,7 +22,7 @@ public class SecurityConfig {
     private final UserService userService;
     private final Oauth2Service oauth2Service;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserService userService, Oauth2Service oauth2Service) {
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserService userService,@Lazy Oauth2Service oauth2Service) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.userService = userService;
         this.oauth2Service= oauth2Service;
