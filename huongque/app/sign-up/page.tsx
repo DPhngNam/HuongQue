@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@radix-ui/react-label'
+import Link from 'next/link'
 import React from 'react'
 
 export default function SignUp() {
@@ -43,7 +44,7 @@ export default function SignUp() {
           <Button className='bg-[#00CC96] text-white rounded-4xl w-full h-[56px]'>Sign Up</Button>
           <div className='flex flex-row justify-between mt-4'>
             <p className='text-sm text-gray-500'>Already have an account?</p>
-            <Button variant="link" className='text-sm text-[#00CC96]'>Log In</Button>
+            <Link href={"/login"}   className='text-sm ml-3 text-[#00CC96]'>Log In</Link>
           </div>
           <div className='flex flex-row justify-between mt-4'>
             <p className='text-sm text-gray-500'>By signing up, you agree to our</p>
