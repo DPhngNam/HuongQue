@@ -1,0 +1,92 @@
+export const products = [
+    {
+        id: 1,
+        name: 'Basic Tee',
+        label: '10% off',
+        imageSrc: 'https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lze8xen5paib9c@resize_w900_nl.webp',
+        imageAlt: "Front of men's Basic Tee in black.",
+        price: '$35',
+        color: 'Black',
+    },
+    {
+        id: 2,
+        name: 'Basic Tee',
+        label: 'New Arrival',
+        imageSrc: 'https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lze8xen5paib9c@resize_w900_nl.webp',
+        imageAlt: "Front of men's Basic Tee in black.",
+        price: '$35',
+        color: 'Black',
+    },
+    {
+        id: 3,
+        name: 'Basic Tee',
+        label: 'Limited Edition',
+        imageSrc: 'https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lze8xen5paib9c@resize_w900_nl.webp',
+        imageAlt: "Front of men's Basic Tee in black.",
+        price: '$35',
+        color: 'Black',
+    },
+    {
+        id: 4,
+        name: 'Basic Tee',
+        label: 'Best Seller',
+        imageSrc: 'https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lze8xen5paib9c@resize_w900_nl.webp',
+        imageAlt: "Front of men's Basic Tee in black.",
+        price: '$35',
+        color: 'Black',
+    },
+    {
+        id: 5,
+        name: 'Basic Tee',
+        label: 'Sale',
+        imageSrc: 'https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lze8xen5paib9c@resize_w900_nl.webp',
+        imageAlt: "Front of men's Basic Tee in black.",
+        price: '$35',
+        color: 'Black',
+    },
+    {
+        id: 6,
+        name: 'Basic Tee',
+        label: 'Featured',
+        imageSrc: 'https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lze8xen5paib9c@resize_w900_nl.webp',
+        imageAlt: "Front of men's Basic Tee in black.",
+        price: '$35',
+        color: 'Black',
+    },
+    {
+        id: 7,
+        name: 'Basic Tee',
+        label: 'Popular',
+        imageSrc: 'https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lze8xen5paib9c@resize_w900_nl.webp',
+        imageAlt: "Front of men's Basic Tee in black.",
+        price: '$35',
+        color: 'Black',
+    },
+    {
+        id: 8,
+        name: 'Basic Tee',
+        label: 'Trending',
+        imageSrc: 'https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lze8xen5paib9c@resize_w900_nl.webp',
+        imageAlt: "Front of men's Basic Tee in black.",
+        price: '$35',
+        color: 'Black',
+    },
+    {
+        id: 9,
+        name: 'Basic Tee',
+        label: 'Hot',
+        imageSrc: 'https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lze8xen5paib9c@resize_w900_nl.webp',
+        imageAlt: "Front of men's Basic Tee in black.",
+        price: '$35',
+        color: 'Black',
+    }
+]
+export const categories = [
+    {
+        id: 1,
+        name: '',
+        imageSrc: 'https://www.flaticon.com/free-icons/on-fire',
+        imageAlt: '',
+        
+    }
+]
