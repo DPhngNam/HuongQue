@@ -8,6 +8,7 @@ import com.huongque.authservice.dto.RegisterRequest;
 import com.huongque.authservice.dto.UserProfileDto;
 import com.huongque.authservice.entity.EmailVerificationToken;
 import com.huongque.authservice.entity.User;
+import com.huongque.authservice.exception.InvalidPasswordException;
 import com.huongque.authservice.exception.UsernameAlreadyTakenException;
 import com.huongque.authservice.repository.EmailVerificationTokenRepository;
 import com.huongque.authservice.repository.UserRepository;
@@ -77,7 +78,7 @@ public class AuthService {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(()->new RuntimeException("User not found"));
         if(!passwordEncoder.matches(request.getPassword(),user.getPasswordHash())){
-            throw new RuntimeException("Invalid password");
+            throw new InvalidPasswordException("Invalid password");
         }
         String accessToken = jwtUtils.generateAccessToken(user.getUsername());
         String refreshToken = jwtUtils.generateRefreshToken(user.getUsername());

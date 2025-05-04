@@ -1,21 +1,23 @@
 package com.huongque.authservice.controller;
 
 import com.huongque.authservice.client.UserProfileService;
-import com.huongque.authservice.config.JwtUtils;
+
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
 import com.huongque.authservice.dto.RegisterRequest;
 import com.huongque.authservice.entity.EmailVerificationToken;
 import com.huongque.authservice.entity.User;
+import com.huongque.authservice.exception.ErrorResponse;
+import com.huongque.authservice.exception.InvalidPasswordException;
 import com.huongque.authservice.repository.EmailVerificationTokenRepository;
 import com.huongque.authservice.repository.UserRepository;
 import com.huongque.authservice.service.AuthService;
-import lombok.Getter;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -72,6 +74,18 @@ public class AuthController {
         return ResponseEntity.ok("Email verified successfully");
 
     }
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<Object> handleInvalidPasswordException(InvalidPasswordException ex) {
+        // Trả về 401 cho mật khẩu sai
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Object> handleRuntimeException(RuntimeException ex) {
+        // Trả về 400 cho các lỗi khác như không tìm thấy user
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
 
 
 

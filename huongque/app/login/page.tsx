@@ -54,6 +54,13 @@ export default function Login() {
                   className="border border-gray-300 rounded-4xl p-2"
                 />
               </div>
+
+              <div className="grid w-full items-center gap-4">
+                <Button className="w-full bg-green-500 text-white rounded-4xl p-2 hover:bg-green-600">
+                  Login
+                </Button>
+              </div>
+
               <div className="flex items-center justify-between gap-2">
                 <Input
                   type="checkbox"
@@ -74,10 +81,7 @@ export default function Login() {
                     Forgot password?
                   </Label>
                 </Link>
-
-
               </div>
-
 
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                 <span className="relative z-10 bg-background px-2 text-muted-foreground">
