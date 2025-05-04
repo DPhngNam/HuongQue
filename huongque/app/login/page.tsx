@@ -26,7 +26,6 @@ export default function Login() {
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
     const password = formData.get("password");
-    console.log(email, password);
 
     const response = await fetch("http://localhost:8080/auth/login", {
       method: "POST",
@@ -39,11 +38,13 @@ export default function Login() {
       }),
     });
     if (response.ok) {
+      const data = await response.json();
+      console.log("Login successful:", data);
       router.push("/");
     } else {
-      const error = await response.json();
-
-      alert( password);
+      const errorData = await response.json();
+      console.error("Login failed:", errorData);
+      alert("Login failed: " + errorData.message);
     }
   }
 

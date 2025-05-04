@@ -21,11 +21,15 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final UserService userService;
     private final Oauth2Service oauth2Service;
+    private final OAuth2SuccessHandler OAuth2SuccessHandler;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserService userService,@Lazy Oauth2Service oauth2Service) {
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter,
+                          UserService userService,@Lazy Oauth2Service oauth2Service
+    , OAuth2SuccessHandler OAuth2SuccessHandler) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.userService = userService;
         this.oauth2Service= oauth2Service;
+        this.OAuth2SuccessHandler = OAuth2SuccessHandler;
     }
 
     @Bean
@@ -38,12 +42,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2->oauth2
-                        .loginPage("/auth/login")
-                                .defaultSuccessUrl("/auth/success",true)
-                        .userInfoEndpoint(userInfo->userInfo
-                                .userService(oauth2Service))
-                        )
-
+                        .userInfoEndpoint(userInfo->userInfo.userService(oauth2Service))
+                        .successHandler(OAuth2SuccessHandler)
+                        
+                )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
