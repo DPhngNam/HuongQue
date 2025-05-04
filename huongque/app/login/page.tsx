@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,10 +11,42 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
+
 import Link from "next/link";
-import React from "react";
+import { Eye, EyeOff } from "lucide-react";
+
+import React, { FormEvent } from "react";
 
 export default function Login() {
+  const [showPassword, setShowPassword] = React.useState(false);
+  const router = useRouter();
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email");
+    const password = formData.get("password");
+    console.log(email, password);
+
+    const response = await fetch("http://localhost:8080/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: email,
+        password,
+      }),
+    });
+    if (response.ok) {
+      router.push("/");
+    } else {
+      const error = await response.json();
+
+      alert( password);
+    }
+  }
+
   return (
     <div className="flex flex-col p-[96px]">
       {/* Login form */}
@@ -26,7 +61,10 @@ export default function Login() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form
+            onSubmit={handleSubmit}
+            className="grid w-full items-center gap-4"
+          >
             <div className="grid w-full items-center gap-4">
               <div className="grid w-full items-center gap-4">
                 <Label
@@ -36,6 +74,7 @@ export default function Login() {
                   Email / User name
                 </Label>
                 <Input
+                  name="email"
                   type="email"
                   id="email"
                   className="border border-gray-300 rounded-4xl p-2"
@@ -48,15 +87,35 @@ export default function Login() {
                 >
                   Password
                 </Label>
-                <Input
-                  type="password"
-                  id="password"
-                  className="border border-gray-300 rounded-4xl p-2"
-                />
+                <div className="relative">
+                  <Input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    className="border border-gray-300 rounded-4xl p-2 w-full"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                    onClick={() => setShowPassword((prev)=> !prev)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </Button>
+                </div>
               </div>
 
+
               <div className="grid w-full items-center gap-4">
-                <Button className="w-full bg-green-500 text-white rounded-4xl p-2 hover:bg-green-600">
+                <Button
+                  type="submit"
+                  className="w-full bg-green-500 text-white rounded-4xl p-2 hover:bg-green-600"
+                >
                   Login
                 </Button>
               </div>
