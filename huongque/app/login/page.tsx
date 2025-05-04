@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
+import Link from "next/link";
 import React from "react";
 
 export default function Login() {
@@ -53,7 +54,7 @@ export default function Login() {
                   className="border border-gray-300 rounded-4xl p-2"
                 />
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between gap-2">
                 <Input
                   type="checkbox"
                   id="remember-me"
@@ -65,7 +66,19 @@ export default function Login() {
                 >
                   Remember me
                 </Label>
+                <Link href={"/forgot-password"}>
+                  <Label
+                    htmlFor="forgot-password"
+                    className="peer text-sm font-medium text-gray-700 "
+                  >
+                    Forgot password?
+                  </Label>
+                </Link>
+
+
               </div>
+
+
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                 <span className="relative z-10 bg-background px-2 text-muted-foreground">
                   Or continue with

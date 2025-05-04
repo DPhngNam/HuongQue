@@ -7,6 +7,7 @@ import { IoSearch } from "react-icons/io5";
 import { FiShoppingCart } from "react-icons/fi";
 import { FaRegUser } from "react-icons/fa6";
 import { useRouter } from 'next/navigation'
+import Link from "next/link";
 
 export default function Header() {
   const router = useRouter()
@@ -21,10 +22,10 @@ export default function Header() {
 
   return (
     <nav className="flex justify-between items-center bg-transparent px-3 py-2">
-      <div className="flex items-center gap-1 ">
+      <Link href={"/"} className="flex items-center gap-1 ">
         <IoLogoChrome className="text-2xl" />
         <span className="font-bold text-2xl ">Hương Quê</span>
-      </div>
+      </Link>
       <button>
         <CiMenuBurger className="text-2xl" />
       </button>
