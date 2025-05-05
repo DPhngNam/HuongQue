@@ -70,7 +70,17 @@ services:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
     restart: always
-
+  orderservice:
+    build:
+      context: ./orderservice
+      dockerfile: dockerfile
+    ports:
+      - "8087:8080"
+    depends_on:
+      - rabbitmq
+    env_file:
+      - ./orderservice/.env
+  
 networks:
   default:
     driver: bridge
