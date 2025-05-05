@@ -1,24 +1,64 @@
 services:
-  adminservice:
-    build:
-      context: ./adminservice
-      dockerfile: dockerfile
+  # rabbitmq:
+  #   image: rabbitmq:latest
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: admin
+  #     RABBITMQ_DEFAULT_PASS: admin
+  #   restart: always
+  #   volumes:
+  #     - rabbitmq-data:/var/lib/rabbitmq
+  # adminservice:
+  #   build:
+  #     context: ./adminservice
+  #     dockerfile: dockerfile
+  #   ports:
+  #     - "8081:8080"
+  #   depends_on:
+  #     - rabbitmq
+  #   env_file:
+  #     - ./adminservice/.env
+
+    # auth_db
+  # auth_db:
+  #   image: postgres:latest
+  #   container_name: auth_db
+  #   restart: always
+  #   ports:
+  #     - "5433:5432"
+  #   environment:
+  #     POSTGRES_USER: root
+  #     POSTGRES_PASSWORD: root
+  #     POSTGRES_DB: authdb
+  #   volumes:
+  #     - authdb-data:/var/lib/postgresql/data
+  # authservice:
+  #   build:
+  #     context: ./authservice
+  #     dockerfile: dockerfile 
+  #   ports:
+  #     - "8082:8080"
+  #   depends_on:
+  #     - auth_db
+  #     - rabbitmq
+  #   env_file:
+  #     - ./authservice/.env
+  
+  # user_db
+  user_db:
+    image: postgres:latest
+    container_name: user_db
+    restart: always
     ports:
-      - "8081:8080"
-    depends_on:
-      - rabbitmq
-    env_file:
-      - ./adminservice/.env
-  authservice:
-    build:
-      context: ./authservice
-      dockerfile: dockerfile
-    ports:
-      - "8082:8080"
-    depends_on:
-      - rabbitmq
-    env_file:
-      - ./authservice/.env
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: userdb
+    volumes:
+      - userdb-data:/var/lib/postgresql/data
   userservice:
     build:
       context: ./userservice
@@ -26,61 +66,56 @@ services:
     ports:
       - "8083:8080"
     depends_on:
-      - rabbitmq
-    env_file:
-      - ./userservice/.env
-  registerservice:
-    build:
-      context: ./registerservice
-      dockerfile: dockerfile
-    ports:
-      - "8084:8080"
-    depends_on:
-      - rabbitmq
-    env_file:
-      - ./registerservice/.env
-  s3bucket:
-    build:
-      context: ./s3bucket
-      dockerfile: dockerfile
-    ports:
-      - "8085:8080"
-    depends_on:
-      - rabbitmq
-    env_file:
-      - ./s3bucket/.env
+      - user_db
+    # env_file:
+    #   - ./userservice/.env
+  # registerservice:
+  #   build:
+  #     context: ./registerservice
+  #     dockerfile: dockerfile
+  #   ports:
+  #     - "8084:8080"
+  #   depends_on:
+  #     - rabbitmq
+  #   env_file:
+  #     - ./registerservice/.env
+  # s3bucket:
+  #   build:
+  #     context: ./s3bucket
+  #     dockerfile: dockerfile
+  #   ports:
+  #     - "8085:8080"
+  #   depends_on:
+  #     - rabbitmq
+  #   env_file:
+  #     - ./s3bucket/.env
 
-  searchservice:
-    build:
-      context: ./searchservice
-      dockerfile: dockerfile
-    ports:
-      - "8086:8080"
-    depends_on:
-      - rabbitmq
-    env_file:
-      - ./searchservice/.env
+  # searchservice:
+  #   build:
+  #     context: ./searchservice
+  #     dockerfile: dockerfile
+  #   ports:
+  #     - "8086:8080"
+  #   depends_on:
+  #     - rabbitmq
+  #   env_file:
+  #     - ./searchservice/.env
 
-  rabbitmq:
-    image: rabbitmq:latest
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: admin
-    restart: always
-  orderservice:
-    build:
-      context: ./orderservice
-      dockerfile: dockerfile
-    ports:
-      - "8087:8080"
-    depends_on:
-      - rabbitmq
-    env_file:
-      - ./orderservice/.env
   
+  # orderservice:
+  #   build:
+  #     context: ./orderservice
+  #     dockerfile: dockerfile
+  #   ports:
+  #     - "8087:8080"
+  #   depends_on:
+  #     - rabbitmq
+  #   env_file:
+  #     - ./orderservice/.env
+
 networks:
   default:
     driver: bridge
+
+volumes:
+  userdb-data:
