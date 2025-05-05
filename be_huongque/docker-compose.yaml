@@ -20,8 +20,7 @@ services:
   #     - rabbitmq
   #   env_file:
   #     - ./adminservice/.env
-
-    # auth_db
+  # auth_db
   auth_db:
     image: postgres:latest
     container_name: auth_db

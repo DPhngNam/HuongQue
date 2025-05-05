@@ -31,7 +31,6 @@ public class SecurityConfig {
         this.oauth2Service= oauth2Service;
         this.OAuth2SuccessHandler = OAuth2SuccessHandler;
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws  Exception{
         http
