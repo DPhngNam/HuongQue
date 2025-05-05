@@ -1,15 +1,15 @@
 services:
-  # rabbitmq:
-  #   image: rabbitmq:latest
-  #   ports:
-  #     - "5672:5672"
-  #     - "15672:15672"
-  #   environment:
-  #     RABBITMQ_DEFAULT_USER: admin
-  #     RABBITMQ_DEFAULT_PASS: admin
-  #   restart: always
-  #   volumes:
-  #     - rabbitmq-data:/var/lib/rabbitmq
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    restart: always
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
   # adminservice:
   #   build:
   #     context: ./adminservice
@@ -22,29 +22,29 @@ services:
   #     - ./adminservice/.env
 
     # auth_db
-  # auth_db:
-  #   image: postgres:latest
-  #   container_name: auth_db
-  #   restart: always
-  #   ports:
-  #     - "5433:5432"
-  #   environment:
-  #     POSTGRES_USER: root
-  #     POSTGRES_PASSWORD: root
-  #     POSTGRES_DB: authdb
-  #   volumes:
-  #     - authdb-data:/var/lib/postgresql/data
-  # authservice:
-  #   build:
-  #     context: ./authservice
-  #     dockerfile: dockerfile 
-  #   ports:
-  #     - "8082:8080"
-  #   depends_on:
-  #     - auth_db
-  #     - rabbitmq
-  #   env_file:
-  #     - ./authservice/.env
+  auth_db:
+    image: postgres:latest
+    container_name: auth_db
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: authdb
+    volumes:
+      - authdb-data:/var/lib/postgresql/data
+  authservice:
+    build:
+      context: ./authservice
+      dockerfile: dockerfile 
+    ports:
+      - "8082:8080"
+    depends_on:
+      - auth_db
+      - rabbitmq
+    env_file:
+      - ./authservice/.env
   
   # user_db
   user_db:
@@ -119,3 +119,5 @@ networks:
 
 volumes:
   userdb-data:
+  authdb-data:
+  rabbitmq-data:
