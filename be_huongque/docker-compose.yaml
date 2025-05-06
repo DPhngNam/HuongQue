@@ -42,8 +42,6 @@ services:
     depends_on:
       - auth_db
       - rabbitmq
-    env_file:
-      - ./authservice/.env
   
   # user_db
   user_db:
@@ -68,12 +66,41 @@ services:
       - user_db
     # env_file:
     #   - ./userservice/.env
+  
+  #tenant service
+  tenant_db:
+    image: postgres:latest
+    container_name: tenant_db
+    restart: always
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: tenantservice
+      POSTGRES_PASSWORD: tenant
+      POSTGRES_DB: tenantdb
+    volumes:
+      - tenantdb-data:/var/lib/postgresql/data
+  tenantservice:
+    build:
+      context: ./tenantservice
+      dockerfile: dockerfile
+    ports:
+      - "8084:8080"
+    depends_on:
+      - tenant_db
+    environment:
+      DB_HOST: tenant_db
+      DB_PORT: 5435
+      DB_USERNAME: tenantservice
+      DB_PASSWORD: tenant
+      DB_NAME: tenantdb
+
   # registerservice:
   #   build:
   #     context: ./registerservice
   #     dockerfile: dockerfile
   #   ports:
-  #     - "8084:8080"
+  #     - "8085:8080"
   #   depends_on:
   #     - rabbitmq
   #   env_file:
@@ -83,7 +110,7 @@ services:
   #     context: ./s3bucket
   #     dockerfile: dockerfile
   #   ports:
-  #     - "8085:8080"
+  #     - "8086:8080"
   #   depends_on:
   #     - rabbitmq
   #   env_file:
@@ -94,7 +121,7 @@ services:
   #     context: ./searchservice
   #     dockerfile: dockerfile
   #   ports:
-  #     - "8086:8080"
+  #     - "8087:8080"
   #   depends_on:
   #     - rabbitmq
   #   env_file:
@@ -106,7 +133,7 @@ services:
   #     context: ./orderservice
   #     dockerfile: dockerfile
   #   ports:
-  #     - "8087:8080"
+  #     - "8088:8080"
   #   depends_on:
   #     - rabbitmq
   #   env_file:
@@ -119,4 +146,5 @@ networks:
 volumes:
   userdb-data:
   authdb-data:
+  tenantdb-data:
   rabbitmq-data:
