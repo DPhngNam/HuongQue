@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.huongque.authservice.dto.UserProfileDto;
 
-@FeignClient(name = "user-service",url = "http://localhost:8085/users")
+@FeignClient(name = "userservice",url = "http://userservice:8083/users")
 public interface UserProfileService {
     @PostMapping
     void createUserProfile(@RequestBody UserProfileDto userProfileDto);

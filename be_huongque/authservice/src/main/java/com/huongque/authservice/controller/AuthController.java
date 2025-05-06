@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.huongque.authservice.client.UserProfileService;
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
 import com.huongque.authservice.dto.RegisterRequest;
@@ -31,10 +30,6 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
     private final AuthService authService;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
-
-
-    @Autowired
-    private UserProfileService userProfileService;
     @Autowired
     private UserRepository userRepository;
 

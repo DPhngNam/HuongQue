@@ -15,7 +15,7 @@ services:
   #     context: ./adminservice
   #     dockerfile: dockerfile
   #   ports:
-  #     - "8081:8080"
+  #     - "8080:8081"
   #   depends_on:
   #     - rabbitmq
   #   env_file:
@@ -26,10 +26,10 @@ services:
     container_name: auth_db
     restart: always
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+      POSTGRES_USER: authservice
+      POSTGRES_PASSWORD: auth
       POSTGRES_DB: authdb
     volumes:
       - authdb-data:/var/lib/postgresql/data
@@ -38,7 +38,14 @@ services:
       context: ./authservice
       dockerfile: dockerfile 
     ports:
-      - "8082:8080"
+      - "8081:8081"
+    environment:
+      DB_HOST: auth_db
+      DB_PORT: 5432
+      DB_USERNAME: authservice
+      DB_PASSWORD: auth
+      DB_NAME: authdb
+      PORT: 8081
     depends_on:
       - auth_db
       - rabbitmq
@@ -49,10 +56,10 @@ services:
     container_name: user_db
     restart: always
     ports:
-      - "5434:5432"
+      - "5433:5432"
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+      POSTGRES_USER: userservice
+      POSTGRES_PASSWORD: user
       POSTGRES_DB: userdb
     volumes:
       - userdb-data:/var/lib/postgresql/data
@@ -61,11 +68,16 @@ services:
       context: ./userservice
       dockerfile: dockerfile
     ports:
-      - "8083:8080"
+      - "8083:8083"
     depends_on:
       - user_db
-    # env_file:
-    #   - ./userservice/.env
+    environment:
+      DB_HOST: user_db
+      DB_PORT: 5432
+      DB_USERNAME: userservice
+      DB_PASSWORD: user
+      DB_NAME: userdb
+      PORT: 8083
   
   #tenant service
   tenant_db:
@@ -73,7 +85,7 @@ services:
     container_name: tenant_db
     restart: always
     ports:
-      - "5435:5432"
+      - "5434:5432"
     environment:
       POSTGRES_USER: tenantservice
       POSTGRES_PASSWORD: tenant
@@ -85,22 +97,22 @@ services:
       context: ./tenantservice
       dockerfile: dockerfile
     ports:
-      - "8084:8080"
+      - "8084:8084"
     depends_on:
       - tenant_db
     environment:
       DB_HOST: tenant_db
-      DB_PORT: 5435
+      DB_PORT: 5432
       DB_USERNAME: tenantservice
       DB_PASSWORD: tenant
       DB_NAME: tenantdb
-
+      PORT: 8084
   # registerservice:
   #   build:
   #     context: ./registerservice
   #     dockerfile: dockerfile
   #   ports:
-  #     - "8085:8080"
+  #     - "8080:8085"
   #   depends_on:
   #     - rabbitmq
   #   env_file:

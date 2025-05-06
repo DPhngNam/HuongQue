@@ -9,10 +9,10 @@
         <relativePath/>
     </parent>
     <groupId>com.huongque</groupId>
-    <artifactId>user-service</artifactId>
+    <artifactId>userservice</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>user-service</name>
-    <description>user-service</description>
+    <name>userservice</name>
+    <description>userservice</description>
     <url/>
     <licenses>
         <license/>
