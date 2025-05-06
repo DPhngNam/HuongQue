@@ -1,4 +1,12 @@
 services:
+  eureka:
+    build:
+      context: ./apigateway
+      dockerfile: dockerfile
+    ports:
+      - "8765:8765"
+    environment:
+      EUREKA_HOSTNAME: eureka
   rabbitmq:
     image: rabbitmq:latest
     ports:
