@@ -3,6 +3,10 @@ package com.huongque.authservice.service;
 import java.util.Date;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +37,7 @@ public class AuthService {
     private final UserProfileService userProfileService;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
     private final JavaMailSender javaMailSender;
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
 
 
@@ -56,6 +61,7 @@ public class AuthService {
         try {
           userProfileService.createUserProfile(userProfileDto);
         } catch (Exception e) {
+            logger.error("Failed to create user profile", e.getMessage(),e);
             throw new RuntimeException("Failed to create user profile", e);
         }
         String token = UUID.randomUUID().toString();
@@ -69,6 +75,7 @@ public class AuthService {
             sendVerificationEmail(user.getEmail(), token);
         }
         catch (Exception e){
+            logger.error("Failed to send verification email", e.getMessage(),e);
             throw  new RuntimeException("Failed to send verification email", e);
         }
 
