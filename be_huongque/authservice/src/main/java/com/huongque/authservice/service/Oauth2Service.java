@@ -30,7 +30,6 @@ public class Oauth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
 
         User user = userRepository.findByEmail(email).orElseGet(() -> {
             User newUser = User.builder()
-                    .username(email)
                     .email(email)
                     .enabled(true)
                     .build();

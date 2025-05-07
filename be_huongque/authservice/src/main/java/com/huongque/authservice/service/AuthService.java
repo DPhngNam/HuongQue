@@ -39,12 +39,11 @@ public class AuthService {
 
     @Transactional
     public void register(RegisterRequest request){
-        if(userRepository.existsByUsername(request.getUsername())){
+        if(userRepository.existsByEmail(request.getEmail())){
             throw new UsernameAlreadyTakenException("Username is already taken!");
         }
 
         User user = User.builder()
-                .username(request.getUsername())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
                 .build();
@@ -53,7 +52,6 @@ public class AuthService {
         UserProfileDto userProfileDto = UserProfileDto.builder()
                 .id(user.getId())
                 .gmail(user.getEmail())
-                .fullName(user.getUsername())
                 .build();
         try {
             userProfileService.createUserProfile(userProfileDto);
@@ -80,13 +78,13 @@ public class AuthService {
     }
 
     public AuthResponse login(AuthRequest request){
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository.findByEmail(request.getGmail())
                 .orElseThrow(()->new RuntimeException("User not found"));
         if(!passwordEncoder.matches(request.getPassword(),user.getPasswordHash())){
             throw new InvalidPasswordException("Invalid password");
         }
-        String accessToken = jwtUtils.generateAccessToken(user.getUsername());
-        String refreshToken = jwtUtils.generateRefreshToken(user.getUsername());
+        String accessToken = jwtUtils.generateAccessToken(user.getEmail());
+        String refreshToken = jwtUtils.generateRefreshToken(user.getEmail());
         return new AuthResponse(accessToken,refreshToken);
     }
     public AuthResponse refreshToken(String refreshToken){
