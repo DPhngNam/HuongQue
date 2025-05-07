@@ -50,6 +50,16 @@ public class AuthService {
                 .build();
         userRepository.save(user);
 
+        UserProfileDto userProfileDto = UserProfileDto.builder()
+                .id(user.getId())
+                .gmail(user.getEmail())
+                .fullName(user.getUsername())
+                .build();
+        try {
+            userProfileService.createUserProfile(userProfileDto);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create user profile", e);
+        }
         String token = UUID.randomUUID().toString();
         EmailVerificationToken verificationToken = new EmailVerificationToken();
         verificationToken.setToken(token);
@@ -66,12 +76,7 @@ public class AuthService {
 
 
 
-        UserProfileDto userProfileDto = UserProfileDto.builder()
-                .id(user.getId())
-                .gmail(user.getEmail())
-                .fullName(user.getUsername())
-                .build();
-        userProfileService.createUserProfile(userProfileDto);
+
     }
 
     public AuthResponse login(AuthRequest request){
@@ -104,9 +109,9 @@ public class AuthService {
     private void sendVerificationEmail(String toEmail, String token){
         String subject = "Verify your email";
         String body = "Click the link to verify your email: " +
-                "http://localhost:8080/auth/verify-email?token=" + token;
+                "http://localhost:8081/auth/verify-email?token=" + token;
         String message = "Click the link to verify your email: " +
-                "http://localhost:8080/auth/verify-email?token=" + token;
+                "http://localhost:8081/auth/verify-email?token=" + token;
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(toEmail);
         email.setSubject(subject);
