@@ -12,7 +12,6 @@ import com.huongque.authservice.client.UserProfileService;
 import com.huongque.authservice.config.JwtUtils;
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
-import com.huongque.authservice.dto.RegisterRequest;
 import com.huongque.authservice.dto.UserProfileDto;
 import com.huongque.authservice.entity.EmailVerificationToken;
 import com.huongque.authservice.entity.User;
@@ -38,7 +37,7 @@ public class AuthService {
 
 
     @Transactional
-    public void register(RegisterRequest request){
+    public void register(AuthRequest request){
         if(userRepository.existsByEmail(request.getEmail())){
             throw new UsernameAlreadyTakenException("Username is already taken!");
         }
@@ -53,8 +52,9 @@ public class AuthService {
                 .id(user.getId())
                 .gmail(user.getEmail())
                 .build();
+
         try {
-            userProfileService.createUserProfile(userProfileDto);
+          userProfileService.createUserProfile(userProfileDto);
         } catch (Exception e) {
             throw new RuntimeException("Failed to create user profile", e);
         }
@@ -73,12 +73,10 @@ public class AuthService {
         }
 
 
-
-
     }
 
     public AuthResponse login(AuthRequest request){
-        User user = userRepository.findByEmail(request.getGmail())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(()->new RuntimeException("User not found"));
         if(!passwordEncoder.matches(request.getPassword(),user.getPasswordHash())){
             throw new InvalidPasswordException("Invalid password");

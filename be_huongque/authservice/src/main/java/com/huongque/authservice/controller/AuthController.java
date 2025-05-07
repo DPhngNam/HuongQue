@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
-import com.huongque.authservice.dto.RegisterRequest;
 import com.huongque.authservice.entity.EmailVerificationToken;
 import com.huongque.authservice.entity.User;
 import com.huongque.authservice.exception.ErrorResponse;
@@ -35,7 +34,7 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<String> register(@RequestBody AuthRequest request) {
         authService.register(request);
         return ResponseEntity.ok("Success");
     }
