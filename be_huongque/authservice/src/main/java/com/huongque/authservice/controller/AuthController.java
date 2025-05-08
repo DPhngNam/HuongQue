@@ -1,8 +1,12 @@
 package com.huongque.authservice.controller;
 
+import com.huongque.authservice.entity.PasswordResetToken;
+import com.huongque.authservice.repository.PasswordResetTokenRepository;
+import com.huongque.authservice.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,12 +27,19 @@ import com.huongque.authservice.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private  final PasswordEncoder passwordEncoder;
+    private  final EmailService emailService;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+    private final PasswordResetTokenRepository tokenRepository;
     @Autowired
     private UserRepository userRepository;
 
@@ -82,6 +93,47 @@ public class AuthController {
         // Trả về 400 cho các lỗi khác như không tìm thấy user
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            String token = UUID.randomUUID().toString();
+
+            PasswordResetToken resetToken = new PasswordResetToken();
+            resetToken.setToken(token);
+            resetToken.setUser(user);
+            resetToken.setExpiryDate(LocalDateTime.now().plusMinutes(30));
+
+            tokenRepository.save(resetToken);
+            emailService.sendPasswordResetEmail(email, token);
+
+        }
+
+
+        return ResponseEntity.ok("Nếu email tồn tại, liên kết đặt lại mật khẩu đã được gửi.");
+    }
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+        Optional<PasswordResetToken> optionalToken = tokenRepository.findByToken(token);
+        if (optionalToken.isEmpty()) {
+            return ResponseEntity.badRequest().body("Token không hợp lệ");
+        }
+
+        PasswordResetToken resetToken = optionalToken.get();
+        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body("Token đã hết hạn");
+        }
+
+        User user = resetToken.getUser();
+        user.setPasswordHash(passwordEncoder.encode(newPassword)); // gọi hàm hash mật khẩu
+        userRepository.save(user);
+
+        tokenRepository.delete(resetToken); // xoá token sau khi dùng
+        return ResponseEntity.ok("Đặt lại mật khẩu thành công.");
+    }
+
+
 
 
 

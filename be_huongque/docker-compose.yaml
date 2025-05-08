@@ -44,7 +44,7 @@ services:
   authservice:
     build:
       context: ./authservice
-      dockerfile: dockerfile 
+      dockerfile: dockerfile.dev
     ports:
       - "8081:8081"
     environment:
@@ -54,6 +54,8 @@ services:
       DB_PASSWORD: auth
       DB_NAME: authdb
       PORT: 8081
+    volumes:
+    - ./authservice:/app
     depends_on:
       - auth_db
       - rabbitmq

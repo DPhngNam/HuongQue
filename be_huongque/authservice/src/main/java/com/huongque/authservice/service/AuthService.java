@@ -37,6 +37,7 @@ public class AuthService {
     private final UserProfileService userProfileService;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
     private final JavaMailSender javaMailSender;
+    private final EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
 
@@ -72,7 +73,7 @@ public class AuthService {
         emailVerificationTokenRepository.save(verificationToken);
 
         try {
-            sendVerificationEmail(user.getEmail(), token);
+           emailService.sendVerificationEmail(user.getEmail(),token);
         }
         catch (Exception e){
             logger.error("Failed to send verification email", e.getMessage(),e);
@@ -109,17 +110,6 @@ public class AuthService {
         }
         return "Logout success";
     }
-    private void sendVerificationEmail(String toEmail, String token){
-        String subject = "Verify your email";
-        String body = "Click the link to verify your email: " +
-                "http://localhost:8081/auth/verify-email?token=" + token;
-        String message = "Click the link to verify your email: " +
-                "http://localhost:8081/auth/verify-email?token=" + token;
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(toEmail);
-        email.setSubject(subject);
-        email.setText(message);
-        javaMailSender.send(email);
-    }
+
 
 }
