@@ -3,6 +3,7 @@ package com.huongque.authservice.controller;
 import com.huongque.authservice.entity.PasswordResetToken;
 import com.huongque.authservice.repository.PasswordResetTokenRepository;
 import com.huongque.authservice.service.EmailService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,13 +37,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    private  final PasswordEncoder passwordEncoder;
-    private  final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
     private final PasswordResetTokenRepository tokenRepository;
     @Autowired
     private UserRepository userRepository;
-
 
 
     @PostMapping("/register")
@@ -52,28 +52,30 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login (@RequestBody AuthRequest request){
-        return  ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+        return ResponseEntity.ok(authService.login(request));
     }
+
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthResponse> refreshToken (@RequestBody String refreshToken){
-        return  ResponseEntity.ok(authService.refreshToken(refreshToken));
+    public ResponseEntity<AuthResponse> refreshToken(@RequestBody String refreshToken) {
+        return ResponseEntity.ok(authService.refreshToken(refreshToken));
     }
+
     @PostMapping("/logout")
-    public ResponseEntity<String> logout (@RequestBody String refreshToken){
-        return  ResponseEntity.ok(authService.logout(refreshToken));
+    public ResponseEntity<String> logout(@RequestBody String refreshToken) {
+        return ResponseEntity.ok(authService.logout(refreshToken));
     }
 
     @GetMapping("/verify-email")
-    public ResponseEntity<String> verifyEmail(@RequestParam("token") String token){
-        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token).orElseThrow(()->new RuntimeException("Invalid token"));
+    public ResponseEntity<String> verifyEmail(@RequestParam("token") String token) {
+        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token).orElseThrow(() -> new RuntimeException("Invalid token"));
 
         User user = verificationToken.getUser();
         if (user.isEnabled()) {
             return ResponseEntity.ok("Email already verified");
         }
         if (verificationToken.getExpirationTime().before(new java.util.Date())) {
-            return  ResponseEntity.badRequest().body("Token expired");
+            return ResponseEntity.badRequest().body("Token expired");
 
         }
         user.setEnabled(true);
@@ -83,6 +85,7 @@ public class AuthController {
         return ResponseEntity.ok("Email verified successfully");
 
     }
+
     @ExceptionHandler(InvalidPasswordException.class)
     public ResponseEntity<Object> handleInvalidPasswordException(InvalidPasswordException ex) {
         // Trả về 401 cho mật khẩu sai
@@ -94,6 +97,7 @@ public class AuthController {
         // Trả về 400 cho các lỗi khác như không tìm thấy user
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
+
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
@@ -114,6 +118,7 @@ public class AuthController {
 
         return ResponseEntity.ok("Nếu email tồn tại, liên kết đặt lại mật khẩu đã được gửi.");
     }
+
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
         Optional<PasswordResetToken> optionalToken = tokenRepository.findByToken(token);
@@ -134,10 +139,12 @@ public class AuthController {
         return ResponseEntity.ok("Đặt lại mật khẩu thành công.");
     }
 
-
-
-
-
+    @PostMapping("/social-login")
+    public ResponseEntity<AuthResponse> socialLogin(
+            @RequestParam("login_type") String loginType,
+            HttpServletRequest request) {
+        return ResponseEntity.ok(new AuthResponse("accessToken", "refreshToken"));
+    }
 
 
 }
