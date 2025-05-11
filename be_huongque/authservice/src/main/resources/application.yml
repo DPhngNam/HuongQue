@@ -1,3 +1,56 @@
+server:
+  port: ${PORT}
+
 spring:
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:prod}  # mặc định là prod nếu không khai báo
+  application:
+    name: authservice
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: thinhhuynh180204@gmail.com
+    password: disb jypl pwmk eajt
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: smtp.gmail.com
+  security:
+    oauth2:
+          client:
+            registration:
+              google:
+                client-id: 709450877692-titg00f4sod9al6ijlg21j2g6g2kjaup.apps.googleusercontent.com
+                client-secret: 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
+                redirect-uri: "http://localhost:8081/login/oauth2/code/google"
+                scope:
+                  - email
+                  - profile
+            provider:
+              google:
+                authorization-uri: https://accounts.google.com/o/oauth2/auth
+                token-uri: https://oauth2.googleapis.com/token
+                user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+                user-name-attribute: sub
+
+jwt:
+  token:
+    validity: 18000
+  signing-key: 0Fdo7skQSpDpkW/ydOWOZuPEqvgxVcL7/kITm/uSEKRvrY6vxsfIwhrob6FkiAxe2gdzApoATeX8E3mCe3ipSw==
+  authorities-key: roles
+  token-prefix: Bearer
+  header-string: Authorization
