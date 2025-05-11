@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
+import com.huongque.authservice.dto.EmailRequest;
+import com.huongque.authservice.dto.ResetPasswordRequest;
 import com.huongque.authservice.entity.EmailVerificationToken;
 import com.huongque.authservice.entity.User;
 import com.huongque.authservice.exception.ErrorResponse;
@@ -99,8 +101,8 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+    public ResponseEntity<String> forgotPassword(@RequestBody EmailRequest request) {
+        Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             String token = UUID.randomUUID().toString();
@@ -111,17 +113,18 @@ public class AuthController {
             resetToken.setExpiryDate(LocalDateTime.now().plusMinutes(30));
 
             tokenRepository.save(resetToken);
-            emailService.sendPasswordResetEmail(email, token);
+            emailService.sendPasswordResetEmail(request.getEmail(), token);
 
         }
 
 
-        return ResponseEntity.ok("Nếu email tồn tại, liên kết đặt lại mật khẩu đã được gửi.");
+        return ResponseEntity.ok("Check your email for reset password link.");
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
-        Optional<PasswordResetToken> optionalToken = tokenRepository.findByToken(token);
+    public ResponseEntity<String> resetPassword(
+            @RequestBody ResetPasswordRequest request) {
+        Optional<PasswordResetToken> optionalToken = tokenRepository.findByToken(request.getToken());
         if (optionalToken.isEmpty()) {
             return ResponseEntity.badRequest().body("Token không hợp lệ");
         }
@@ -132,7 +135,7 @@ public class AuthController {
         }
 
         User user = resetToken.getUser();
-        user.setPasswordHash(passwordEncoder.encode(newPassword)); // gọi hàm hash mật khẩu
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword())); // gọi hàm hash mật khẩu
         userRepository.save(user);
 
         tokenRepository.delete(resetToken); // xoá token sau khi dùng

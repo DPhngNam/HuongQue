@@ -5,10 +5,6 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.slf4j.LoggerFactory;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +32,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserProfileService userProfileService;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
-    private final JavaMailSender javaMailSender;
+
     private final EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
@@ -86,6 +82,10 @@ public class AuthService {
     public AuthResponse login(AuthRequest request){
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(()->new RuntimeException("User not found"));
+
+        if(!user.isEnabled()){
+            throw new RuntimeException("User not verified");
+        }
         if(!passwordEncoder.matches(request.getPassword(),user.getPasswordHash())){
             throw new InvalidPasswordException("Invalid password");
         }

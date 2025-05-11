@@ -42,9 +42,13 @@ public class EmailService {
         email.setText(message);
         try {
             javaMailSender.send(email);
+            logger.info("Password reset email sent to: {}", toEmail);
+            
+
+    
 
         } catch (Exception e) {
-            logger.error("Failed to send email", e.getMessage(), e);
+            logger.error("Failed to send email", e);
             throw new RuntimeException("Failed to send email", e);
         }
     }
