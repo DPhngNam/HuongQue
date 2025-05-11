@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -140,6 +142,20 @@ public class AuthController {
 
         tokenRepository.delete(resetToken); // xoá token sau khi dùng
         return ResponseEntity.ok("Đặt lại mật khẩu thành công.");
+    }
+     @GetMapping("/social-login-success")
+    public ResponseEntity<String> socialLoginSuccess(OAuth2AuthenticationToken authentication) {
+        OAuth2User user = authentication.getPrincipal();
+        String email = user.getAttribute("email");
+        String name = user.getAttribute("name");
+
+    
+        return ResponseEntity.ok("Login successful! Welcome, " + name + " (" + email + ")");
+    }
+
+    @GetMapping("/social-login-failure")
+    public ResponseEntity<String> socialLoginFailure() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed!");
     }
 
     @PostMapping("/social-login")

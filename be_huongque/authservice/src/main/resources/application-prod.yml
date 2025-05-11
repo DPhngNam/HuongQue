@@ -36,7 +36,7 @@ spring:
               google:
                 client-id: 709450877692-titg00f4sod9al6ijlg21j2g6g2kjaup.apps.googleusercontent.com
                 client-secret: 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
-                redirect-uri: {$GOOGLE_REDIRECT_URI:http://localhost:3000/auth/google/callback}
+                redirect-uri: "localhost:8081/login/oauth2/code/google"
                 scope:
                   - email
                   - profile

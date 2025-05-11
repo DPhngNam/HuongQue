@@ -41,6 +41,10 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**","/").permitAll()
                         .anyRequest().authenticated()
                 )
+                .oauth2Login(oauth2->oauth2
+                        .defaultSuccessUrl("/auth/social-login-success")
+                        .failureUrl("/auth/social-login-failure")
+                )
 
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
