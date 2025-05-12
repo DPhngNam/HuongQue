@@ -33,7 +33,7 @@ export default function Login() {
 
   try {
     const response = await axiosInstance.post("http://localhost:8081/auth/login", {
-      username: email,
+      email,
       password,
     });
 
@@ -42,6 +42,7 @@ export default function Login() {
 
     // Save tokens
     useAuthStore.getState().setTokens(accessToken, refreshToken);
+    alert("Login successful");
 
     router.push("/");
   } catch (error: any) {
