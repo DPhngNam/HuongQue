@@ -8,9 +8,11 @@ import { FiShoppingCart } from "react-icons/fi";
 import { FaRegUser } from "react-icons/fa6";
 import { useRouter } from 'next/navigation'
 import Link from "next/link";
+import { useCartStore } from "@/app/stores/cartStore";
 
 export default function Header() {
   const router = useRouter()
+  const totalItems = useCartStore(state => state.totalItems)
 
   const handleCartClick = () => {
     router.push('/cart')
@@ -29,21 +31,20 @@ export default function Header() {
       <button>
         <CiMenuBurger className="text-2xl" />
       </button>
-      <div className="flex justify-between gap-2" >
-        <button className="text-2xl">
-          <IoSearch />
+      <div className="flex gap-4">
+        <button className="p-2 rounded-full hover:bg-gray-100">
+          <IoSearch className="text-xl" />
         </button>
-        <button 
-          onClick={handleCartClick}
-          className="text-2xl"
-        >
-          <FiShoppingCart />
+        <button className="p-2 rounded-full hover:bg-gray-100 relative" onClick={handleCartClick}>
+          <FiShoppingCart className="text-xl" />
+          {totalItems > 0 && (
+            <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+              {totalItems > 99 ? '99+' : totalItems}
+            </div>
+          )}
         </button>
-        <button 
-          onClick={handleUserClick}
-          className="text-2xl"
-        >
-          <FaRegUser />
+        <button className="p-2 rounded-full hover:bg-gray-100" onClick={handleUserClick}>
+          <FaRegUser className="text-xl" />
         </button>
       </div>
     </nav>
