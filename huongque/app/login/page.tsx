@@ -17,37 +17,38 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 
 import React, { FormEvent } from "react";
+import axiosInstance from "@/lib/axiosInstance";
+import { useAuthStore } from "../stores/authStore";
 
 export default function Login() {
   const [showPassword, setShowPassword] = React.useState(false);
   const router = useRouter();
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+ async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
+  const formData = new FormData(event.currentTarget);
+  const email = formData.get("email");
+  const password = formData.get("password");
 
-    const response = await fetch("http://localhost:8081/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: email,
-        password,
-      }),
+
+  try {
+    const response = await axiosInstance.post("http://localhost:8081/auth/login", {
+      username: email,
+      password,
     });
-    if (response.ok) {
-      const data = await response.json();
-      console.log("Login successful:", data);
-      router.push("/");
-    } else {
-      const errorData = await response.json();
-      console.error("Login failed:", errorData);
-      alert("Login failed: " + errorData.message);
-    }
+
+    const { accessToken, refreshToken } = response.data;
+    console.log("Login successful:", response.data);
+
+    // Save tokens
+    useAuthStore.getState().setTokens(accessToken, refreshToken);
+
+    router.push("/");
+  } catch (error: any) {
+    console.error("Login failed:", error.response?.data || error.message);
+    alert("Login failed: " + (error.response?.data?.message || error.message));
   }
+}
 
   
 

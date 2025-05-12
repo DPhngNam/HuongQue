@@ -2,6 +2,7 @@
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
 import "./globals.css";
+import { useAuthStore } from "./stores/authStore";
 
 
 export default function RootLayout({
@@ -9,6 +10,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const {initialize} = useAuthStore.getState();
+  initialize();
   return (
     <html lang="en">
       <body>
