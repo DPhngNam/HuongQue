@@ -1,6 +1,8 @@
 import React from "react";
 import Container from "./components/container";
 import { Avatar } from "@radix-ui/react-avatar";
+import SalesChart from "./charts/SalesChart";
+import ReviewSummary from "./charts/ReviewSumary";
 
 export default function page() {
   return (
@@ -97,9 +99,15 @@ export default function page() {
             </Avatar>
           </div>
         </Container>
-
-        
       </div>
+
+      <div className=" items-center justify-center p-5 flex flex-col bg-Colors-Background-Card rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+        <SalesChart />
+      </div>
+
+        <ReviewSummary />
+      
+
     </div>
   );
 }
