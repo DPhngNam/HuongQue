@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { LayoutDashboard, BarChart2, Truck } from "lucide-react";
 
 import {
   Sidebar,
@@ -14,35 +14,24 @@ import {
 // Menu items.
 const items = [
   {
-    title: "Home",
+    title: "Dashboard",
     url: "#",
-    icon: Home,
+    icon: LayoutDashboard,
   },
   {
-    title: "Inbox",
+    title: "Analytics",
     url: "#",
-    icon: Inbox,
+    icon: BarChart2,
   },
   {
-    title: "Calendar",
+    title: "Logistics",
     url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
+    icon: Truck,
   },
 ];
-
 export default function TenantSidebar() {
   return (
-    <Sidebar >
+    <Sidebar>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
