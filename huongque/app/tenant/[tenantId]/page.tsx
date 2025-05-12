@@ -3,6 +3,7 @@ import Container from "./components/container";
 import { Avatar } from "@radix-ui/react-avatar";
 import SalesChart from "./charts/SalesChart";
 import ReviewSummary from "./charts/ReviewSumary";
+import OrderTable from "./components/OrderTable";
 
 export default function page() {
   return (
@@ -101,13 +102,17 @@ export default function page() {
         </Container>
       </div>
 
-      <div className=" items-center justify-center p-5 flex flex-col bg-Colors-Background-Card rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+      <Container>
         <SalesChart />
-      </div>
+      </Container>
 
+      <Container>
         <ReviewSummary />
-      
+      </Container>
 
+      <Container className=" col-span-2" >
+        <OrderTable />
+      </Container>
     </div>
   );
 }
