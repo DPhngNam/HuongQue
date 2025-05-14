@@ -1,13 +1,13 @@
-package com.huongque.orderservice;
+package com.huongque.checkoutservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class OrderserviceApplication {
+public class CheckoutserviceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(OrderserviceApplication.class, args);
+		SpringApplication.run(CheckoutserviceApplication.class, args);
 	}
 
 }

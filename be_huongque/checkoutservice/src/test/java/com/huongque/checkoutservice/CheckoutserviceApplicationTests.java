@@ -1,10 +1,10 @@
-package com.huongque.orderservice;
+package com.huongque.checkoutservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class OrderserviceApplicationTests {
+class CheckoutserviceApplicationTests {
 
 	@Test
 	void contextLoads() {
