@@ -10,9 +10,9 @@ interface LayoutProps {
 const TenantLayout: React.FC<LayoutProps> = ({ children }) => {
     return (
         <div>
-            <SidebarProvider>
+            <SidebarProvider className='w-full h-full flex justify-center items-center'>
                 <TenantSidebar />
-                <main>{children}</main>
+                <main className='w-full'>{children}</main>
             </SidebarProvider>
             
             
