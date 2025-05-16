@@ -1,0 +1,31 @@
+# Maven/Gradle build output
+target/
+build/
+
+# Logs
+*.log
+
+# IDEs
+.idea/
+*.iml
+*.classpath
+*.project
+*.settings/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Node (if using frontend assets)
+node_modules/
+npm-debug.log
+yarn.lock
+pnpm-lock.yaml
+
+# Test reports
+test-output/
+coverage/
