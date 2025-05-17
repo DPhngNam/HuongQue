@@ -1,3 +1,4 @@
+'use client'
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import React from "react";
 import { ShoppingCart, Pencil, Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const mockProducts = [
   {
@@ -81,6 +83,10 @@ const products = [
 ];
 
 export default function page() {
+  const router = useRouter();
+  const handleAddProduct = () => {
+    router.push("/tenant/[tenantId]/add-product");
+  }
   return (
     <div className="flex flex-col items-center  justify-start h-full w-full min-h-screen p-5 px-10">
       <div className="flex justify-between items-center w-full mb-4">
@@ -125,7 +131,9 @@ export default function page() {
               Products
             </text>
           </div>
-          <Button className="justify-start  text-sm font-normal font-['Inter']">
+          <Button 
+          onClick={handleAddProduct}
+            className="justify-start  text-sm font-normal font-['Inter']">
             Add Product
           </Button>
         </div>
