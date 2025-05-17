@@ -21,7 +21,9 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(name="price",nullable = false)
     private Double price;
+    @Column(name="quantity",nullable = false)
     private Integer quantity;
 
     @ElementCollection
@@ -34,7 +36,8 @@ public class Product {
 
     @Column(name="tenant_id",nullable = false)
     private UUID tenantId;
-
+    @Column(name="created_at",nullable = false)
     private Timestamp createdAt;
+    @Column(name="updated_at",nullable = false)
     private Timestamp updatedAt;
 }

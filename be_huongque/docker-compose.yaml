@@ -118,6 +118,38 @@ services:
     volumes:
       - ./tenantservice:/src
       - /src/node_modules
+  # product_db
+  product_db:
+    image: postgres:latest
+    container_name: product_db
+    restart: always
+    ports:
+      - "5435:5432" 
+    environment:
+      POSTGRES_USER: productservice
+      POSTGRES_PASSWORD: product
+      POSTGRES_DB: productdb
+    volumes:
+      - productdb-data:/var/lib/postgresql/data
+
+  productservice:
+    build:
+      context: ./productservice
+      dockerfile: Dockerfile  
+    container_name: productservice
+    restart: on-failure
+    ports:
+      - "8085:8085"
+    depends_on:
+      - product_db
+    environment:
+      DB_HOST: product_db
+      DB_PORT: 5432
+      DB_USERNAME: productservice
+      DB_PASSWORD: product
+      DB_NAME: productdb
+      PORT: 8085
+
   # registerservice:
   #   build:
   #     context: ./registerservice
@@ -162,6 +194,7 @@ services:
   #   env_file:
   #     - ./orderservice/.env
 
+
 networks:
   default:
     driver: bridge
@@ -171,3 +204,4 @@ volumes:
   authdb-data:
   tenantdb-data:
   rabbitmq-data:
+  productdb-data:

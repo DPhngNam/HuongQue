@@ -15,6 +15,7 @@ The application consists of the following services:
 | Checkout Service | 8087 | Handles payment processing with Stripe (commented out) |
 | Order Service | 9000 | Manages orders (commented out) |
 | API Gateway | 8761 | API gateway for service communication |
+| Product Service | 8085 | Manages products |
 
 ## Database Configuration
 
@@ -25,6 +26,7 @@ The application consists of the following services:
 | Tenant DB (PostgreSQL) | 5434 (mapped to 5432) | tenantservice | tenant | tenantdb |
 | Order DB (MySQL) | - | order | - | mydb |
 | Checkout DB (H2) | - | - | - | In-memory |
+| Product DB (PostgreSQL) | 5435 (mapped to 5432) | productservice | product | productdb |
 
 ## Environment Variables
 
