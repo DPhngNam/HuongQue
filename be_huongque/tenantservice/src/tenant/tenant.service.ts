@@ -16,9 +16,7 @@ export class TenantService {
   async findAll() {
     return this.tenantRepository.find();
   }
-  async findByDomain(domain: string) {
-    return this.tenantRepository.findOne({ where: { domain } });
-  }
+
   async findById(id: string) {
     return this.tenantRepository.findOne({ where: { id } });
   }
