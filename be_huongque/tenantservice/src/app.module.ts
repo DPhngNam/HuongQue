@@ -10,6 +10,7 @@ import { OwnerModule } from './owner/owner.module';
   imports: [TenantModule,
     ConfigModule.forRoot({
       isGlobal: true,
+     
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
