@@ -1,4 +1,9 @@
+server:
+  port: 8085
+
 spring:
+  application:
+    name: productservice
   datasource:
     url: jdbc:postgresql://product_db:5432/productdb
     username: productservice
@@ -15,13 +20,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  server:
-    port: 8085
-  application:
-    name: productservice
   rabbitmq:
     host: localhost
     port: 5672
     username: guest
     password: guest
-    virtual-host: /
+    virtual-host: 
