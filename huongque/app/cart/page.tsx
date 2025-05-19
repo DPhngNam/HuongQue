@@ -1,15 +1,16 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { cartItems } from '../utils/cartData'
 import CartItem from '../cartitem'
 import BreadcrumbNav from '../components/ui/breadcrumb-nav'
 import { Button } from '@/components/ui/button'
+import { useCartStore } from '../stores/cartStore'
 
 export default function CartPage() {
     const router = useRouter()
-    const [items, setItems] = useState(cartItems)
+    const items = useCartStore(state => state.items)
+    const updateQuantity = useCartStore(state => state.updateQuantity)
+    const removeItem = useCartStore(state => state.removeItem)
     
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
     const shipping = 15
@@ -21,13 +22,11 @@ export default function CartPage() {
     ]
 
     const handleUpdateQuantity = (id: string, quantity: number) => {
-        setItems(items.map(item => 
-            item.id === id ? { ...item, quantity } : item
-        ))
+        updateQuantity(id, quantity)
     }
 
     const handleRemoveItem = (id: string) => {
-        setItems(items.filter(item => item.id !== id))
+        removeItem(id)
     }
 
     const handleCheckout = () => {
