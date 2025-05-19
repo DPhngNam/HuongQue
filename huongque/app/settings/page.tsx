@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Personal from './[tabs]/personal';
 import Password from './[tabs]/password';
@@ -11,7 +11,46 @@ import NotificationTab from './[tabs]/Notification';
 import Review from './[tabs]/Review';
 import { User , Lock,MapPin,Bell,Truck,Heart,LogOut,Star,MessageSquare} from 'lucide-react';
 export default function SettingsPage() {
-  const [activeSection, setActiveSection] = useState('personal');
+  // Mock user data
+  const [user, setUser] = useState({
+    name: "Nguyễn Văn A",
+    email: "nguyenvana@example.com",
+    phone: "0123456789",
+    avatar: "https://i.pravatar.cc/150?img=3",
+  });
+  const [form, setForm] = useState({
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+  });
+  const [avatar, setAvatar] = useState(user.avatar);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const url = URL.createObjectURL(e.target.files[0]);
+      setAvatar(url);
+    }
+  };
+
+  const handleCancel = () => {
+    setForm({ name: user.name, email: user.email, phone: user.phone });
+    setAvatar(user.avatar);
+  };
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(() => {
+      setUser({ ...user, ...form, avatar });
+      setLoading(false);
+      // Show success toast here if needed
+    }, 1200);
+  };
 
   return (
     <div className="p-8 md:p-8">
@@ -95,4 +134,4 @@ export default function SettingsPage() {
       </div>
     </div>
   );
-} 
+}

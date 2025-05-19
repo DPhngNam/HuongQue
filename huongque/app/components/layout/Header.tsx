@@ -23,7 +23,7 @@ export default function Header() {
   }
 
   return (
-    <nav className="flex justify-between items-center bg-transparent px-3 py-2">
+    <nav className="flex z-50 justify-between items-center bg-transparent px-3 py-2">
       <Link href={"/"} className="flex items-center gap-1 ">
         <IoLogoChrome className="text-2xl" />
         <span className="font-bold text-2xl ">Hương Quê</span>
