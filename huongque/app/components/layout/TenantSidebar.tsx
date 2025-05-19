@@ -30,7 +30,7 @@ export default function TenantSidebar() {
     },
     {
       title: "Analytics",
-      url: "#",
+      url: `/tenant/${tenantId}/analytics`,
       icon: BarChart2,
     },
     {
