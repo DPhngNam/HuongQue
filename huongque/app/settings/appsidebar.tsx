@@ -54,7 +54,7 @@ export function AppSidebar() {
     },
   ];
   return (
-    <Sidebar>
+    <Sidebar variant="sidebar">
       <SidebarHeader>
         <SidebarContent>
           <SidebarMenuButton asChild>
