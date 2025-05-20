@@ -1,18 +1,18 @@
-import { Injectable,Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { UpdateRegistrationDto } from './dto/update-registration.dto';
-import { ClientProxy } from '@nestjs/microservices';
-
+import { Registration } from './entities/registration.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class RegistrationsService {
-  constructor(@Inject("REGISTER_SERVICE") private rabbitClient: ClientProxy) {
-    
-  }
+  constructor(
+    @InjectRepository(Registration)
+    private registrationRepository: Repository<Registration>,
+  ) {}
+
   create(createRegistrationDto: CreateRegistrationDto) {
-    this.rabbitClient.emit('create_registration', createRegistrationDto);
-    // this.rabbitClient.send('create_registration', createRegistrationDto).subscribe((response) => {
-    
-    return 'This action adds a new registration';
+    return this.registrationRepository.save(createRegistrationDto);
   }
 
   findAll() {

@@ -17,18 +17,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  // Connect microservice
-  app.connectMicroservice({
-    name: 'REGISTER_SERVICE',
-    transport: Transport.RMQ,
-    options: {
-      urls: ['amqp://localhost:5672'],
-      queue: 'registrations_queue',
-      queueOptions: {
-        durable: false
-      },
-    },
-  });
+  
 
   // Start both HTTP server and microservice
   await app.startAllMicroservices();
