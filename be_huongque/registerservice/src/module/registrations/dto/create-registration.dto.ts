@@ -18,18 +18,15 @@ export class CreateRegistrationDto {
         format: 'email'
     })
     useremail: string;
-
-    @IsNotEmpty()
     @ApiProperty({
-        description: 'Store documentation images',
-        type: 'array',
-        items: {
-            type: 'file',
-            format: 'binary'
-        },
-        required: true
+        type: 'string',
+        format: 'binary',
+        description: 'Upload one or more image files',
+        isArray: true,
+        required: true,
     })
-    image: Array<Express.Multer.File>;
+    image: any;
+
 
     @IsString()
     @IsNotEmpty()

@@ -16,7 +16,7 @@ The application consists of the following services:
 | Order Service | 9000 | Manages orders (commented out) |
 | API Gateway | 8761 | API gateway for service communication |
 | Product Service | 8085 | Manages products |
-
+| S3Bucket | 8087 | Store Images- Files|
 ## Database Configuration
 
 | Database | Port | Username | Password | Database Name |
@@ -24,9 +24,8 @@ The application consists of the following services:
 | Auth DB (PostgreSQL) | 5432 | authservice | auth | authdb |
 | User DB (PostgreSQL) | 5433 (mapped to 5432) | userservice | user | userdb |
 | Tenant DB (PostgreSQL) | 5434 (mapped to 5432) | tenantservice | tenant | tenantdb |
-| Order DB (MySQL) | - | order | - | mydb |
-| Checkout DB (H2) | - | - | - | In-memory |
 | Product DB (PostgreSQL) | 5435 (mapped to 5432) | productservice | product | productdb |
+
 
 ## Environment Variables
 

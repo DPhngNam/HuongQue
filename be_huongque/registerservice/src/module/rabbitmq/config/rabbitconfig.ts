@@ -1,12 +1,11 @@
-export interface RabbitConfig {}
-export interface FileUploadRequest {
+export class FileUploadRequest {
     fileName: string;
-    fileContent: Buffer;
+    fileContent: string;
     bucketName: string;
     contentType: string;
 
 }
-export interface FileUploadResponse {
+export class FileUploadResponse {
     success: boolean;
     message: string;
     

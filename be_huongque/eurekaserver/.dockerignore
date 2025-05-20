@@ -1,0 +1,52 @@
+# Compiled class files
+target/
+build/
+
+# Maven & Gradle specific files
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/
+pom.xml.*
+.settings/
+.idea/
+*.iml
+*.ipr
+*.iws
+.gradle/
+gradle/
+build.gradle*
+gradlew
+gradlew.bat
+
+# Logs
+*.log
+logs/
+log/
+*.out
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Test and coverage reports
+test-output/
+coverage/
+*.ec
+
+# Node/npm (if using frontend in same repo)
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# IDEs & editors
+.vscode/
+*.swp
+*.swo
+
+# Docker-specific
+Dockerfile*
+.dockerignore
+
+# Environment files (security)
+.env
+.env.*

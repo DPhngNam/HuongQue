@@ -1,4 +1,4 @@
-# Use an official OpenJDK runtime as a parent image for building
+
 FROM openjdk:21-jdk-slim AS build
 
 # Set the working directory inside the container
@@ -23,10 +23,10 @@ FROM openjdk:21-jdk-slim
 WORKDIR /
 
 # Copy the built JAR from the build stage
-COPY --from=build /target/s3bucket-0.0.1-SNAPSHOT.jar /s3bucket-0.0.1-SNAPSHOT.jar
+COPY --from=build /target/eurekaserver-0.0.1-SNAPSHOT.jar /eurekaserver-0.0.1-SNAPSHOT.jar
 
 # Expose the port the application runs on
-EXPOSE 8080
+EXPOSE 8761
 
 # Command to run the application
-ENTRYPOINT ["java", "-jar", "s3bucket-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "eurekaserver-0.0.1-SNAPSHOT.jar"]

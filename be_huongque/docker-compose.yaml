@@ -1,27 +1,55 @@
 services:
-  eureka:
+  eurekaserver:
     build:
-      context: ./apigateway
-      dockerfile: dockerfile
+    
+      context: ./eurekaserver
+      dockerfile: Dockerfile
     ports:
       - "8765:8765"
     environment:
-      EUREKA_HOSTNAME: eureka
+      EUREKA_HOSTNAME: eurekaserver
+    healthcheck:
+      test: ["CMD","executable", "arg"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
   rabbitmq:
     image: rabbitmq:latest
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: admin
+      RABBITMQ_DEFAULT_USER: adminhuongque
+      RABBITMQ_DEFAULT_PASS: huongque
     restart: always
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
+  apigateway:
+    build:
+      context: ./apigateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - rabbitmq
+      - eurekaserver
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      RABBITMQ_QUEUE: file.upload
+
   # adminservice:
   #   build:
   #     context: ./adminservice
-  #     dockerfile: dockerfile
+  #     dockerfile: Dockerfile
   #   ports:
   #     - "8080:8081"
   #   depends_on:
@@ -44,7 +72,7 @@ services:
   authservice:
     build:
       context: ./authservice
-      dockerfile: dockerfile 
+      dockerfile: Dockerfile
     ports:
       - "8081:8081"
     environment:
@@ -74,7 +102,7 @@ services:
   userservice:
     build:
       context: ./userservice
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
     ports:
       - "8083:8083"
     depends_on:
@@ -103,7 +131,7 @@ services:
   tenantservice:
     build:
       context: ./tenantservice
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
     ports:
       - "8084:8084"
     depends_on:
@@ -150,51 +178,108 @@ services:
       DB_NAME: productdb
       PORT: 8085
 
-  # registerservice:
-  #   build:
-  #     context: ./registerservice
-  #     dockerfile: dockerfile
-  #   ports:
-  #     - "8080:8085"
-  #   depends_on:
-  #     - rabbitmq
-  #   env_file:
-  #     - ./registerservice/.env
-  # s3bucket:
-  #   build:
-  #     context: ./s3bucket
-  #     dockerfile: dockerfile
-  #   ports:
-  #     - "8086:8080"
-  #   depends_on:
-  #     - rabbitmq
-  #   env_file:
-  #     - ./s3bucket/.env
+  register_db:
+    image: postgres:latest
+    container_name: register_db
+    restart: always
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_USER: register
+      POSTGRES_PASSWORD: register
+      POSTGRES_DB: registerdb
+    volumes:
+      - registerdb-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U register"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  registerservice:
+    build:
+      context: ./registerservice
+      dockerfile: Dockerfile
+    ports:
+      - "8086:8086"
+    depends_on:
+      register_db:
+        condition: service_healthy 
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      DB_HOST: register_db
+      DB_PORT: 5432
+      DB_USERNAME: register
+      DB_PASSWORD: register
+      DB_NAME: registerdb
+      PORT: 8086
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      RABBITMQ_QUEUE: file.upload
 
-  # searchservice:
-  #   build:
-  #     context: ./searchservice
-  #     dockerfile: dockerfile
-  #   ports:
-  #     - "8087:8080"
-  #   depends_on:
-  #     - rabbitmq
-  #   env_file:
-  #     - ./searchservice/.env
-
-  
-  # orderservice:
-  #   build:
-  #     context: ./orderservice
-  #     dockerfile: dockerfile
-  #   ports:
-  #     - "8088:8080"
-  #   depends_on:
-  #     - rabbitmq
-  #   env_file:
-  #     - ./orderservice/.env
-
-
+  s3bucket:
+    build:
+      context: ./s3bucket
+      dockerfile: Dockerfile
+    ports:
+      - "8087:8087"
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      RABBITMQ_QUEUE: file.upload
+      RABBITMQ_QUEUE_RESPONSE: file.upload.response
+      API_KEY: ${API_KEY}
+      ENDPOINT: ${ENDPOINT}
+  checkoutservice:
+    build:
+      context: ./checkoutservice
+      dockerfile: Dockerfile
+    ports:
+      - "8088:8088"
+    depends_on:
+      - rabbitmq
+    environment:
+      PORT: 8088
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      RABBITMQ_QUEUE: file.upload
+    
+  order_db:
+    image: postgres:latest
+    container_name: order_db
+    restart: always
+    ports:
+      - "5437:5432"
+    environment:
+      POSTGRES_USER: orderservice
+      POSTGRES_PASSWORD: order
+      POSTGRES_DB: orderdb
+    volumes:
+      - orderdb-data:/var/lib/postgresql/data
+  orderservice:
+    build:
+      context: ./orderservice
+      dockerfile: Dockerfile
+    ports:
+      - "8089:8089"
+    depends_on:
+      - order_db
+      - rabbitmq
+    environment:
+      DB_HOST: order_db
+      DB_PORT: 5432
+      DB_USERNAME: orderservice
+      DB_PASSWORD: order
+      DB_NAME: orderdb
+      PORT: 8089
 networks:
   default:
     driver: bridge
@@ -205,3 +290,5 @@ volumes:
   tenantdb-data:
   rabbitmq-data:
   productdb-data:
+  orderdb-data:
+  registerdb-data:
