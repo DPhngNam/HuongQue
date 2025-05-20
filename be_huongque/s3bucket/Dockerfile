@@ -26,7 +26,7 @@ WORKDIR /
 COPY --from=build /target/s3bucket-0.0.1-SNAPSHOT.jar /s3bucket-0.0.1-SNAPSHOT.jar
 
 # Expose the port the application runs on
-EXPOSE 8080
+EXPOSE 8087
 
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "s3bucket-0.0.1-SNAPSHOT.jar"]
