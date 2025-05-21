@@ -1,9 +1,8 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import type { Metadata } from "next";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
 import "./globals.css";
-import type { Metadata } from "next";
-import TenantSidebar from "./components/layout/TenantSidebar";
+import AuthInit from "./components/layout/AuthInit";
 
 export const metadata: Metadata = {
   title: "Huong Que",
@@ -15,11 +14,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const {initialize} = useAuthStore.getState();
-  initialize();
+  
+
   return (
     <html lang="en">
       <body>
+        <AuthInit/>
         <main>
           <Header />
           {children}
