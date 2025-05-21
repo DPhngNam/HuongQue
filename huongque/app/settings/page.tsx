@@ -2,54 +2,94 @@
 
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-
+import Personal from './[tabs]/personal';
+import Password from './[tabs]/password';
+import Orderhistory from './[tabs]/orderhistory';
+import Address from './[tabs]/Address';
+import Wishlist from './[tabs]/Wishlist';
+import NotificationTab from './[tabs]/Notification';
+import Review from './[tabs]/Review';
+import { User , Lock,MapPin,Bell,Truck,Heart,LogOut,Star,MessageSquare} from 'lucide-react';
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState('personal');
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Settings</h1>
-      <div className="flex flex-col md:flex-row gap-8">
-        <div className="w-full md:w-1/4">
-          <nav className="flex flex-col gap-2">
+    <div className="p-8 md:p-8">
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="w-[300px] h-[400px] rounded-2xl bg-white shadow-[0px_2px_5px_-1px_rgba(107,114,128,0.03),0px_4px_10px_0px_rgba(107,114,128,0.04),0px_1px_22px_0px_rgba(107,114,128,0.08)] sticky top-4">
+          <nav className="flex flex-col gap-2 p-4">
             <Button
               variant={activeSection === 'personal' ? 'default' : 'outline'}
               onClick={() => setActiveSection('personal')}
+              className="w-[261px] h-[45px] px-6 py-3 flex items-center justify-start gap-4 border-0"
             >
-              Personal Info
+              <User/> Thông tin cá nhân
             </Button>
             <Button
-              variant={activeSection === 'address' ? 'default' : 'outline'}
-              onClick={() => setActiveSection('address')}
+              variant={activeSection === 'password' ? 'default' : 'outline'}
+              onClick={() => setActiveSection('password')}
+              className="w-[261px] h-[45px] px-6 py-3 flex items-center justify-start gap-4 border-0"
             >
-              Delivery Address
+              <Lock /> Mật khẩu
             </Button>
             <Button
               variant={activeSection === 'orders' ? 'default' : 'outline'}
               onClick={() => setActiveSection('orders')}
+              className="w-[261px] h-[45px] px-6 py-3 flex items-center justify-start gap-4 border-0"
             >
-              Order History
+              <Truck /> Lịch sử mua hàng
+            </Button>
+            <Button
+              variant={activeSection === 'address' ? 'default' : 'outline'}
+              onClick={() => setActiveSection('address')}
+              className="w-[261px] h-[45px] px-6 py-3 flex items-center justify-start gap-4 border-0"
+            >
+              <MapPin /> Địa chỉ
+            </Button>
+            <Button
+              variant={activeSection === 'notification' ? 'default' : 'outline'}
+              onClick={() => setActiveSection('notification')}
+              className="w-[261px] h-[45px] px-6 py-3 flex items-center justify-start gap-4 border-0"
+            >
+              <Bell /> Thông báo
+            </Button>
+            <Button
+              variant={activeSection === 'wishlist' ? 'default' : 'outline'}
+              onClick={() => setActiveSection('wishlist')}
+              className="w-[261px] h-[45px] px-6 py-3 flex items-center justify-start gap-4 border-0"
+            >
+              <Heart /> Yêu thích
+            </Button>
+            <Button
+              variant={activeSection === 'logout' ? 'default' : 'outline'}
+              onClick={() => setActiveSection('logout')}
+              className="w-[261px] h-[45px] px-6 py-3 flex items-center justify-start gap-4 border-0"
+            >
+              <LogOut /> Đăng xuất
             </Button>
           </nav>
         </div>
-        <div className="w-full md:w-3/4">
+        <div className="w-full md:w-3/4 rounded-2xl bg-white shadow-[0px_2px_5px_-1px_rgba(107,114,128,0.03),0px_4px_10px_0px_rgba(107,114,128,0.04),0px_1px_22px_0px_rgba(107,114,128,0.08)]">
           {activeSection === 'personal' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Personal Info</h2>
-              <p>Display your personal information here.</p>
-            </div>
+            <Personal />
           )}
-          {activeSection === 'address' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Delivery Address</h2>
-              <p>Manage your delivery address here.</p>
-            </div>
+          {activeSection === 'password' && (
+            <Password />
           )}
           {activeSection === 'orders' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Order History</h2>
-              <p>View your past orders here.</p>
-            </div>
+            <Orderhistory />
+          )}
+          {activeSection === 'review' && (
+            <Review />
+          )}
+          {activeSection === 'address' && (
+            <Address />
+          )}
+          {activeSection === 'notification' && (
+            <NotificationTab />
+          )}
+          {activeSection === 'wishlist' && (
+            <Wishlist />
           )}
         </div>
       </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { products } from "../../utils/homeData";
-import Product from "../products/Product";
+import HomeProduct from "./HomeProduct";
 import { useState, useEffect, useCallback, memo } from "react";
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -64,7 +64,7 @@ export default function HomeProducts() {
             ))
           ) : (
             displayedProducts.map((product) => (
-              <Product 
+              <HomeProduct 
                 key={product.id}
                 {...product}
               />
