@@ -37,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -157,7 +158,10 @@ public void socialLoginSuccess(OAuth2AuthenticationToken authentication, HttpSer
   
     User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("User not found after OAuth login"));
-    String accessToken = jwtUtils.generateAccessToken(email);
+    List<String> roles = user.getRoles().stream()
+            .map(role -> role.getName())
+            .toList();
+    String accessToken = jwtUtils.generateAccessToken(email, roles);
     String refreshToken = jwtUtils.generateRefreshToken(email);
     String redirectUrl = "http://localhost:3000/login/social-login-success?access_token=" + accessToken + "&refresh_token=" + refreshToken;
 

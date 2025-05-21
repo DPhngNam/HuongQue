@@ -27,10 +27,9 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateAccessToken(String username, String tenantId, List<String> roles) {
+    public String generateAccessToken(String username, List<String> roles) {
         return Jwts.builder()
                 .subject(username)
-                .claim("tenantId", tenantId)
                 .claim("roles", roles)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10)) // 10 phút

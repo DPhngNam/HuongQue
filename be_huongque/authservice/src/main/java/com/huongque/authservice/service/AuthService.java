@@ -1,6 +1,7 @@
 package com.huongque.authservice.service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -89,7 +90,10 @@ public class AuthService {
         if(!passwordEncoder.matches(request.getPassword(),user.getPasswordHash())){
             throw new InvalidPasswordException("Invalid password");
         }
-        String accessToken = jwtUtils.generateAccessToken(user.getEmail());
+        List<String> roles = user.getRoles().stream()
+                .map(role -> role.getName())
+                .toList();
+        String accessToken = jwtUtils.generateAccessToken(user.getEmail(), roles);
         String refreshToken = jwtUtils.generateRefreshToken(user.getEmail());
         return new AuthResponse(accessToken,refreshToken);
     }
@@ -98,7 +102,7 @@ public class AuthService {
             throw new RuntimeException("Invalid refresh token");
         }
         String username = jwtUtils.extractUsername(refreshToken);
-        String newAccessToken = jwtUtils.generateAccessToken(username);
+        String newAccessToken = jwtUtils.generateAccessToken(username, List.of());
         String newRefreshToken = jwtUtils.generateRefreshToken(username);
 
         return  new AuthResponse(newAccessToken,newRefreshToken);
