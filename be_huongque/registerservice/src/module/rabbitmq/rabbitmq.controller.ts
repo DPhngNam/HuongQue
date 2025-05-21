@@ -1,9 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { RabbitmqService } from './rabbitmq.service';
-import { CreateRabbitmqDto } from './dto/create-rabbitmq.dto';
-import { UpdateRabbitmqDto } from './dto/update-rabbitmq.dto';
 import { FileUploadRequest } from './config/rabbitconfig';
+import { RabbitmqService } from './rabbitmq.service';
 
 @Controller()
 export class RabbitmqController {

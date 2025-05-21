@@ -6,13 +6,10 @@ import { RegistrationsModule } from './module/registrations/registrations.module
 import { RabbitmqModule } from './module/rabbitmq/rabbitmq.module';
 import { RabbitmqService } from './module/rabbitmq/rabbitmq.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Registration } from './module/registrations/entities/registration.entity';
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: '../.env',
-      isGlobal: true,
-    }),
-
+    TypeOrmModule.forFeature([Registration]),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,

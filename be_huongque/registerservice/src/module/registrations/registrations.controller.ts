@@ -13,21 +13,12 @@ export class RegistrationsController {
 
   @Post('/create')
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FilesInterceptor('image')) // "image" is the field name
+  @UseInterceptors(FilesInterceptor('image'))
   @ApiBody({
     description: 'Upload images and form data',
     schema: {
       type: 'object',
       properties: {
-        useremail: {
-          type: 'string',
-          format: 'email',
-          example: 'user@example.com',
-        },
-        store_name: {
-          type: 'string',
-          example: 'My Store Name',
-        },
         image: {
           type: 'array',
           items: {
@@ -36,7 +27,7 @@ export class RegistrationsController {
           },
         },
       },
-      required: ['useremail', 'store_name', 'image'],
+      required: ['image'],
     },
   })
   async create(
@@ -53,7 +44,6 @@ export class RegistrationsController {
         bucketName: 'registrations',
         contentType: file.mimetype,
       }
-
       const response = await this.rabbitmqService.uploadFile(fileUpload);
       if (response.success) {
         imageUrl.push({
@@ -66,23 +56,23 @@ export class RegistrationsController {
     return this.registrationsService.create(createRegistrationDto);
   }
 
-  @Get()
+  @Get('/all')
   findAll() {
     return this.registrationsService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.registrationsService.findOne(+id);
+    return this.registrationsService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRegistrationDto: UpdateRegistrationDto) {
-    return this.registrationsService.update(+id, updateRegistrationDto);
+    return this.registrationsService.update(id, updateRegistrationDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.registrationsService.remove(+id);
+    return this.registrationsService.remove(id);
   }
 }
