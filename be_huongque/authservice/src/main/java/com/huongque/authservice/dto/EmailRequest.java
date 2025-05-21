@@ -1,11 +1,10 @@
 package com.huongque.authservice.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-public class AuthRequest {
+@AllArgsConstructor
+public class EmailRequest {
     private String email;
-    private String password;
 }
