@@ -10,8 +10,10 @@ import Wishlist from './[tabs]/Wishlist';
 import NotificationTab from './[tabs]/Notification';
 import Review from './[tabs]/Review';
 import { User , Lock,MapPin,Bell,Truck,Heart,LogOut,Star,MessageSquare} from 'lucide-react';
+import { useAuthStore } from "../stores/authStore";
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState('personal');
+  const {clearTokens} = useAuthStore();
 
 
   return (
@@ -63,7 +65,7 @@ export default function SettingsPage() {
             </Button>
             <Button
               variant={activeSection === 'logout' ? 'default' : 'outline'}
-              onClick={() => setActiveSection('logout')}
+              onClick={() => clearTokens()}
               className="w-[261px] h-[45px] px-6 py-3 flex items-center justify-start gap-4 border-0"
             >
               <LogOut /> Đăng xuất

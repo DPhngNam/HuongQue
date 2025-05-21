@@ -7,10 +7,11 @@ interface AuthState {
   setTokens: (accessToken: string, refreshToken: string) => void;
   clearTokens: () => void;
   initialize: () => void;
+  isLogin:()=> boolean;
 }
 
 
-export const useAuthStore = create<AuthState>((set)=>({
+export const useAuthStore = create<AuthState>((set,get)=>({
     accessToken: null,
     refreshToken: null,
     setTokens: (accessToken, refreshToken) => {
@@ -27,6 +28,10 @@ export const useAuthStore = create<AuthState>((set)=>({
         const refreshToken = localStorage.getItem('refreshToken');
         set({ accessToken, refreshToken });
     },
+    isLogin:()=>{
+        const {accessToken}=get()
+        return Boolean(accessToken);
+    }
     
 
 }))
