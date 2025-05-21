@@ -32,6 +32,7 @@ public class Oauth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
             User newUser = User.builder()
                     .email(email)
                     .enabled(true)
+                    .passwordHash("OAUTH@_USER")
                     .build();
             userRepository.save(newUser);
 

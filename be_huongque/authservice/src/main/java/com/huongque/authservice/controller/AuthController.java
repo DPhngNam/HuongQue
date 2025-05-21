@@ -4,6 +4,8 @@ import com.huongque.authservice.entity.PasswordResetToken;
 import com.huongque.authservice.repository.PasswordResetTokenRepository;
 import com.huongque.authservice.service.EmailService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.huongque.authservice.config.JwtUtils;
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
 import com.huongque.authservice.dto.EmailRequest;
@@ -32,6 +35,7 @@ import com.huongque.authservice.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,6 +49,7 @@ public class AuthController {
     private final EmailService emailService;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
     private final PasswordResetTokenRepository tokenRepository;
+    private final JwtUtils jwtUtils;
     @Autowired
     private UserRepository userRepository;
 
@@ -104,6 +109,7 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestBody EmailRequest request) {
+        
         Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -144,14 +150,20 @@ public class AuthController {
         return ResponseEntity.ok("Đặt lại mật khẩu thành công.");
     }
      @GetMapping("/social-login-success")
-    public ResponseEntity<String> socialLoginSuccess(OAuth2AuthenticationToken authentication) {
-        OAuth2User user = authentication.getPrincipal();
-        String email = user.getAttribute("email");
-        String name = user.getAttribute("name");
+public void socialLoginSuccess(OAuth2AuthenticationToken authentication, HttpServletResponse response) throws IOException {
+    OAuth2User oauthUser = authentication.getPrincipal();
+    String email = oauthUser.getAttribute("email");
 
-    
-        return ResponseEntity.ok("Login successful! Welcome, " + name + " (" + email + ")");
-    }
+  
+    User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found after OAuth login"));
+    String accessToken = jwtUtils.generateAccessToken(email);
+    String refreshToken = jwtUtils.generateRefreshToken(email);
+    String redirectUrl = "http://localhost:3000/login/social-login-success?access_token=" + accessToken + "&refresh_token=" + refreshToken;
+
+    response.sendRedirect(redirectUrl);
+}
+
 
     @GetMapping("/social-login-failure")
     public ResponseEntity<String> socialLoginFailure() {
