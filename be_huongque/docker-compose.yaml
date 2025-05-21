@@ -1,0 +1,294 @@
+services:
+  eurekaserver:
+    build:
+    
+      context: ./eurekaserver
+      dockerfile: Dockerfile
+    ports:
+      - "8765:8765"
+    environment:
+      EUREKA_HOSTNAME: eurekaserver
+    healthcheck:
+      test: ["CMD","executable", "arg"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: adminhuongque
+      RABBITMQ_DEFAULT_PASS: huongque
+    restart: always
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+  apigateway:
+    build:
+      context: ./apigateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - rabbitmq
+      - eurekaserver
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      RABBITMQ_QUEUE: file.upload
+
+  # adminservice:
+  #   build:
+  #     context: ./adminservice
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8080:8081"
+  #   depends_on:
+  #     - rabbitmq
+  #   env_file:
+  #     - ./adminservice/.env
+  # auth_db
+  auth_db:
+    image: postgres:latest
+    container_name: auth_db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: authservice
+      POSTGRES_PASSWORD: auth
+      POSTGRES_DB: authdb
+    volumes:
+      - authdb-data:/var/lib/postgresql/data
+  authservice:
+    build:
+      context: ./authservice
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: auth_db
+      DB_PORT: 5432
+      DB_USERNAME: authservice
+      DB_PASSWORD: auth
+      DB_NAME: authdb
+      PORT: 8081
+    depends_on:
+      - auth_db
+      - rabbitmq
+  
+  # user_db
+  user_db:
+    image: postgres:latest
+    container_name: user_db
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: userservice
+      POSTGRES_PASSWORD: user
+      POSTGRES_DB: userdb
+    volumes:
+      - userdb-data:/var/lib/postgresql/data
+  userservice:
+    build:
+      context: ./userservice
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    depends_on:
+      - user_db
+    environment:
+      DB_HOST: user_db
+      DB_PORT: 5432
+      DB_USERNAME: userservice
+      DB_PASSWORD: user
+      DB_NAME: userdb
+      PORT: 8083
+  
+  #tenant service
+  tenant_db:
+    image: postgres:latest
+    container_name: tenant_db
+    restart: always
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: tenantservice
+      POSTGRES_PASSWORD: tenant
+      POSTGRES_DB: tenantdb
+    volumes:
+      - tenantdb-data:/var/lib/postgresql/data
+  tenantservice:
+    build:
+      context: ./tenantservice
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    depends_on:
+      - tenant_db
+    environment:
+      DB_HOST: tenant_db
+      DB_PORT: 5432
+      DB_USERNAME: tenantservice
+      DB_PASSWORD: tenant
+      DB_NAME: tenantdb
+      PORT: 8084
+    volumes:
+      - ./tenantservice:/src
+      - /src/node_modules
+  # product_db
+  product_db:
+    image: postgres:latest
+    container_name: product_db
+    restart: always
+    ports:
+      - "5435:5432" 
+    environment:
+      POSTGRES_USER: productservice
+      POSTGRES_PASSWORD: product
+      POSTGRES_DB: productdb
+    volumes:
+      - productdb-data:/var/lib/postgresql/data
+
+  productservice:
+    build:
+      context: ./productservice
+      dockerfile: Dockerfile  
+    container_name: productservice
+    restart: on-failure
+    ports:
+      - "8085:8085"
+    depends_on:
+      - product_db
+    environment:
+      DB_HOST: product_db
+      DB_PORT: 5432
+      DB_USERNAME: productservice
+      DB_PASSWORD: product
+      DB_NAME: productdb
+      PORT: 8085
+
+  register_db:
+    image: postgres:latest
+    container_name: register_db
+    restart: always
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_USER: register
+      POSTGRES_PASSWORD: register
+      POSTGRES_DB: registerdb
+    volumes:
+      - registerdb-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U register"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  registerservice:
+    build:
+      context: ./registerservice
+      dockerfile: Dockerfile
+    ports:
+      - "8086:8086"
+    depends_on:
+      register_db:
+        condition: service_healthy 
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      DB_HOST: register_db
+      DB_PORT: 5432
+      DB_USERNAME: register
+      DB_PASSWORD: register
+      DB_NAME: registerdb
+      PORT: 8086
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      RABBITMQ_QUEUE: file.upload
+
+  s3bucket:
+    build:
+      context: ./s3bucket
+      dockerfile: Dockerfile
+    ports:
+      - "8087:8087"
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      RABBITMQ_QUEUE: file.upload
+      RABBITMQ_QUEUE_RESPONSE: file.upload.response
+      API_KEY: ${API_KEY}
+      ENDPOINT: ${ENDPOINT}
+  checkoutservice:
+    build:
+      context: ./checkoutservice
+      dockerfile: Dockerfile
+    ports:
+      - "8088:8088"
+    depends_on:
+      - rabbitmq
+    environment:
+      PORT: 8088
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      RABBITMQ_QUEUE: file.upload
+    
+  order_db:
+    image: postgres:latest
+    container_name: order_db
+    restart: always
+    ports:
+      - "5437:5432"
+    environment:
+      POSTGRES_USER: orderservice
+      POSTGRES_PASSWORD: order
+      POSTGRES_DB: orderdb
+    volumes:
+      - orderdb-data:/var/lib/postgresql/data
+  orderservice:
+    build:
+      context: ./orderservice
+      dockerfile: Dockerfile
+    ports:
+      - "8089:8089"
+    depends_on:
+      - order_db
+      - rabbitmq
+    environment:
+      DB_HOST: order_db
+      DB_PORT: 5432
+      DB_USERNAME: orderservice
+      DB_PASSWORD: order
+      DB_NAME: orderdb
+      PORT: 8089
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  userdb-data:
+  authdb-data:
+  tenantdb-data:
+  rabbitmq-data:
+  productdb-data:
+  orderdb-data:
+  registerdb-data:

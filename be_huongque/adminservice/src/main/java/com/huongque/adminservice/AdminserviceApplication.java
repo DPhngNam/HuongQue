@@ -11,7 +11,7 @@ public class AdminserviceApplication {
 	public static void main(String[] args) {
 		// Load .env file first
 		Dotenv dotenv = Dotenv.configure()
-				.directory("be_huongque/adminservice")
+				.directory("adminservice/.env")
 				.ignoreIfMissing()
 				.load();
 

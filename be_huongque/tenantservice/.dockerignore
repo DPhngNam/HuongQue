@@ -1,0 +1,29 @@
+# Node modules (they will be installed inside the container)
+node_modules
+
+# Logs
+*.log
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Dependency lock files (optional - include if you're copying package-lock/yarn.lock)
+.pnpm-debug.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Editor and IDE
+.vscode
+.idea
+*.swp
+
+# Build output
+dist/
+build/
+tmp/
