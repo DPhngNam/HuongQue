@@ -60,7 +60,7 @@ export default function Login() {
   }
 
   return (
-    <div className="flex flex-col p-[96px]">
+    <div className="flex justify-center items-center flex-col p-[96px]">
       {/* Login form */}
       <div className="w-96 justify-start text-gray-900 text-4xl font-bold font-['Montserrat'] leading-[56px]">
         Login to Your Account
@@ -83,7 +83,7 @@ export default function Login() {
                   htmlFor="email"
                   className="text-sm font-medium text-gray-700"
                 >
-                  Email / User name
+                  Email 
                 </Label>
                 <Input
                   name="email"
@@ -132,17 +132,7 @@ export default function Login() {
               </div>
 
               <div className="flex items-center justify-between gap-2">
-                <Input
-                  type="checkbox"
-                  id="remember-me"
-                  className="w-4 h-4 border border-gray-300 focus:ring-0 focus:outline-none bg-green-500"
-                />
-                <Label
-                  htmlFor="remember-me"
-                  className="peer text-sm font-medium text-gray-700 "
-                >
-                  Remember me
-                </Label>
+                
                 <Link href={"/forgot-password"}>
                   <Label
                     htmlFor="forgot-password"
