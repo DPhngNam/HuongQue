@@ -2,7 +2,8 @@ package com.huongque.authservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
+// import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
@@ -14,8 +15,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Role {
     @Id
-    @GeneratedValue(generator = "UUID",strategy = GenerationType.AUTO)
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue
+    @UuidGenerator
     private UUID id;
 
     @Column(nullable = false, unique = true)

@@ -45,6 +45,7 @@ services:
       RABBITMQ_USERNAME: adminhuongque
       RABBITMQ_PASSWORD: huongque
       RABBITMQ_QUEUE: file.upload
+      EUREKA_SERVER_HOST: eurekaserver
 
   # adminservice:
   #   build:
@@ -82,6 +83,8 @@ services:
       DB_PASSWORD: auth
       DB_NAME: authdb
       PORT: 8081
+    volumes:
+    - ./authservice:/app
     depends_on:
       - auth_db
       - rabbitmq
@@ -185,13 +188,13 @@ services:
     ports:
       - "5436:5432"
     environment:
-      POSTGRES_USER: register
+      POSTGRES_USER: registerservice
       POSTGRES_PASSWORD: register
       POSTGRES_DB: registerdb
     volumes:
       - registerdb-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U register"]
+      test: ["CMD-SHELL", "pg_isready -U registerservice -d registerdb"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -202,14 +205,12 @@ services:
     ports:
       - "8086:8086"
     depends_on:
-      register_db:
-        condition: service_healthy 
-      rabbitmq:
-        condition: service_healthy
+      - register_db
+      - rabbitmq
     environment:
       DB_HOST: register_db
       DB_PORT: 5432
-      DB_USERNAME: register
+      DB_USERNAME: registerservice
       DB_PASSWORD: register
       DB_NAME: registerdb
       PORT: 8086
@@ -218,7 +219,6 @@ services:
       RABBITMQ_USERNAME: adminhuongque
       RABBITMQ_PASSWORD: huongque
       RABBITMQ_QUEUE: file.upload
-
   s3bucket:
     build:
       context: ./s3bucket

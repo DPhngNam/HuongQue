@@ -1,26 +1,20 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { RegistrationsModule } from './module/registrations/registrations.module';
 import { RabbitmqModule } from './module/rabbitmq/rabbitmq.module';
 import { RabbitmqService } from './module/rabbitmq/rabbitmq.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { RegistrationsModule } from './module/registrations/registrations.module';
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: '../.env',
-      isGlobal: true,
-    }),
-
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      host: 'register_db',
+      port: 5432,
+      username: 'registerservice',
+      password: 'register',
+      database: 'registerdb',
+      entities: ['src/module/registrations' + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
     RegistrationsModule,

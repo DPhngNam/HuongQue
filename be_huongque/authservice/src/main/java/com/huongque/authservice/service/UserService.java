@@ -23,17 +23,16 @@ import lombok.RequiredArgsConstructor;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
-
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.findByEmail(email);
 
         if (!user.isPresent()) {
-            throw new UsernameNotFoundException("User not found for username: " + username);
+            throw new UsernameNotFoundException("User not found for email: " + email);
         }
 
         return new org.springframework.security.core.userdetails.User(
-                user.get().getUsername(),
+                user.get().getEmail(),
                 user.get().getPasswordHash(),
                 user.get().getRoles().stream()
                         .map(role -> new SimpleGrantedAuthority(role.getName()))
@@ -41,12 +40,12 @@ public class UserService implements UserDetailsService {
         );
     }
 
-
-    public UserResponse getProfile(UUID userId){
+    public UserResponse getProfile(UUID userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(()->new RuntimeException("User not found"));
-        return  new UserResponse(user.getUsername(),user.getEmail());
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return new UserResponse(user.getEmail(), user.getEmail());
     }
+
     public UserDetails loadUserById(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
@@ -56,11 +55,10 @@ public class UserService implements UserDetailsService {
                 .collect(Collectors.toList());
 
         return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
+                user.getEmail(),
                 user.getPasswordHash(),
                 true, true, true, true,
                 authorities
         );
     }
-
 }

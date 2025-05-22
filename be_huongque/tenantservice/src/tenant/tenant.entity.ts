@@ -1,4 +1,3 @@
-import { Owner } from 'src/owner/owner.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity()
@@ -19,9 +18,8 @@ export class Tenant {
   @Column()
   ShopDescription: string;
 
-  @ManyToOne(()=>Owner)
-  @JoinColumn({ name: 'owner_id' })
-  owner: Owner;
+  @Column({name: 'ownerId',type: 'uuid'})
+  owner: string;
 
   @CreateDateColumn()
   created_at: Date;

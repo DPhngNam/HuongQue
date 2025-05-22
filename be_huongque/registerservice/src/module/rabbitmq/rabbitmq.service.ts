@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CreateRabbitmqDto } from './dto/create-rabbitmq.dto';
-import { UpdateRabbitmqDto } from './dto/update-rabbitmq.dto';
 import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
-import { FileUploadRequest, FileUploadResponse } from './config/rabbitconfig';
 import { firstValueFrom } from 'rxjs';
+import { FileUploadRequest, FileUploadResponse } from './config/rabbitconfig';
 
 @Injectable()
 export class RabbitmqService {

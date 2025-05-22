@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -26,14 +27,16 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateAccessToken(String username) {
+    public String generateAccessToken(String username, List<String> roles) {
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10)) // 10 phút
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .subject(username)
+                .claim("roles", roles)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10)) // 10 phút
+                .signWith(getSigningKey())
                 .compact();
     }
+
 
     public String generateRefreshToken(String username) {
         return Jwts.builder()

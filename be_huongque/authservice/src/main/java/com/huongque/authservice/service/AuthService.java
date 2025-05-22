@@ -1,10 +1,11 @@
 package com.huongque.authservice.service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +13,6 @@ import com.huongque.authservice.client.UserProfileService;
 import com.huongque.authservice.config.JwtUtils;
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
-import com.huongque.authservice.dto.RegisterRequest;
 import com.huongque.authservice.dto.UserProfileDto;
 import com.huongque.authservice.entity.EmailVerificationToken;
 import com.huongque.authservice.entity.User;
@@ -33,23 +33,35 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserProfileService userProfileService;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
-    private final JavaMailSender javaMailSender;
+
+    private final EmailService emailService;
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
 
 
     @Transactional
-    public void register(RegisterRequest request){
-        if(userRepository.existsByUsername(request.getUsername())){
+    public void register(AuthRequest request){
+        if(userRepository.existsByEmail(request.getEmail())){
             throw new UsernameAlreadyTakenException("Username is already taken!");
         }
 
         User user = User.builder()
-                .username(request.getUsername())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
                 .build();
         userRepository.save(user);
 
+        UserProfileDto userProfileDto = UserProfileDto.builder()
+                .id(user.getId())
+                .gmail(user.getEmail())
+                .build();
+
+        try {
+          userProfileService.createUserProfile(userProfileDto);
+        } catch (Exception e) {
+            logger.error("Failed to create user profile", e.getMessage(),e);
+            throw new RuntimeException("Failed to create user profile", e);
+        }
         String token = UUID.randomUUID().toString();
         EmailVerificationToken verificationToken = new EmailVerificationToken();
         verificationToken.setToken(token);
@@ -58,30 +70,31 @@ public class AuthService {
         emailVerificationTokenRepository.save(verificationToken);
 
         try {
-            sendVerificationEmail(user.getEmail(), token);
+           emailService.sendVerificationEmail(user.getEmail(),token);
         }
         catch (Exception e){
+            logger.error("Failed to send verification email", e.getMessage(),e);
             throw  new RuntimeException("Failed to send verification email", e);
         }
 
 
-
-        UserProfileDto userProfileDto = UserProfileDto.builder()
-                .id(user.getId())
-                .gmail(user.getEmail())
-                .fullName(user.getUsername())
-                .build();
-        userProfileService.createUserProfile(userProfileDto);
     }
 
     public AuthResponse login(AuthRequest request){
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(()->new RuntimeException("User not found"));
+
+        if(!user.isEnabled()){
+            throw new RuntimeException("User not verified");
+        }
         if(!passwordEncoder.matches(request.getPassword(),user.getPasswordHash())){
             throw new InvalidPasswordException("Invalid password");
         }
-        String accessToken = jwtUtils.generateAccessToken(user.getUsername());
-        String refreshToken = jwtUtils.generateRefreshToken(user.getUsername());
+        List<String> roles = user.getRoles().stream()
+                .map(role -> role.getName())
+                .toList();
+        String accessToken = jwtUtils.generateAccessToken(user.getEmail(), roles);
+        String refreshToken = jwtUtils.generateRefreshToken(user.getEmail());
         return new AuthResponse(accessToken,refreshToken);
     }
     public AuthResponse refreshToken(String refreshToken){
@@ -89,7 +102,7 @@ public class AuthService {
             throw new RuntimeException("Invalid refresh token");
         }
         String username = jwtUtils.extractUsername(refreshToken);
-        String newAccessToken = jwtUtils.generateAccessToken(username);
+        String newAccessToken = jwtUtils.generateAccessToken(username, List.of());
         String newRefreshToken = jwtUtils.generateRefreshToken(username);
 
         return  new AuthResponse(newAccessToken,newRefreshToken);
@@ -101,17 +114,6 @@ public class AuthService {
         }
         return "Logout success";
     }
-    private void sendVerificationEmail(String toEmail, String token){
-        String subject = "Verify your email";
-        String body = "Click the link to verify your email: " +
-                "http://localhost:8080/auth/verify-email?token=" + token;
-        String message = "Click the link to verify your email: " +
-                "http://localhost:8080/auth/verify-email?token=" + token;
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(toEmail);
-        email.setSubject(subject);
-        email.setText(message);
-        javaMailSender.send(email);
-    }
+
 
 }

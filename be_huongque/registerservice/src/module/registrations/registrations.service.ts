@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Registration } from './entities/registration.entity';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { UpdateRegistrationDto } from './dto/update-registration.dto';
-import { Registration } from './entities/registration.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+
 @Injectable()
 export class RegistrationsService {
   constructor(
@@ -16,18 +17,18 @@ export class RegistrationsService {
   }
 
   findAll() {
-    return `This action returns all registrations`;
+    return this.registrationRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} registration`;
+  findOne(id: string) {
+    return this.registrationRepository.findOne({ where: { registration_id: id } });
   }
 
-  update(id: number, updateRegistrationDto: UpdateRegistrationDto) {
-    return `This action updates a #${id} registration`;
+  update(id: string, updateRegistrationDto: UpdateRegistrationDto) {
+    return this.registrationRepository.update(id, updateRegistrationDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} registration`;
+  remove(id: string) {
+    return this.registrationRepository.delete(id);
   }
 }

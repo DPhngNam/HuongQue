@@ -20,4 +20,13 @@ export class TenantService {
   async findById(id: string) {
     return this.tenantRepository.findOne({ where: { id } });
   }
+
+  async update(id: string, data: Partial<Tenant>) {
+    await this.tenantRepository.update(id, data);
+    return this.tenantRepository.findOne({ where: { id } });
+  }
+
+  async remove(id: string) {
+    return this.tenantRepository.delete(id);
+  }
 }

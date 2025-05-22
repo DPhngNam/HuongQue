@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { TenantModule } from './tenant/tenant.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { OwnerModule } from './owner/owner.module';
 
 @Module({
   imports: [TenantModule,
@@ -22,7 +21,7 @@ import { OwnerModule } from './owner/owner.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    OwnerModule
+    
   ],
   controllers: [AppController],
   providers: [AppService],

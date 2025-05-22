@@ -16,6 +16,8 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 
 import React, { FormEvent } from "react";
+import axiosInstance from "@/lib/axiosInstance";
+import { useAuthStore } from "../stores/authStore";
 
 export default function Login() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -27,29 +29,38 @@ export default function Login() {
     const email = formData.get("email");
     const password = formData.get("password");
 
-    const response = await fetch("http://localhost:8080/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: email,
-        password,
-      }),
-    });
-    if (response.ok) {
-      const data = await response.json();
-      console.log("Login successful:", data);
+    try {
+      const response = await axiosInstance.post(
+        "http://localhost:8081/auth/login",
+        {
+          email,
+          password,
+        }
+      );
+
+      const { accessToken, refreshToken } = response.data;
+      console.log("Login successful:", response.data);
+
+      // Save tokens
+      useAuthStore.getState().setTokens(accessToken, refreshToken);
+      alert("Login successful");
+
       router.push("/");
-    } else {
-      const errorData = await response.json();
-      console.error("Login failed:", errorData);
-      alert("Login failed: " + errorData.message);
+    } catch (error: any) {
+      let errorMsg = "Unknown error";
+      if (error.response && error.response.data) {
+        errorMsg =
+          error.response.data.message || JSON.stringify(error.response.data);
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
+      console.error("Login failed:", errorMsg);
+      alert("Login failed: " + errorMsg);
     }
   }
 
   return (
-    <div className="flex flex-col p-[96px]">
+    <div className="flex justify-center items-center flex-col p-[96px]">
       {/* Login form */}
       <div className="w-96 justify-start text-gray-900 text-4xl font-bold font-['Montserrat'] leading-[56px]">
         Login to Your Account
@@ -72,7 +83,7 @@ export default function Login() {
                   htmlFor="email"
                   className="text-sm font-medium text-gray-700"
                 >
-                  Email / User name
+                  Email 
                 </Label>
                 <Input
                   name="email"
@@ -100,7 +111,7 @@ export default function Login() {
                     variant="ghost"
                     size="sm"
                     className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                    onClick={() => setShowPassword((prev)=> !prev)}
+                    onClick={() => setShowPassword((prev) => !prev)}
                   >
                     {showPassword ? (
                       <EyeOff className="h-5 w-5" />
@@ -110,7 +121,6 @@ export default function Login() {
                   </Button>
                 </div>
               </div>
-
 
               <div className="grid w-full items-center gap-4">
                 <Button
@@ -122,17 +132,7 @@ export default function Login() {
               </div>
 
               <div className="flex items-center justify-between gap-2">
-                <Input
-                  type="checkbox"
-                  id="remember-me"
-                  className="w-4 h-4 border border-gray-300 focus:ring-0 focus:outline-none bg-green-500"
-                />
-                <Label
-                  htmlFor="remember-me"
-                  className="peer text-sm font-medium text-gray-700 "
-                >
-                  Remember me
-                </Label>
+                
                 <Link href={"/forgot-password"}>
                   <Label
                     htmlFor="forgot-password"
@@ -159,7 +159,15 @@ export default function Login() {
                   </svg>
                   <span className="sr-only">Login with Apple</span>
                 </Button>
-                <Button variant="outline" className="w-full">
+                {/*Google */}
+                <Button
+                  onClick={() => {
+                    window.location.href =
+                      "http://localhost:8081/oauth2/authorization/google";
+                  }}
+                  variant="outline"
+                  className="w-full"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path
                       d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
@@ -168,6 +176,7 @@ export default function Login() {
                   </svg>
                   <span className="sr-only">Login with Google</span>
                 </Button>
+                {/*Meta */}
                 <Button variant="outline" className="w-full">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path

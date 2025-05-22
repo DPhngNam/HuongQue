@@ -1,6 +1,7 @@
-import { IsNotEmpty, IsString, IsEmail, IsOptional, IsEnum } from 'class-validator';
-import { ApiProperty, ApiConsumes } from '@nestjs/swagger';
-import { Express } from 'express';
+import { ApiConsumes, ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { BusinessModel } from '../entities/business-model.enum';
+
 
 export enum RegistrationStatus {
     PENDING = 'PENDING',
@@ -63,4 +64,8 @@ export class CreateRegistrationDto {
         format: 'email'
     })
     store_email: string;
+
+    @ApiProperty({ description: 'Business model', enum: BusinessModel })
+    @IsEnum(BusinessModel)
+    business_model: BusinessModel;
 }
