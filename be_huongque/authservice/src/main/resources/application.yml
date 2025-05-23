@@ -50,7 +50,7 @@ spring:
 jwt:
   token:
     validity: 18000
-  signing-key: 0Fdo7skQSpDpkW/ydOWOZuPEqvgxVcL7/kITm/uSEKRvrY6vxsfIwhrob6FkiAxe2gdzApoATeX8E3mCe3ipSw==
+  signing-key: ${JWT_SIGNING_KEY}
   authorities-key: roles
   token-prefix: Bearer
   header-string: Authorization
