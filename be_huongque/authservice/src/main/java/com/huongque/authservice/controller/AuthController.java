@@ -5,6 +5,7 @@ import com.huongque.authservice.repository.PasswordResetTokenRepository;
 import com.huongque.authservice.service.EmailService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import com.huongque.authservice.config.JwtUtils;
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
 import com.huongque.authservice.dto.EmailRequest;
+import com.huongque.authservice.dto.RegisterDto;
 import com.huongque.authservice.dto.ResetPasswordRequest;
 import com.huongque.authservice.entity.EmailVerificationToken;
 import com.huongque.authservice.entity.User;
@@ -56,7 +58,7 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody AuthRequest request) {
+    public ResponseEntity<String> register(@RequestBody @Valid RegisterDto request) {
         authService.register(request);
         return ResponseEntity.ok("Success");
     }

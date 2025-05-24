@@ -1,5 +1,4 @@
 "use client";
-
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -63,7 +62,7 @@ export default function Login() {
     <div className="flex justify-center items-center flex-col p-[96px]">
       {/* Login form */}
       <div className="w-96 justify-start text-gray-900 text-4xl font-bold font-['Montserrat'] leading-[56px]">
-        Login to Your Account
+        Login to your account
       </div>
       <Card className="w-[564px] mt-8">
         <CardHeader>
@@ -83,7 +82,7 @@ export default function Login() {
                   htmlFor="email"
                   className="text-sm font-medium text-gray-700"
                 >
-                  Email 
+                  Email
                 </Label>
                 <Input
                   name="email"
@@ -132,13 +131,18 @@ export default function Login() {
               </div>
 
               <div className="flex items-center justify-between gap-2">
-                
                 <Link href={"/forgot-password"}>
                   <Label
                     htmlFor="forgot-password"
                     className="peer text-sm font-medium text-gray-700 "
                   >
                     Forgot password?
+                  </Label>
+                </Link>
+                {/* Add sign up link here */}
+                <Link href={"/sign-up"}>
+                  <Label className="peer text-sm font-medium text-green-600 cursor-pointer">
+                    Sign Up
                   </Label>
                 </Link>
               </div>

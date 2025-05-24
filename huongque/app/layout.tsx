@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import Footer from "./components/layout/Footer";
-import Header from "./components/layout/Header";
 import "./globals.css";
-import AuthInit from "./components/layout/AuthInit";
+import LayoutWrapper from "./components/layout/LayoutWrapper";
 
 export const metadata: Metadata = {
   title: "Huong Que",
@@ -11,20 +9,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  
-
+}) {
   return (
     <html lang="en">
       <body>
-        <AuthInit/>
-        <main>
-          <Header />
-          {children}
-          <Footer />
-        </main>
+        <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>
   );

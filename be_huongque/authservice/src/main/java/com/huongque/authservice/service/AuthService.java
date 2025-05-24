@@ -13,6 +13,7 @@ import com.huongque.authservice.client.UserProfileService;
 import com.huongque.authservice.config.JwtUtils;
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
+import com.huongque.authservice.dto.RegisterDto;
 import com.huongque.authservice.dto.UserProfileDto;
 import com.huongque.authservice.entity.EmailVerificationToken;
 import com.huongque.authservice.entity.User;
@@ -40,7 +41,8 @@ public class AuthService {
 
 
     @Transactional
-    public void register(AuthRequest request){
+    public void register(RegisterDto request){
+    
         if(userRepository.existsByEmail(request.getEmail())){
             throw new UsernameAlreadyTakenException("Username is already taken!");
         }
