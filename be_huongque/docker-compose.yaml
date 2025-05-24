@@ -83,6 +83,7 @@ services:
       DB_PASSWORD: auth
       DB_NAME: authdb
       JWT_SIGNING_KEY: ${JWT_SIGNING_KEY}
+      FRONTEND_URL: ${FRONTEND_URL}
       PORT: 8081
     volumes:
     - ./authservice:/app

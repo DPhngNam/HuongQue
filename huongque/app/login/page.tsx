@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,10 +17,27 @@ import { Eye, EyeOff } from "lucide-react";
 import React, { FormEvent } from "react";
 import axiosInstance from "@/lib/axiosInstance";
 import { useAuthStore } from "../stores/authStore";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Login() {
   const [showPassword, setShowPassword] = React.useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const status = searchParams.get("status");
+
+  React.useEffect(() => {
+    if (status === "success") {
+      toast.success(
+        "Xác thực thành công! Bạn có thể đăng nhập ngay bây giờ."
+      );
+    } else if (status === "already") {
+      toast.info("Tài khoản đã xác nhận trước đó. Bạn có thể đăng nhập.");
+    } else if (status === "expired") {
+      toast.error("Link xác nhận đã hết hạn. Vui lòng đăng ký lại.");
+    }
+  }, [status]);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -60,6 +77,7 @@ export default function Login() {
 
   return (
     <div className="flex justify-center items-center flex-col p-[96px]">
+      <ToastContainer position="top-center" autoClose={3000} />
       {/* Login form */}
       <div className="w-96 justify-start text-gray-900 text-4xl font-bold font-['Montserrat'] leading-[56px]">
         Login to your account

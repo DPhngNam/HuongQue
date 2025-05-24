@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,21 +9,70 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import axiosInstance from "@/lib/axiosInstance";
 import { Label } from "@radix-ui/react-label";
 import Link from "next/link";
 import React, { useState, FormEvent } from "react";
+import * as yup from "yup";
+
+const signUpSchema = yup.object().shape({
+  email: yup.string().email("Invalid email").required("Email is required"),
+  password: yup
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .required("Password is required"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password")], "Passwords must match")
+    .required("Confirm Password is required"),
+});
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const confirmPassword = formData.get("confirm-password");
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirm-password") as string;
+    const url = process.env.NEXT_PUBLIC_AUTH_API;
 
+    try {
+      await signUpSchema.validate(
+        { email, password, confirmPassword },
+        { abortEarly: false }
+      );
+      setErrors({});
+      setError(null);
+      const res = await axiosInstance.post(`${url}/auth/register`, {
+        email,
+        password,
+        confirmPassword,
+      });
+
+      if (res && res.status === 201) {
+        alert("Kiểm tra email để xác nhận tài khoản");
+      }
+    } catch (err: any) {
+      if (err.response) {
+        // Backend error (validation, conflict, etc.)
+        setError(err.response.data?.message || "Đăng ký thất bại");
+      } else if (err.inner && err.inner.length > 0) {
+        // Yup validation error
+        const fieldErrors: { [key: string]: string } = {};
+        err.inner.forEach((e: any) => {
+          if (e.path && !fieldErrors[e.path]) fieldErrors[e.path] = e.message;
+        });
+        setErrors(fieldErrors);
+        setError(null);
+      } else {
+        setError(err.message);
+      }
+    }
   }
 
   return (
@@ -58,6 +107,11 @@ export default function SignUp() {
                   id="email"
                   className="border border-gray-300 rounded-4xl p-2"
                 />
+                {errors.email && (
+                  <div className="text-red-500 text-xs mt-1">
+                    {errors.email}
+                  </div>
+                )}
               </div>
               <div className="grid w-full items-center gap-4">
                 <Label
@@ -113,6 +167,11 @@ export default function SignUp() {
                     )}
                   </Button>
                 </div>
+                {errors.password && (
+                  <div className="text-red-500 text-xs mt-1">
+                    {errors.password}
+                  </div>
+                )}
               </div>
               <div className="grid w-full items-center gap-4">
                 <Label
@@ -168,7 +227,15 @@ export default function SignUp() {
                     )}
                   </Button>
                 </div>
+                {errors.confirmPassword && (
+                  <div className="text-red-500 text-xs mt-1">
+                    {errors.confirmPassword}
+                  </div>
+                )}
               </div>
+              {error && (
+                <div className="text-red-500 text-sm font-medium">{error}</div>
+              )}
               <div className="grid w-full items-center gap-4">
                 <Button
                   type="submit"

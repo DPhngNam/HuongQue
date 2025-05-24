@@ -7,7 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,6 +45,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -55,12 +59,14 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     @Autowired
     private UserRepository userRepository;
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody @Valid RegisterDto request) {
         authService.register(request);
-        return ResponseEntity.ok("Success");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Success");
     }
 
     @PostMapping("/login")
@@ -79,23 +85,23 @@ public class AuthController {
     }
 
     @GetMapping("/verify-email")
-    public ResponseEntity<String> verifyEmail(@RequestParam("token") String token) {
-        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token).orElseThrow(() -> new RuntimeException("Invalid token"));
+    public void verifyEmail(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
+        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
 
         User user = verificationToken.getUser();
         if (user.isEnabled()) {
-            return ResponseEntity.ok("Email already verified");
+            response.sendRedirect(frontendUrl + "/login?status=already");
+            return;
         }
         if (verificationToken.getExpirationTime().before(new java.util.Date())) {
-            return ResponseEntity.badRequest().body("Token expired");
-
+            response.sendRedirect(frontendUrl + "/login?status=expired");
+            return;
         }
         user.setEnabled(true);
         userRepository.save(user);
-
         emailVerificationTokenRepository.delete(verificationToken);
-        return ResponseEntity.ok("Email verified successfully");
-
+        response.sendRedirect(frontendUrl + "/login?status=success");
     }
 
     @ExceptionHandler(InvalidPasswordException.class)

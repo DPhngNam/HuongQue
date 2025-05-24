@@ -54,3 +54,5 @@ jwt:
   authorities-key: roles
   token-prefix: Bearer
   header-string: Authorization
+app:
+  frontend-url: ${FRONTEND_URL}
