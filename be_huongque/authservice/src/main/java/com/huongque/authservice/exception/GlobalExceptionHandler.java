@@ -1,6 +1,8 @@
 package com.huongque.authservice.exception;
 
 import org.springframework.validation.BindException;
+    import org.springframework.web.bind.MethodArgumentNotValidException;
+
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,14 @@ public class GlobalExceptionHandler {
     public String handleBindException(BindException e) {
         String errMessage = "Invalid request";
         if (e.getBindingResult().hasErrors())
-        e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+            errMessage = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
     return errMessage;
     }
+
+@ExceptionHandler(MethodArgumentNotValidException.class)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    String errorMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+    return ResponseEntity.badRequest().body(errorMessage);
+}
 }
