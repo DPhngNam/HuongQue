@@ -85,3 +85,6 @@ The following persistent volumes are configured:
 ## Networks
 
 All services run on a bridge network.
+
+## Compose
+doppler run --project backend --config dev -- docker compose up
