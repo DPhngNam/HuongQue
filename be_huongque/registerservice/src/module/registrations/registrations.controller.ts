@@ -7,7 +7,7 @@ import { ApiConsumes } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBody } from '@nestjs/swagger';
 
-@Controller('/registrations')
+@Controller('/api/register')
 export class RegistrationsController {
   constructor(private readonly registrationsService: RegistrationsService, private readonly rabbitmqService: RabbitmqService) { }
 

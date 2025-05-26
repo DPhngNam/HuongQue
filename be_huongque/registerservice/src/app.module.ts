@@ -9,11 +9,11 @@ import { RegistrationsModule } from './module/registrations/registrations.module
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'register_db',
-      port: 5432,
-      username: 'registerservice',
-      password: 'register',
-      database: 'registerdb',
+      host: process.env.DB_HOST || 'postgres',
+      port: Number(process.env.DB_PORT) || 5432,
+      username: process.env.DB_USERNAME || 'registerservice',
+      password: process.env.DB_PASSWORD || 'register',
+      database: process.env.DB_NAME || 'registerdb',
       entities: ['src/module/registrations' + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
