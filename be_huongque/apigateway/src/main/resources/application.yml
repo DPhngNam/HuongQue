@@ -35,9 +35,14 @@ spring:
           uri: lb://ADMIN-SERVICE
           predicates:
             - Path=/admin/**
+        - id: registerservice
+          uri: lb://registerservice
+          predicates:
+            - Path=/api/register/**
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone: http://${EUREKA_SERVER_HOST}:8761/eureka/
+

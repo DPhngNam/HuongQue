@@ -19,7 +19,7 @@ COPY src ./src
 RUN ./mvnw clean package -DskipTests
 
 # Expose the application port
-EXPOSE 8765
+EXPOSE 8080
 
 # Run the Spring Boot application
 CMD ["java", "-jar", "target/apigateway-0.0.1-SNAPSHOT.jar"]
