@@ -1,30 +1,35 @@
-# Use an official OpenJDK runtime as a parent image for building
-FROM openjdk:21-jdk-slim AS build
+# Build stage
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
+WORKDIR /app
 
-# Set the working directory inside the container
-WORKDIR /
+# Copy only the POM file first to leverage Docker cache for dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
-# Copy the Maven build files
-COPY pom.xml ./ 
-
-# Copy the source code
+# Copy source code and build
 COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Install Maven
-RUN apt-get update && apt-get install -y maven && apt-get clean
+# Run stage - using a smaller JRE image
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
 
-# Build the application (creates target/app.jar)
+# Create a non-root user to run the application
+RUN addgroup --system --gid 1001 appuser \
+    && adduser --system --uid 1001 --ingroup appuser appuser
 
-RUN mvn clean package
+# Copy only the built JAR from the build stage
+COPY --from=build /app/target/*.jar app.jar
 
-# Use a slim runtime image for running the app
-FROM openjdk:21-jdk-slim
+# Set permissions
+RUN chown appuser:appuser /app/app.jar
+USER appuser
 
-# Set the working directory
-WORKDIR /
+# Configure JVM for containerized environment
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
 
-# Copy the built JAR from the build stage
-COPY --from=build /target/adminservice-0.0.1-SNAPSHOT.jar adminservice-0.0.1-SNAPSHOT.jar
+# Expose the application port
+EXPOSE 8090
 
-# Run the JAR file
-ENTRYPOINT ["java", "-jar", "adminservice-0.0.1-SNAPSHOT.jar"]
+# Run the application
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
