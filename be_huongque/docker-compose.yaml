@@ -81,6 +81,7 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+      - eurekaserver
   userservice:
     build:
       context: ./userservice
@@ -89,6 +90,8 @@ services:
       - "8083:8083"
     depends_on:
       - postgres
+      - rabbitmq
+      - eurekaserver
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -104,6 +107,8 @@ services:
       - "8084:8084"
     depends_on:
       - postgres
+      - rabbitmq
+      - eurekaserver
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -173,6 +178,7 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+      - eurekaserver
     environment:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
@@ -189,8 +195,9 @@ services:
   #   ports:
   #     - "8088:8088"
   #   depends_on:
-  #     - postgres
-  #     - rabbitmq
+      # - postgres
+      # - rabbitmq
+      # - eurekaserver
   #   environment:
   #     DB_HOST: postgres
   #     DB_PORT: 5432
@@ -213,6 +220,7 @@ services:
   #   depends_on:
   #     - postgres
   #     - rabbitmq
+  #     - eurekaserver
   #   environment:
   #     DB_HOST: postgres
   #     DB_PORT: 5432

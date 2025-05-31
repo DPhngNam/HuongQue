@@ -28,5 +28,4 @@ COPY --from=build /target/s3bucket-0.0.1-SNAPSHOT.jar /s3bucket-0.0.1-SNAPSHOT.j
 # Expose the port the application runs on
 EXPOSE 8087
 
-# Command to run the application
-ENTRYPOINT ["java", "-jar", "s3bucket-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["sh", "-c", "sleep 30 && java -jar s3bucket-0.0.1-SNAPSHOT.jar"]
