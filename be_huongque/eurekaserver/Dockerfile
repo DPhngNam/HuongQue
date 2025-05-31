@@ -22,6 +22,9 @@ FROM openjdk:21-jdk-slim
 # Set the working directory
 WORKDIR /
 
+# Install wget for health checks
+RUN apt-get update && apt-get install -y wget && apt-get clean
+
 # Copy the built JAR from the build stage
 COPY --from=build /target/eurekaserver-0.0.1-SNAPSHOT.jar /eurekaserver-0.0.1-SNAPSHOT.jar
 

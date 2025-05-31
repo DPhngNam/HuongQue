@@ -23,11 +23,11 @@ services:
     environment:
       EUREKA_HOSTNAME: eurekaserver
     healthcheck:
-      test: ["CMD","executable", "arg"]
-      interval: 1m30s
-      timeout: 30s
+      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:8761/eureka/apps/"]
+      interval: 30s
+      timeout: 10s
       retries: 5
-      start_period: 30s
+      start_period: 60s
   rabbitmq:
     image: rabbitmq:latest
     ports:
@@ -51,8 +51,10 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - rabbitmq
-      - eurekaserver
+      rabbitmq:
+        condition: service_started
+      eurekaserver:
+        condition: service_healthy
     environment:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
@@ -60,6 +62,7 @@ services:
       RABBITMQ_PASSWORD: huongque
       RABBITMQ_QUEUE: file.upload
       EUREKA_SERVER_HOST: eurekaserver
+      
   authservice:
     build:
       context: ./authservice
@@ -130,6 +133,9 @@ services:
       DB_PASSWORD: product
       DB_NAME: productdb
       PORT: 8085
+      EUREKA_SERVER_HOST: eurekaserver
+      EUREKA_PORT: 8761
+      HOSTNAME: productservice
   registerservice:
     build:
       context: ./registerservice
@@ -157,6 +163,7 @@ services:
       EUREKA_HOST: eurekaserver
       EUREKA_PORT: 8761
       HOSTNAME: registerservice
+      
   s3bucket:
     build:
       context: ./s3bucket
@@ -175,44 +182,44 @@ services:
       RABBITMQ_QUEUE_RESPONSE: file.upload.response
       API_KEY: ${API_KEY}
       ENDPOINT: ${ENDPOINT}
-  checkoutservice:
-    build:
-      context: ./checkoutservice
-      dockerfile: Dockerfile
-    ports:
-      - "8088:8088"
-    depends_on:
-      - postgres
-      - rabbitmq
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USERNAME: paymentservice
-      DB_PASSWORD: payment
-      DB_NAME: paymentdb
-      PORT: 8088
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USERNAME: adminhuongque
-      RABBITMQ_PASSWORD: huongque
-      RABBITMQ_QUEUE: file.upload
+  # checkoutservice:
+  #   build:
+  #     context: ./checkoutservice
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8088:8088"
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USERNAME: paymentservice
+  #     DB_PASSWORD: payment
+  #     DB_NAME: paymentdb
+  #     PORT: 8088
+  #     RABBITMQ_HOST: rabbitmq
+  #     RABBITMQ_PORT: 5672
+  #     RABBITMQ_USERNAME: adminhuongque
+  #     RABBITMQ_PASSWORD: huongque
+  #     RABBITMQ_QUEUE: file.upload
 
-  orderservice:
-    build:
-      context: ./orderservice
-      dockerfile: Dockerfile
-    ports:
-      - "8089:8089"
-    depends_on:
-      - postgres
-      - rabbitmq
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USERNAME: orderservice
-      DB_PASSWORD: order
-      DB_NAME: orderdb
-      PORT: 8089
+  # orderservice:
+  #   build:
+  #     context: ./orderservice
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8089:8089"
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USERNAME: orderservice
+  #     DB_PASSWORD: order
+  #     DB_NAME: orderdb
+  #     PORT: 8089
 networks:
   default:
     driver: bridge
