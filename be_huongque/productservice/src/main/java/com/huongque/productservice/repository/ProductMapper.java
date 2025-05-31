@@ -26,5 +26,6 @@ public interface ProductMapper {
     // Map từ Entity sang ResponseDTO
     @Mapping(target = "categoryId", source = "category.id")
     @Mapping(target = "categoryName", source = "category.name")
+    @Mapping(target = "createAt", source = "createdAt")
     ProductResponseDTO toDto(Product product);
 }

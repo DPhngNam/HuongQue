@@ -3,17 +3,11 @@ FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
-RUN mvn clean package -DskipTests -X
-RUN echo "Contents of target directory:"
-RUN ls -la target/
-RUN echo "Contents of current directory:"
-RUN ls -la
+RUN mvn clean package -DskipTests
 
 # Run stage
-FROM eclipse-temurin:21-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-RUN echo "Contents of /app directory:"
-RUN ls -la
+COPY --from=build /app/target/productservice-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8085
 ENTRYPOINT ["java", "-jar", "app.jar"]
