@@ -28,4 +28,4 @@ COPY --from=builder /app/package*.json ./
 EXPOSE 8086
 
 # Run the app
-CMD ["sh", "-c", "sleep 30 && node dist/main.js"]
+CMD ["node", "dist/main"]
