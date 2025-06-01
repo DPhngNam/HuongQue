@@ -5,6 +5,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import Link from "next/link";
 
@@ -20,7 +21,9 @@ export default function NavMenu() {
       <NavigationMenu className=" rounded-lg  flex">
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuTrigger>Trang chủ</NavigationMenuTrigger>
+            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+              <Link href="/">Trang Chủ</Link>
+            </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuTrigger>
