@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useCartStore } from "@/app/stores/cartStore";
 import { useAuthStore } from "@/app/stores/authStore";
 import { Button } from "@/components/ui/button";
+import NavMenu from "./NavMenu";
 
 export default function Header() {
   const router = useRouter();
@@ -31,9 +32,9 @@ export default function Header() {
         <IoLogoChrome className="text-2xl" />
         <span className="font-bold text-2xl ">Hương Quê</span>
       </Link>
-      <button>
-        <CiMenuBurger className="text-2xl" />
-      </button>
+      <NavMenu />
+        
+      
       <div className="flex gap-4">
         <button className="p-2 rounded-full hover:bg-gray-100">
           <IoSearch className="text-xl" />
