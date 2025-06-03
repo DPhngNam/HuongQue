@@ -10,34 +10,16 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
-      routes:
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/auth/**
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user/**
-        - id: tenant-service
-          uri: lb://tenant-service
-          predicates:
-            - Path=/api/tenants/**
-        - id: order-service
-          uri: lb://order-service
-          predicates:
-            - Path=/api/orders/**
-        - id: checkout-service
-          uri: lb://checkout-service
-          predicates:
-            - Path=/api/checkout/**
-        - id: admin-service
-          uri: lb://ADMIN-SERVICE
-          predicates:
-            - Path=/admin/**
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG
+
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://${EUREKA_SERVER_HOST}:8761/eureka/
+      defaultZone: http://${EUREKA_SERVER_HOST:localhost}:8761/eureka/
+

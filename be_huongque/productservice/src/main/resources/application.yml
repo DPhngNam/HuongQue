@@ -1,13 +1,13 @@
 server:
-  port: 8085
+  port: ${PORT:8085}
 
 spring:
   application:
     name: productservice
   datasource:
-    url: jdbc:postgresql://product_db:5432/productdb
-    username: productservice
-    password: product
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:productdb}
+    username: ${DB_USERNAME:productservice}
+    password: ${DB_PASSWORD:product}
   jpa:
     hibernate:
       ddl-auto: update
@@ -26,3 +26,13 @@ spring:
     username: guest
     password: guest
     virtual-host: 
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_SERVER_HOST:localhost}:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    metadata-map:
+      instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}

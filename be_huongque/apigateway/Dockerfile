@@ -1,25 +1,17 @@
-# Use OpenJDK 17 as the base image
-FROM openjdk:21-jdk-slim
-
-# Set the working directory inside the container
+# Build stage
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
 WORKDIR /app
-
-# Copy Maven Wrapper and pom.xml for dependency resolution
 COPY pom.xml .
-COPY mvnw .
-COPY .mvn .mvn
-
-# Download dependencies to cache them
-RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
-
-# Copy the source code
 COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Build the application
-RUN ./mvnw clean package -DskipTests
+# Run stage
+FROM eclipse-temurin:21-alpine
+WORKDIR /app
+COPY --from=build /app/target/apigateway-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the application port
-EXPOSE 8765
+EXPOSE 8080
 
 # Run the Spring Boot application
-CMD ["java", "-jar", "target/apigateway-0.0.1-SNAPSHOT.jar"]
+CMD ["sh", "-c", "sleep 30 && java -jar app.jar"]

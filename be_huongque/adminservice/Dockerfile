@@ -1,30 +1,17 @@
-# Use an official OpenJDK runtime as a parent image for building
-FROM openjdk:21-jdk-slim AS build
-
-# Set the working directory inside the container
-WORKDIR /
-
-# Copy the Maven build files
-COPY pom.xml ./ 
-
-# Copy the source code
+# Build stage
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
+WORKDIR /app
+COPY pom.xml .
 COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Install Maven
-RUN apt-get update && apt-get install -y maven && apt-get clean
+# Run stage
+FROM eclipse-temurin:21-alpine
+WORKDIR /app
+COPY --from=build /app/target/adminservice-0.0.1-SNAPSHOT.jar app.jar
 
-# Build the application (creates target/app.jar)
+# Expose the application port
+EXPOSE 8090
 
-RUN mvn clean package
-
-# Use a slim runtime image for running the app
-FROM openjdk:21-jdk-slim
-
-# Set the working directory
-WORKDIR /
-
-# Copy the built JAR from the build stage
-COPY --from=build /target/adminservice-0.0.1-SNAPSHOT.jar adminservice-0.0.1-SNAPSHOT.jar
-
-# Run the JAR file
-ENTRYPOINT ["java", "-jar", "adminservice-0.0.1-SNAPSHOT.jar"]
+# Run the application
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

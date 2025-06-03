@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
+import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -24,8 +25,8 @@ public class S3Config {
             throws IOException, InterruptedException {
 
         String endpoint = supabaseUrl + "/storage/v1/object/" + bucketName + "/" + fileName;
-
-        URL url = new URL(endpoint);
+        URI uri = URI.create(endpoint);
+        URL url = uri.toURL();        
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
