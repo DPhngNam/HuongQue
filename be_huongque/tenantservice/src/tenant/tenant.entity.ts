@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, IsNull } from 'typeorm';
 
 @Entity()
 export class Tenant {
@@ -18,7 +18,7 @@ export class Tenant {
   @Column()
   ShopDescription: string;
 
-  @Column({name: 'ownerId',type: 'uuid'})
+  @Column({ name: 'ownerId', type: 'uuid', nullable: true })
   owner: string;
 
   @CreateDateColumn()

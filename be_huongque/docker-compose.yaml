@@ -132,6 +132,9 @@ services:
       DB_PASSWORD: tenant
       DB_NAME: tenantdb
       PORT: 8084
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+      HOSTNAME: tenantservice
     volumes:
       - ./tenantservice:/src
       - /src/node_modules
