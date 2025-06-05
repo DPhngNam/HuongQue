@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   postgres:
     image: postgres:latest
@@ -13,7 +12,6 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./scripts:/docker-entrypoint-initdb.d
-
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     container_name: elasticsearch
@@ -79,7 +77,6 @@ services:
       RABBITMQ_PASSWORD: huongque
       RABBITMQ_QUEUE: file.upload
       EUREKA_SERVER_HOST: eurekaserver
-      
   authservice:
     build:
       context: ./authservice
@@ -187,7 +184,23 @@ services:
       EUREKA_HOST: eurekaserver
       EUREKA_PORT: 8761
       HOSTNAME: registerservice
-      
+  logsservice:
+    build:
+      context: ./logsservice
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - eurekaserver
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: logsservice
+      DB_PASSWORD: logs
+      DB_NAME: logsdb
+      PORT: 8082
   s3bucket:
     build:
       context: ./s3bucket
@@ -207,46 +220,47 @@ services:
       RABBITMQ_QUEUE_RESPONSE: file.upload.response
       API_KEY: ${API_KEY}
       ENDPOINT: ${ENDPOINT}
-  # checkoutservice:
-  #   build:
-  #     context: ./checkoutservice
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8088:8088"
-  #   depends_on:
-      # - postgres
-      # - rabbitmq
-      # - eurekaserver
-  #   environment:
-  #     DB_HOST: postgres
-  #     DB_PORT: 5432
-  #     DB_USERNAME: paymentservice
-  #     DB_PASSWORD: payment
-  #     DB_NAME: paymentdb
-  #     PORT: 8088
-  #     RABBITMQ_HOST: rabbitmq
-  #     RABBITMQ_PORT: 5672
-  #     RABBITMQ_USERNAME: adminhuongque
-  #     RABBITMQ_PASSWORD: huongque
-  #     RABBITMQ_QUEUE: file.upload
+  
+  checkoutservice:
+    build:
+      context: ./checkoutservice
+      dockerfile: Dockerfile
+    ports:
+      - "8088:8088"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - eurekaserver
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: paymentservice
+      DB_PASSWORD: payment
+      DB_NAME: paymentdb
+      PORT: 8088
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      RABBITMQ_QUEUE: file.upload
 
-  # orderservice:
-  #   build:
-  #     context: ./orderservice
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8089:8089"
-  #   depends_on:
-  #     - postgres
-  #     - rabbitmq
-  #     - eurekaserver
-  #   environment:
-  #     DB_HOST: postgres
-  #     DB_PORT: 5432
-  #     DB_USERNAME: orderservice
-  #     DB_PASSWORD: order
-  #     DB_NAME: orderdb
-  #     PORT: 8089
+  orderservice:
+    build:
+      context: ./orderservice
+      dockerfile: Dockerfile
+    ports:
+      - "8089:8089"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - eurekaserver
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: orderservice
+      DB_PASSWORD: order
+      DB_NAME: orderdb
+      PORT: 8089
 networks:
   default:
     driver: bridge

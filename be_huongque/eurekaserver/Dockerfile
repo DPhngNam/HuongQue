@@ -1,30 +1,13 @@
-
-FROM openjdk:21-jdk-slim AS build
-
-# Set the working directory inside the container
-WORKDIR /
-
-# Copy the Maven build files
-COPY pom.xml ./ 
-
-# Copy the source code
+# Build stage
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
+WORKDIR /app
+COPY pom.xml .
 COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Install Maven
-RUN apt-get update && apt-get install -y maven && apt-get clean
-
-# Build the application (creates target/app.jar)
-RUN mvn clean package
-
-# Use a slim runtime image for running the app
-FROM openjdk:21-jdk-slim
-
-# Set the working directory
-WORKDIR /
-
-# Install wget for health checks
-RUN apt-get update && apt-get install -y wget && apt-get clean
-
+# Run stage
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
 # Copy the built JAR from the build stage
 COPY --from=build /target/eurekaserver-0.0.1-SNAPSHOT.jar /eurekaserver-0.0.1-SNAPSHOT.jar
 

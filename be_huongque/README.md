@@ -6,25 +6,23 @@ This project is a microservices-based application with multiple services communi
 
 The application consists of the following services:
 
-| Service | Port | Description |
-|---------|------|-------------|
-| RabbitMQ | 5672, 15672 | Message broker for service communication |
-| Auth Service | 8081 | Authentication and authorization service |
-| User Service | 8083 | User management service |
-| Tenant Service | 8084 | Tenant management service |
-| Checkout Service | 8087 | Handles payment processing with Stripe (commented out) |
-| Order Service | 9000 | Manages orders (commented out) |
-| API Gateway | 8761 | API gateway for service communication |
-| Product Service | 8085 | Manages products |
-| S3Bucket | 8087 | Store Images- Files|
-## Database Configuration
+| **Service**           | **Port**     | **Description**                                                                 |
+|-----------------------|--------------|---------------------------------------------------------------------------------|
+| **Postgres**          | 5432         | Relational database used to persist core data (e.g., users, orders, products). |
+| **Elasticsearch**     | 9200, 9300   | Full-text search engine used for searching logs, products, shops, etc.         |
+| **RabbitMQ**          | 5672, 15672  | Message broker for asynchronous communication between microservices.           |
+| **API Gateway**       | 8080         | Central entry point that routes external traffic to internal microservices.    |
+| **Auth Service**      | 8081         | Handles user authentication, authorization, token issuing, and validation.     |
+| **Log Service**       | 8082         | Collects and stores logs for monitoring and debugging (backed by Elasticsearch).|
+| **User Service**      | 8083         | Manages user profiles, roles, and permissions.                                 |
+| **Tenant Service**    | 8084         | Manages multi-tenant configurations and tenant-specific data access.           |
+| **Product Service**   | 8085         | Handles product CRUD operations, categories, and inventory.                    |
+| **Register Service**  | 8086         | Manages user or seller registration, onboarding, and profile setup.            |
+| **S3Bucket Service**  | 8087         | Interface to Supabase storage for uploading and retrieving files.   |
+| **Checkout Service**  | 8088         | Handles checkout logic, cart finalization, and payment gateway interactions.   |
+| **Order Service**     | 8089         | Manages order creation, status tracking, and order history.                    |
+| **Eureka Registry**   | 8761         | Service discovery server where microservices register and discover each other. |
 
-| Database | Port | Username | Password | Database Name |
-|----------|------|----------|----------|--------------|
-| Auth DB (PostgreSQL) | 5432 | authservice | auth | authdb |
-| User DB (PostgreSQL) | 5433 (mapped to 5432) | userservice | user | userdb |
-| Tenant DB (PostgreSQL) | 5434 (mapped to 5432) | tenantservice | tenant | tenantdb |
-| Product DB (PostgreSQL) | 5435 (mapped to 5432) | productservice | product | productdb |
 
 
 ## Environment Variables
