@@ -14,4 +14,6 @@ public interface TenantRepository extends ElasticsearchRepository<Tenant, String
 
     @Query("{\"bool\": {\"should\": [{\"match\": {\"name\": \"?0\"}}, {\"match\": {\"id\": \"?0\"}}]}}")
     List<Tenant> searchByNameOrId(String query);
+
+    List<Tenant> findAll();
 } 

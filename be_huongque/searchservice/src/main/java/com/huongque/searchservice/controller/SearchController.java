@@ -43,8 +43,8 @@ public class SearchController {
     }
 
     @GetMapping("/tenants")
-    public ResponseEntity<List<Tenant>> searchTenants(@RequestParam String query) {
-        return ResponseEntity.ok(tenantSearchService.searchByNameOrId(query));
+    public ResponseEntity<List<Tenant>> searchTenants() {
+        return ResponseEntity.ok(tenantSearchService.findAll());
     }
 
     @GetMapping("/tenants/by-name")

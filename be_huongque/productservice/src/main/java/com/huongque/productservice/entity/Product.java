@@ -16,7 +16,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
+    @Column(name="name", nullable = false)
     private String name;
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -34,7 +34,7 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Column(name="tenant_id",nullable = false)
+    @Column(name="tenant_id",nullable = true)
     private UUID tenantId;
     @Column(name="created_at",nullable = false)
     private Timestamp createdAt;

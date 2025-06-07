@@ -4,8 +4,11 @@ import { AppService } from './app.service';
 import { TenantModule } from './tenant/tenant.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { ElasticsearchModule } from '@nestjs/elasticsearch';
+
 @Module({
-  imports: [TenantModule,
+  imports: [
+    TenantModule,
     ConfigModule.forRoot({
       isGlobal: true,
      
@@ -20,7 +23,6 @@ import { ConfigModule } from '@nestjs/config';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    
   ],
   controllers: [AppController],
   providers: [AppService],

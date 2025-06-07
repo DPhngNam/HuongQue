@@ -21,6 +21,10 @@ public class TenantSearchService {
         this.tenantClient = tenantClient;
     }
 
+    public List<Tenant> findAll() {
+        return (List<Tenant>) tenantRepository.findAll();
+    }
+
     public List<Tenant> searchByNameOrId(String query) {
         return tenantRepository.searchByNameOrId(query);
     }
