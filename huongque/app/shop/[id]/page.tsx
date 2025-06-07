@@ -9,7 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import ShopAvatar from '@/app/components/shop/ShopAvatar'
 import { shopContactInfo } from '@/app/utils/shopData'
-import { useSearchParams, useRouter } from 'next/navigation'
+import {useRouter } from 'next/navigation'
 import { use } from 'react'
 import { useCartStore } from '@/app/stores/cartStore'
 import { CartItem } from '@/app/models/cart'
@@ -18,9 +18,9 @@ export default function ShopProductPage({ params }: { params: Promise<{ id: stri
   // Unwrap params using React.use()
   const resolvedParams = use(params)
   const [quantity, setQuantity] = useState(1)
-  const [showShopInfo, setShowShopInfo] = useState(false)
+  const [showShopInfo, setShowShopInfo] = useState(true)
   const [addedToCart, setAddedToCart] = useState(false)
-  const searchParams = useSearchParams()
+  //const searchParams = useSearchParams()
   const router = useRouter()
   const addItem = useCartStore(state => state.addItem)
   
@@ -29,23 +29,23 @@ export default function ShopProductPage({ params }: { params: Promise<{ id: stri
   const productId = resolvedParams.id ? Number(resolvedParams.id) : 0
   const product = products.find(p => p.id === productId)
 
-  // Check where user came from and set shop info visibility accordingly
-  useEffect(() => {
-    const source = searchParams.get('source')
-    // Only show shop info if explicitly coming from shop page
-    // If coming from home, cart, or other pages, don't show shop info
-    if (source === 'shop') {
-      setShowShopInfo(true)
-    } else {
-      // Explicitly handle other sources
-      if (source === 'home' || source === 'cart' || !source) {
-        setShowShopInfo(false)
-      } else {
-        // Default behavior for any other unrecognized source
-        setShowShopInfo(false)
-      }
-    }
-  }, [searchParams])
+  // // Check where user came from and set shop info visibility accordingly
+  // useEffect(() => {
+  //   const source = searchParams.get('source')
+  //   // Only show shop info if explicitly coming from shop page
+  //   // If coming from home, cart, or other pages, don't show shop info
+  //   if (source === 'shop') {
+  //     setShowShopInfo(true)
+  //   } else {
+  //     // Explicitly handle other sources
+  //     if (source === 'home' || source === 'cart' || !source) {
+  //       setShowShopInfo(true)
+  //     } else {
+  //       // Default behavior for any other unrecognized source
+  //       setShowShopInfo(false)
+  //     }
+  //   }
+  // }, [searchParams])
 
   // Breadcrumb navigation
   const breadcrumbItems = [
