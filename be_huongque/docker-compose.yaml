@@ -249,6 +249,9 @@ services:
       RABBITMQ_USERNAME: adminhuongque
       RABBITMQ_PASSWORD: huongque
       RABBITMQ_QUEUE: file.upload
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+      STRIPE_KEY: ${STRIPE_KEY}
 
   orderservice:
     build:
@@ -267,6 +270,13 @@ services:
       DB_PASSWORD: order
       DB_NAME: orderdb
       PORT: 8089
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      RABBITMQ_QUEUE: file.upload
   searchservice:
     build:
       context: ./searchservice
