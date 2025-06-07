@@ -94,6 +94,8 @@ services:
       JWT_SIGNING_KEY: ${JWT_SIGNING_KEY}
       FRONTEND_URL: ${FRONTEND_URL}
       PORT: 8081
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
     volumes:
     - ./authservice:/app
     depends_on:
