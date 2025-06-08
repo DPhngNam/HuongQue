@@ -10,7 +10,6 @@ interface LayoutProps {
 const TenantLayout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <>
-   
     <SidebarProvider>
       <div className="flex">
         <TenantSidebar />
