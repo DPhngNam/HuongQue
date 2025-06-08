@@ -1,5 +1,5 @@
 import React from "react";
-import Container from "../components/container";
+import Container from "../../../components/container";
 
 export default function page() {
   return (
@@ -25,11 +25,11 @@ export default function page() {
       <Container>
         <h1 className="text-2xl font-bold">Phân Tích Bán Hàng </h1>
         <div className="grid grid-cols-5 gap-5 mt-7">
-            <SaleAnalytics title="Doanh thu" value={257} percentage={0} />
-            <SaleAnalytics title="Số đơn hàng" value={257} percentage={0} />
-            <SaleAnalytics title="Số sản phẩm" value={257} percentage={0} />
-            <SaleAnalytics title="Lượt truy cập" value={257} percentage={0} />
-            <SaleAnalytics title="Tỷ lệ chuyển đổi" value={257} percentage={0} />
+          <SaleAnalytics title="Doanh thu" value={257} percentage={0} />
+          <SaleAnalytics title="Số đơn hàng" value={257} percentage={0} />
+          <SaleAnalytics title="Số sản phẩm" value={257} percentage={0} />
+          <SaleAnalytics title="Lượt truy cập" value={257} percentage={0} />
+          <SaleAnalytics title="Tỷ lệ chuyển đổi" value={257} percentage={0} />
         </div>
       </Container>
     </div>

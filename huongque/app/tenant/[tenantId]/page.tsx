@@ -1,5 +1,5 @@
 import React from "react";
-import Container from "./components/container";
+import Container from "../../components/container";
 import { Avatar } from "@radix-ui/react-avatar";
 import SalesChart from "./charts/SalesChart";
 import ReviewSummary from "./charts/ReviewSumary";
@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress";
 
 export default function page() {
   return (
-    <div className="grid grid-cols-[1.5fr_1fr] gap-4 w-full px-5 bg-[#FBFBFD">
+    <div className="grid grid-cols-[1.5fr_1fr] gap-4 w-full px-5 bg-[#FBFBFD]">
       <div className="grid grid-cols-4 col-span-2 gap-4 w-full px-5">
         <Container>
           <div className="flex flex-col items-center justify-between h-full p-4">
@@ -95,7 +95,7 @@ export default function page() {
           </div>
         </Container>
 
-         <Container>
+        <Container>
           <div className="flex flex-col items-center  h-full p-4">
             <div className="flex justify-center items-center gap-3">
               <span className="text-Colors-Text-Text-Primary text-3xl font-semibold font-['Inter']">
