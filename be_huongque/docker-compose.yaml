@@ -146,11 +146,12 @@ services:
   productservice:
     build:
       context: ./productservice
-      dockerfile: Dockerfile  
+      dockerfile: Dockerfile #
     container_name: productservice
-    restart: on-failure
+    restart: on-failure 
     ports:
       - "8085:8085"
+      - "35729:35729" 
     depends_on:
       - postgres
       - rabbitmq
@@ -165,6 +166,8 @@ services:
       EUREKA_SERVER_HOST: eurekaserver
       EUREKA_PORT: 8761
       HOSTNAME: productservice
+    volumes:
+      - ./productservice:/app
   registerservice:
     build:
       context: ./registerservice
