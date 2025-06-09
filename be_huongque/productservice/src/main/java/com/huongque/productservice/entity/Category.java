@@ -37,8 +37,8 @@ public class Category {
     @Column(name = "updated_at", nullable = false) // Ensures it's not null and updates
     private LocalDateTime updatedAt;
 
-    public Category(UUID id, String name) {
-        this.id = id;
+    public Category( String name) {
+
         this.name = name;
     }
 }
