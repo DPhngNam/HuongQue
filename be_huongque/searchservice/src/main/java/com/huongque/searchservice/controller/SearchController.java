@@ -72,4 +72,9 @@ public class SearchController {
         tenantSearchService.reindexAllTenants();
         return ResponseEntity.ok("Tenant reindexing initiated");
     }
+
+    @GetMapping(/categories)
+    public ResponseEntity<Category> getAllCategory(){
+        
+    }
 } 
