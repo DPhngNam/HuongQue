@@ -6,8 +6,6 @@ import com.huongque.productservice.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,8 +25,7 @@ public class CategoryService {
         Category category = new Category();
         category.setName(dto.getName());
         category.setDescription(dto.getDescription());
-        category.setCreatedAt(Timestamp.from(Instant.now()));
-        category.setUpdatedAt(Timestamp.from(Instant.now()));
+ 
         return categoryRepository.save(category);
     }
 
@@ -36,7 +33,6 @@ public class CategoryService {
         Category existingCategory = getCategoryById(id);
         existingCategory.setName(dto.getName());
         existingCategory.setDescription(dto.getDescription());
-        existingCategory.setUpdatedAt(Timestamp.from(Instant.now()));
         return categoryRepository.save(existingCategory);
     }
 
