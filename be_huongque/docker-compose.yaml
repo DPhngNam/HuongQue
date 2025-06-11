@@ -1,7 +1,7 @@
 services:
   postgres:
-    image: postgres:13-alpine3.22
-    container_name: database
+    image: postgres:latest
+    container_name: postgres
     restart: always
     ports:
       - "5432:5432"
@@ -85,6 +85,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8081:8081"
+    depends_on:
+      - postgres
+      - eurekaserver
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -98,10 +101,12 @@ services:
       EUREKA_PORT: 8761
     volumes:
     - ./authservice:/app
-    depends_on:
-      - postgres
-      - rabbitmq
-      - eurekaserver
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
   userservice:
     build:
       context: ./userservice

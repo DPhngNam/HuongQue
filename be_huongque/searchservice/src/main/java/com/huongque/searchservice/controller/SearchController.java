@@ -2,6 +2,8 @@ package com.huongque.searchservice.controller;
 
 import com.huongque.searchservice.model.Product;
 import com.huongque.searchservice.model.Tenant;
+import com.huongque.searchservice.model.Category;
+import com.huongque.searchservice.service.CategoryService;
 import com.huongque.searchservice.service.ProductSearchService;
 import com.huongque.searchservice.service.TenantSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,14 @@ public class SearchController {
 
     private final ProductSearchService productSearchService;
     private final TenantSearchService tenantSearchService;
+    private final CategoryService categoryService;
 
     @Autowired
-    public SearchController(ProductSearchService productSearchService, TenantSearchService tenantSearchService) {
+    public SearchController(ProductSearchService productSearchService, TenantSearchService tenantSearchService, 
+                            CategoryService categoryService) {
         this.productSearchService = productSearchService;
         this.tenantSearchService = tenantSearchService;
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/products")
@@ -73,8 +78,15 @@ public class SearchController {
         return ResponseEntity.ok("Tenant reindexing initiated");
     }
 
-    @GetMapping(/categories)
-    public ResponseEntity<Category> getAllCategory(){
-        
+    @GetMapping("/categories")
+    public ResponseEntity<List<Category>> getAllCategory(){
+        try {
+            List<Category> categories = categoryService.findAll();
+            return ResponseEntity.ok(categories);
+        } catch (Exception e) {
+            
+            e.printStackTrace();
+        }
+        return null;
     }
 } 

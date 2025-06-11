@@ -1,13 +1,14 @@
 package com.huongque.searchservice.service;
 
-import com.huongque.searchservice.client.ProductClient;
-import com.huongque.searchservice.model.Product;
-import com.huongque.searchservice.repository.ProductRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.huongque.searchservice.client.ProductClient;
+import com.huongque.searchservice.model.Product;
+import com.huongque.searchservice.repository.ProductRepository;
 
 @Service
 public class ProductSearchService {
@@ -44,4 +45,6 @@ public class ProductSearchService {
         productRepository.deleteAll();
         syncProductData();
     }
+    
+
 } 
