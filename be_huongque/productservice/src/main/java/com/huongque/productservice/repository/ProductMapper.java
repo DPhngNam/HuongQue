@@ -9,7 +9,6 @@ import org.mapstruct.Mapping;
 
 
 @Mapper(componentModel = "spring")
-
 public interface ProductMapper {
 
     // Map từ RequestDTO sang Entity
