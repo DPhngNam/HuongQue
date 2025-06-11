@@ -28,26 +28,29 @@ public class ImportService {
             throw new IOException("File not found: " + jsonFilePath);
         }
         JsonNode root = objectMapper.readTree(inputStream);
-        JsonNode productsNode=root.get(0).get("products");
-        for(JsonNode productNode : productsNode){
-            ProductJsonDTO productJsonDTO = objectMapper.treeToValue(productNode, ProductJsonDTO.class);
-            Product product = new Product();
-            product.setName(productJsonDTO.getName());
-            product.setDescription(productJsonDTO.getDescription());
+        for (JsonNode groupNode : root) {
+            JsonNode productsNode = groupNode.get("products");
+            if (productsNode == null || !productsNode.isArray()) {
+                throw new IOException("Invalid JSON structure: 'products' node is missing or not an array.");
+            }
+            for (JsonNode productNode : productsNode) {
+                ProductJsonDTO productJsonDTO = objectMapper.treeToValue(productNode, ProductJsonDTO.class);
+                Product product = new Product();
+                product.setName(productJsonDTO.getName());
+                product.setDescription(productJsonDTO.getDescription());
 
-             String cleanedPrice = productJsonDTO.getPrice().replaceAll("[^\\d.]", "").replace(".", "");
-            product.setPrice(Double.parseDouble(cleanedPrice));
-            product.setImages(productJsonDTO.getImageUrls());
+                String cleanedPrice = productJsonDTO.getPrice().replaceAll("[^\\d.]", "").replace(".", "");
+                product.setPrice(Double.parseDouble(cleanedPrice));
+                product.setImages(productJsonDTO.getImageUrls());
 
-            java.util.UUID categoryId = java.util.UUID.fromString(productJsonDTO.getCategoryId());
-            Category category = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new RuntimeException("Category not found with ID: " + productJsonDTO.getCategoryId()));
-            product.setCategory(category);
+                java.util.UUID categoryId = java.util.UUID.fromString(productJsonDTO.getCategoryId());
+                Category category = categoryRepository.findById(categoryId)
+                        .orElseThrow(() -> new RuntimeException("Category not found with ID: " + productJsonDTO.getCategoryId()));
+                product.setCategory(category);
 
-            productRepository.save(product);
-        
+                productRepository.save(product);
+            }
         }
         System.out.println("✅ Products imported successfully from " + jsonFilePath);
-
     }
 }

@@ -2,7 +2,8 @@ package com.huongque.productservice.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -23,8 +24,6 @@ public class Product {
 
     @Column(name="price",nullable = false)
     private Double price;
-    @Column(name="quantity",nullable = false)
-    private Integer quantity;
 
     @ElementCollection
     @Column(columnDefinition = "TEXT")
@@ -36,8 +35,10 @@ public class Product {
 
     @Column(name="tenant_id",nullable = true)
     private UUID tenantId;
-    @Column(name="created_at",nullable = false)
+    @CreationTimestamp
+    @Column(name="created_at",nullable = false, updatable = false)
     private Timestamp createdAt;
+    @UpdateTimestamp
     @Column(name="updated_at",nullable = false)
     private Timestamp updatedAt;
 }
