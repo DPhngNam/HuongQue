@@ -47,6 +47,7 @@ public class ImportService {
             productRepository.save(product);
         
         }
+        System.out.println("✅ Products imported successfully from " + jsonFilePath);
 
     }
 }
