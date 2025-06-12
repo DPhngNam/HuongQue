@@ -1,11 +1,14 @@
 package com.huongque.orderservice.controller;
 
+import com.huongque.orderservice.dto.OrderMessage;
 import com.huongque.orderservice.dto.createOrderDto;
 import com.huongque.orderservice.dto.updateOrderDto;
 import com.huongque.orderservice.dto.orderItemDto;
 import com.huongque.orderservice.entity.Order;
 import com.huongque.orderservice.entity.OrderItem;
 import com.huongque.orderservice.service.OrderService;
+import com.huongque.orderservice.config.RabbitConfig;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,19 +17,35 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import com.huongque.orderservice.service.PaymentService;
+import com.huongque.orderservice.dto.PaymentRequest;
+import com.huongque.orderservice.dto.PaymentResponse;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RequestMapping("/api/v1/orders")
 @RestController
 @Tag(name = "Order API", description = "API for managing orders")
 public class OrderController {
+    private static final Logger log = LoggerFactory.getLogger(OrderController.class);
+
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private PaymentService paymentService;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -35,9 +54,7 @@ public class OrderController {
         @ApiResponse(responseCode = "200", description = "Order created successfully")
     })
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody createOrderDto dto) {
-
-
+    public ResponseEntity<?> createOrder(@RequestBody createOrderDto dto) {
         Order order = Order.builder()
             .userId(dto.getUserId())
             .customerName(dto.getCustomerName())
@@ -52,13 +69,38 @@ public class OrderController {
             .orderPaymentDate(dto.getOrderPaymentDate())
             .orderPaymentAmount(dto.getOrderPaymentAmount())
             .build();
+
         List<OrderItem> items = mapToOrderItems(dto.getOrderItems(), order);
         if (items != null) {
             items.forEach(item -> item.setOrder(order));
             order.setOrderItems(items);
         }
-        Order savedOrder = orderService.createOrder(order);
-        return ResponseEntity.ok(savedOrder);
+
+        Order savedOrderEntity = orderService.createOrder(order);
+
+        // Create payment request
+        PaymentRequest paymentRequest = new PaymentRequest(
+            savedOrderEntity.getOrderId().toString(),
+            savedOrderEntity.getOrderTotal().toString(),
+            "USD",
+            savedOrderEntity.getUserId().toString()
+        );
+
+        try {
+            // Request payment and wait for response
+            PaymentResponse paymentResponse = paymentService.requestPayment(paymentRequest);
+            
+            if (paymentResponse.getStatus().equals("SUCCESS")) {
+                return ResponseEntity.ok(paymentResponse);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Payment processing failed: " + paymentResponse.getStatus());
+            }
+        } catch (Exception e) {
+            log.error("Error processing payment for order {}: {}", savedOrderEntity.getOrderId(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error processing payment: " + e.getMessage());
+        }
     }
 
     @Operation(summary = "Get order by ID", description = "Retrieves an order by its ID.")

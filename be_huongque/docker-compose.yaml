@@ -240,7 +240,7 @@ services:
   checkoutservice:
     build:
       context: ./checkoutservice
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "8088:8088"
     depends_on:
@@ -262,11 +262,12 @@ services:
       EUREKA_HOST: eurekaserver
       EUREKA_PORT: 8761
       STRIPE_KEY: ${STRIPE_KEY}
-
+    volumes:
+      - ./checkoutservice:/app
   orderservice:
     build:
       context: ./orderservice
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "8089:8089"
     depends_on:
@@ -287,6 +288,9 @@ services:
       RABBITMQ_USERNAME: adminhuongque
       RABBITMQ_PASSWORD: huongque
       RABBITMQ_QUEUE: file.upload
+    volumes:
+      - ./orderservice:/app
+
   searchservice:
     build:
       context: ./searchservice
