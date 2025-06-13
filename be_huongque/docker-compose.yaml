@@ -79,6 +79,8 @@ services:
       RABBITMQ_PASSWORD: huongque
       RABBITMQ_QUEUE: file.upload
       EUREKA_SERVER_HOST: eurekaserver
+    volumes:
+      - ./apigateway:/app
   authservice:
     build:
       context: ./authservice
@@ -124,6 +126,8 @@ services:
       DB_PASSWORD: user
       DB_NAME: userdb
       PORT: 8083
+    volumes:
+      - ./userservice:/app
   tenantservice:
     build:
       context: ./tenantservice
@@ -147,7 +151,6 @@ services:
       HOSTNAME: tenantservice
     volumes:
       - ./tenantservice:/src
-      - /src/node_modules
   productservice:
     build:
       context: ./productservice
@@ -200,6 +203,8 @@ services:
       EUREKA_HOST: eurekaserver
       EUREKA_PORT: 8761
       HOSTNAME: registerservice
+    volumes:
+      - ./registerservice:/app
   logsservice:
     build:
       context: ./logsservice
@@ -217,6 +222,8 @@ services:
       DB_PASSWORD: logs
       DB_NAME: logsdb
       PORT: 8082
+    volumes:
+      - ./logsservice:/app
   s3bucket:
     build:
       context: ./s3bucket
@@ -236,6 +243,8 @@ services:
       RABBITMQ_QUEUE_RESPONSE: file.upload.response
       API_KEY: ${API_KEY}
       ENDPOINT: ${ENDPOINT}
+    volumes:
+      - ./s3bucket:/app
   
   checkoutservice:
     build:
@@ -308,6 +317,32 @@ services:
       ELASTICSEARCH_PORT: 9200
       EUREKA_HOST: eurekaserver
       EUREKA_PORT: 8761
+
+  chatbotservice:
+    build:
+      context: ./chatbotservice
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8090"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - eurekaserver
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: chatbotservice
+      DB_PASSWORD: chatbot
+      DB_NAME: chatbotdb
+      PORT: 8090
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+    volumes:
+      - ./chatbotservice:/app
 networks:
   default:
     driver: bridge
