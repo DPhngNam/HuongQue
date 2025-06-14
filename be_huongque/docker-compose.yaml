@@ -40,7 +40,14 @@ services:
     environment:
       EUREKA_HOSTNAME: eurekaserver
     healthcheck:
-      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:8761/eureka/apps/"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--spider",
+          "--quiet",
+          "http://localhost:8761/eureka/apps/",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -102,7 +109,7 @@ services:
       EUREKA_HOST: eurekaserver
       EUREKA_PORT: 8761
     volumes:
-    - ./authservice:/app
+      - ./authservice:/app
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
       interval: 30s
@@ -156,10 +163,10 @@ services:
       context: ./productservice
       dockerfile: Dockerfile #
     container_name: productservice
-    restart: on-failure 
+    restart: on-failure
     ports:
       - "8085:8085"
-      - "35729:35729" 
+      - "35729:35729"
     depends_on:
       - postgres
       - rabbitmq
@@ -245,7 +252,7 @@ services:
       ENDPOINT: ${ENDPOINT}
     volumes:
       - ./s3bucket:/app
-  
+
   checkoutservice:
     build:
       context: ./checkoutservice
