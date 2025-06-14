@@ -44,7 +44,7 @@ public class ImportService {
                 product.setDescription(productJsonDTO.getDescription());
 
                 String cleanedPrice = productJsonDTO.getPrice().replaceAll("[^\\d.]", "").replace(".", "");
-                product.setPrice(Double.parseDouble(cleanedPrice));
+                product.setPrice(cleanedPrice.isEmpty() ? 0.0 : Double.parseDouble(cleanedPrice));
                 product.setImages(productJsonDTO.getImageUrls());
 
                 java.util.UUID categoryId = java.util.UUID.fromString(productJsonDTO.getCategoryId());

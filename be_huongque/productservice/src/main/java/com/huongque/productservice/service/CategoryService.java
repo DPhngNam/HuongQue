@@ -24,7 +24,6 @@ public class CategoryService {
     public Category createCategory(CategoryRequestDTO dto) {
         Category category = new Category();
         category.setName(dto.getName());
-        category.setDescription(dto.getDescription());
  
         return categoryRepository.save(category);
     }
@@ -32,7 +31,6 @@ public class CategoryService {
     public Category updateCategory(UUID id, CategoryRequestDTO dto) {
         Category existingCategory = getCategoryById(id);
         existingCategory.setName(dto.getName());
-        existingCategory.setDescription(dto.getDescription());
         return categoryRepository.save(existingCategory);
     }
 

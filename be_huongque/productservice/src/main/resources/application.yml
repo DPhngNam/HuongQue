@@ -20,12 +20,16 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  sql:
+    init:
+      mode: always
+      platform: postgres
   rabbitmq:
     host: localhost
     port: 5672
     username: guest
     password: guest
-    virtual-host: 
+    virtual-host:
 
 eureka:
   client:

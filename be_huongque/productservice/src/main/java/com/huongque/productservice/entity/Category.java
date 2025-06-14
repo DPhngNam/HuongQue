@@ -25,8 +25,6 @@ public class Category {
     @Column(name="name",nullable = false)
     private String name;
 
-    @Column(columnDefinition = "TEXT", nullable = true)
-    private String description;
 
    @CreationTimestamp // Automatically sets the timestamp on entity creation
     @Column(name = "created_at", nullable = false, updatable = false) // Ensures it's not null and can't be changed after creation
@@ -35,9 +33,9 @@ public class Category {
     @UpdateTimestamp // Automatically updates the timestamp on entity modification
     @Column(name = "updated_at", nullable = false) // Ensures it's not null and updates
     private LocalDateTime updatedAt;
+public Category(UUID id, String name) {
+    this.id = id;
+    this.name = name;
+}
 
-    public Category( String name) {
-
-        this.name = name;
-    }
 }
