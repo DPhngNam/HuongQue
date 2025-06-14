@@ -27,6 +27,10 @@ public class ImportService {
         if (inputStream == null) {
             throw new IOException("File not found: " + jsonFilePath);
         }
+        if (productRepository.count() > 0) {
+        System.out.println("✅ Products already exist, skipping seeding.");
+        return;
+    }
         JsonNode root = objectMapper.readTree(inputStream);
         for (JsonNode groupNode : root) {
             JsonNode productsNode = groupNode.get("products");
@@ -45,10 +49,8 @@ public class ImportService {
 
                 java.util.UUID categoryId = java.util.UUID.fromString(productJsonDTO.getCategoryId());
                 Category category = categoryRepository.findById(categoryId)
-            .orElseGet(() -> categoryRepository.findById(
-                java.util.UUID.fromString("c9145f2c-0bfa-4953-8a21-bf1396912908")
-            ).orElseThrow(() -> new RuntimeException("Default category not found!")));
-    product.setCategory(category);
+                        .orElseThrow(() -> new IOException("Category not found with ID: " + categoryId));
+                product.setCategory(category);
 
                 productRepository.save(product);
             }
