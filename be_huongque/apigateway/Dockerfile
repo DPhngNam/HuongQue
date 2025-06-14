@@ -1,35 +1,14 @@
-# # Build stage
-# FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
-# WORKDIR /app
-# COPY pom.xml .
-# COPY src ./src
-# RUN mvn clean package -DskipTests
-
-# # Run stage
-# FROM eclipse-temurin:21-alpine
-# WORKDIR /app
-# COPY --from=build /app/target/apigateway-0.0.1-SNAPSHOT.jar app.jar
-
-# # Expose the application port
-# EXPOSE 8080
-
-# # Run the Spring Boot application
-# CMD ["sh", "-c", "sleep 30 && java -jar app.jar"]
-
-
-FROM maven:3.9.9-eclipse-temurin-21-alpine
+FROM openjdk:21-jdk-slim
 WORKDIR /app
 
-# Copy cấu trúc project cần thiết
-COPY pom.xml .
-COPY .mvn .mvn
-COPY mvnw .
+# Copy mã nguồn để hot reload
+COPY . /app
 
-# Download dependencies trước (cache)
-RUN ./mvnw dependency:go-offline
+# Cấp quyền Maven wrapper
+RUN chmod +x ./mvnw
 
-# Copy toàn bộ mã nguồn
-COPY . .
+# Expose port
+EXPOSE 8080
 
-# Cấu hình để chạy với DevTools
-CMD ["./mvnw", "spring-boot:run"]
+# Lệnh chạy app, đảm bảo foreground process
+CMD ["./mvnw", "spring-boot:run", "-Dspring.devtools.restart.enabled=true"]
