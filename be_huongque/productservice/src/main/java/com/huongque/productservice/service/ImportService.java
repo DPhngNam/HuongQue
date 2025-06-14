@@ -45,8 +45,10 @@ public class ImportService {
 
                 java.util.UUID categoryId = java.util.UUID.fromString(productJsonDTO.getCategoryId());
                 Category category = categoryRepository.findById(categoryId)
-                        .orElseThrow(() -> new RuntimeException("Category not found with ID: " + productJsonDTO.getCategoryId()));
-                product.setCategory(category);
+            .orElseGet(() -> categoryRepository.findById(
+                java.util.UUID.fromString("c9145f2c-0bfa-4953-8a21-bf1396912908")
+            ).orElseThrow(() -> new RuntimeException("Default category not found!")));
+    product.setCategory(category);
 
                 productRepository.save(product);
             }

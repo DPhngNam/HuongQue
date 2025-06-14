@@ -20,7 +20,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class Category {
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.UUID)
     private UUID id;
 
     @Column(name="name",nullable = false)
