@@ -1,6 +1,7 @@
 package com.huongque.productservice.controller;
 
 import com.huongque.productservice.dto.CategoryRequestDTO;
+import com.huongque.productservice.dto.CategoryResponseDTO;
 import com.huongque.productservice.entity.Category;
 import com.huongque.productservice.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories() {
+    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
     @GetMapping("/{id}")

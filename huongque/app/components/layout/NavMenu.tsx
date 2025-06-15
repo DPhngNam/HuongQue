@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 interface Category {
   id: string;
   name: string;
+  slug: string;
 }
 
 export default function NavMenu() {
@@ -55,7 +56,7 @@ export default function NavMenu() {
                     <li key={category.id}>
                       <NavigationMenuLink asChild>
                         <Link
-                          href={`/category/${category.id}`}
+                          href={`/category/${category.slug}`}
                           className="block p-2 hover:bg-gray-100 rounded"
                         >
                           {category.name}
