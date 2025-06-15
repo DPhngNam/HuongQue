@@ -22,7 +22,7 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name="price",nullable = false)
+    @Column(name="price")
     private Double price;
 
     @ElementCollection
