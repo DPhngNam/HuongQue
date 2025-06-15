@@ -1,13 +1,22 @@
+
 import HomeBanner from "./components/home/HomeBanner";
 import HomeProducts from "./components/home/HomeProducts";
-import { useAuthStore } from "./stores/authStore";
+import axiosInstance from "@/lib/axiosInstance";
 
-export default function Home() {
+export default async function Home() {
+  const url = process.env.BACKEND_URL;
+ const res = await axiosInstance.get("http://localhost:8080/productservice/top", {
+    params: { count: 12 },
+  });
+  const products = res.data;
+  console.log(products)
+
+  
 
   return (
     <div className="flex flex-col p-[96px]">
       <HomeBanner />
-      <HomeProducts/>
+      <HomeProducts products={products}/>
       {/* Why choose us */}
       <div className="">
         
