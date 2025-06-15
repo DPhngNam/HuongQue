@@ -2,6 +2,7 @@ package com.huongque.productservice.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,6 @@ public class ImportService {
                 ProductJsonDTO productJsonDTO = objectMapper.treeToValue(productNode, ProductJsonDTO.class);
                 Product product = new Product();
                 product.setName(productJsonDTO.getName());
-                product.setDescription(productJsonDTO.getDescription());
 
                 String cleanedPrice = productJsonDTO.getPrice().replaceAll("[^\\d.]", "").replace(".", "");
                 product.setPrice(cleanedPrice.isEmpty() ? 0.0 : Double.parseDouble(cleanedPrice));
@@ -51,7 +51,8 @@ public class ImportService {
                 Category category = categoryRepository.findById(categoryId)
                         .orElseThrow(() -> new IOException("Category not found with ID: " + categoryId));
                 product.setCategory(category);
-
+                UUID tenantId = java.util.UUID.fromString(productJsonDTO.getTenant_id());
+                product.setTenantId(tenantId);
                 productRepository.save(product);
             }
         }
