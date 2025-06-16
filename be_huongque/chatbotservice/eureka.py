@@ -3,9 +3,9 @@ import socket
 import time
 import threading
 
-EUREKA_SERVER = "http://localhost:8761/eureka"  # địa chỉ Eureka Server
+EUREKA_SERVER = "http://eurekaserver:8761/eureka"  # địa chỉ Eureka Server
 APP_NAME = "chatbotservice"
-PORT = 8000
+PORT = 8090
 HOSTNAME = socket.gethostname()
 IP_ADDR = socket.gethostbyname(HOSTNAME)
 
