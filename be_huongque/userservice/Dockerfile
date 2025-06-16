@@ -1,13 +1,15 @@
-# Build stage
-FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean package -DskipTests
+FROM openjdk:21-jdk-slim
 
-# Run stage
-FROM eclipse-temurin:21-alpine
 WORKDIR /app
-COPY --from=build /app/target/userservice-0.0.1-SNAPSHOT.jar app.jar
+
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+
+RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
+
+
+
 EXPOSE 8083
-ENTRYPOINT ["sh", "-c", "sleep 30 && java -jar app.jar"]
+
+CMD ["./mvnw", "spring-boot:run"]

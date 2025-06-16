@@ -3,16 +3,15 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
   CardDescription,
+  CardHeader,
+  CardTitle
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import axiosInstance from "@/lib/axiosInstance";
 import { Label } from "@radix-ui/react-label";
 import Link from "next/link";
-import React, { useState, FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import * as yup from "yup";
 
 const signUpSchema = yup.object().shape({
@@ -39,7 +38,6 @@ export default function SignUp() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirm-password") as string;
-    const url = process.env.NEXT_PUBLIC_AUTH_API;
 
     try {
       await signUpSchema.validate(
@@ -48,7 +46,7 @@ export default function SignUp() {
       );
       setErrors({});
       setError(null);
-      const res = await axiosInstance.post(`${url}/auth/register`, {
+      const res = await axiosInstance.post(`/auth/register`, {
         email,
         password,
         confirmPassword,
@@ -61,6 +59,7 @@ export default function SignUp() {
       if (err.response) {
         // Backend error (validation, conflict, etc.)
         setError(err.response.data?.message || "Đăng ký thất bại");
+        console.error("Backend error:", err.response.data);
       } else if (err.inner && err.inner.length > 0) {
         // Yup validation error
         const fieldErrors: { [key: string]: string } = {};

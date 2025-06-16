@@ -28,9 +28,7 @@ export default function Login() {
 
   React.useEffect(() => {
     if (status === "success") {
-      toast.success(
-        "Xác thực thành công! Bạn có thể đăng nhập ngay bây giờ."
-      );
+      toast.success("Xác thực thành công! Bạn có thể đăng nhập ngay bây giờ.");
     } else if (status === "already") {
       toast.info("Tài khoản đã xác nhận trước đó. Bạn có thể đăng nhập.");
     } else if (status === "expired") {
@@ -46,13 +44,10 @@ export default function Login() {
     const password = formData.get("password");
 
     try {
-      const response = await axiosInstance.post(
-        "http://localhost:8081/auth/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axiosInstance.post("/authservice/auth/login", {
+        email,
+        password,
+      });
 
       const { accessToken, refreshToken } = response.data;
       console.log("Login successful:", response.data);
@@ -185,7 +180,7 @@ export default function Login() {
                 <Button
                   onClick={() => {
                     window.location.href =
-                      "http://localhost:8081/oauth2/authorization/google";
+                      "http://localhost:8080/authservice/oauth2/authorization/google";
                   }}
                   variant="outline"
                   className="w-full"
