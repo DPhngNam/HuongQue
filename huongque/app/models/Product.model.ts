@@ -1,9 +1,10 @@
 export interface ProductProps {
-    id: number;
+    id: string;
     name: string;
-    label?: string; // Optional label for tags like "10% off" or "New Arrival"
-    imageSrc: string;
-    imageAlt: string;
-    price: string;
-    color: string;
+    price: number;
+    images: string[];
+    categoryId: string;
+    categoryName: string;
+    createAt: string;
+    label?: string; // Optional
 }

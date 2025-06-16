@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.huongque.productservice.dto.ProductRequestDTO;
@@ -20,7 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/")
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
@@ -37,7 +38,7 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable UUID id){
         return productService.getProductById(id)
-                .map(ResponseEntity::ok)
+                .map(ResponseEntity::ok) 
                 .orElse(ResponseEntity.notFound().build());
     }
     @DeleteMapping("/{id}")
@@ -45,5 +46,13 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/all")
+    public ResponseEntity<List<ProductResponseDTO>> getAllProductsNoTenant() {
+        return ResponseEntity.ok(productService.getAllProducts());
+    }
+    @GetMapping("/top")
+public ResponseEntity<List<ProductResponseDTO>> getTopProducts(@RequestParam int count) {
+    return ResponseEntity.ok(productService.getTopProducts(count));
+}
 
 }

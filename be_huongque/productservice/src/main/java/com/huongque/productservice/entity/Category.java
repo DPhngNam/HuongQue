@@ -25,6 +25,10 @@ public class Category {
     @Column(name="name",nullable = false)
     private String name;
 
+     @Column(unique = true)
+    private String slug;
+
+
 
    @CreationTimestamp // Automatically sets the timestamp on entity creation
     @Column(name = "created_at", nullable = false, updatable = false) // Ensures it's not null and can't be changed after creation
@@ -36,6 +40,11 @@ public class Category {
 public Category(UUID id, String name) {
     this.id = id;
     this.name = name;
+}
+public Category(UUID id, String name, String slug) {
+    this.id = id;
+    this.name = name;
+    this.slug = slug;
 }
 
 }

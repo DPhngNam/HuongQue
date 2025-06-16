@@ -1,9 +1,11 @@
-'use client'
+"use client";
 
-import { products } from "../../utils/homeData";
-import HomeProduct from "./HomeProduct";
-import { useState, useEffect, useCallback, memo } from "react";
-import { Skeleton } from "@/components/ui/skeleton"
+import { ProductProps } from "@/app/models/Product.model";
+import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
+import { memo, useCallback, useEffect, useState } from "react";
+import Product from "../products/Product";
+import { Button } from "@/components/ui/button";
 
 // Memoized ProductSkeleton component
 const ProductSkeleton = memo(() => (
@@ -24,7 +26,7 @@ const ProductSkeleton = memo(() => (
   </div>
 ));
 
-ProductSkeleton.displayName = 'ProductSkeleton';
+ProductSkeleton.displayName = "ProductSkeleton";
 
 // Custom hook for loading state
 const useLoadingState = (delay: number = 1000) => {
@@ -41,48 +43,46 @@ const useLoadingState = (delay: number = 1000) => {
   return isLoading;
 };
 
-export default function HomeProducts() {
+export default function HomeProducts({
+  products,
+}: {
+  products: ProductProps[];
+}) {
   const [showAll, setShowAll] = useState(false);
   const isLoading = useLoadingState();
-  const displayedProducts = showAll ? products : products.slice(0, 8);
+
   const hasMoreProducts = products.length > 8;
 
   const handleShowMore = useCallback(() => {
-    setShowAll(prev => !prev);
+    setShowAll((prev) => !prev);
   }, []);
 
   return (
     <div className="">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900">Customers also purchased</h2>
+        <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+          Các sản phẩm nổi bật
+        </h2>
 
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          {isLoading ? (
-            // Show 8 skeleton items while loading
-            Array.from({ length: 8 }).map((_, index) => (
-              <ProductSkeleton key={index} />
-            ))
-          ) : (
-            displayedProducts.map((product) => (
-              <HomeProduct 
-                key={product.id}
-                {...product}
-              />
-            ))
-          )}
+          {isLoading
+            ? // Show 8 skeleton items while loading
+              Array.from({ length: 8 }).map((_, index) => (
+                <ProductSkeleton key={index} />
+              ))
+            : products.map((product) => (
+                <Product product={product} key={product.id} />
+              ))}
         </div>
 
-        {hasMoreProducts && !isLoading && (
-          <div className="mt-10 text-center">
-            <button
-              onClick={handleShowMore}
-              className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              {showAll ? "Show less" : "View more"}
-            </button>
-          </div>
-        )}
+        <div className="mt-10 text-center">
+          <Link href={"/category"}>
+          <Button>
+            Xem Thêm
+          </Button>
+          </Link>
+        </div>
       </div>
     </div>
-  )
+  );
 }

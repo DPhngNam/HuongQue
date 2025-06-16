@@ -1,3 +1,5 @@
+"use client";
+
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -7,21 +9,37 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import axiosInstance from "@/lib/axiosInstance";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 export default function NavMenu() {
-  const categories = [
-    { name: "Điện thoại", href: "/category/phone" },
-    { name: "Máy tính bảng", href: "/category/tablet" },
-    { name: "Laptop", href: "/category/laptop" },
-    { name: "Phụ kiện", href: "/category/accessories" },
-  ];
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axiosInstance
+      .get("/productservice/categories")
+      .then((res) => setCategories(res.data))
+      .catch(() => setCategories([]))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div>
-      <NavigationMenu className=" rounded-lg  flex">
+      <NavigationMenu className="rounded-lg flex">
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+            <NavigationMenuLink
+              asChild
+              className={navigationMenuTriggerStyle()}
+            >
               <Link href="/">Trang Chủ</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
@@ -31,18 +49,24 @@ export default function NavMenu() {
             </NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                {categories.map((category) => (
-                  <li key={category.name}>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        href={category.href}
-                        className="block p-2 hover:bg-gray-100 rounded"
-                      >
-                        {category.name}
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                ))}
+                {loading ? (
+                  <li>Đang tải...</li>
+                ) : categories.length > 0 ? (
+                  categories.map((category) => (
+                    <li key={category.id}>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          href={`/category/${category.slug}`}
+                          className="block p-2 hover:bg-gray-100 rounded"
+                        >
+                          {category.name}
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                  ))
+                ) : (
+                  <li>Không có danh mục</li>
+                )}
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>

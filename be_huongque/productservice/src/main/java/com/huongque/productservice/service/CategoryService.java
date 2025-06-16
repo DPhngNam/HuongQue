@@ -1,6 +1,7 @@
 package com.huongque.productservice.service;
 
 import com.huongque.productservice.dto.CategoryRequestDTO;
+import com.huongque.productservice.dto.CategoryResponseDTO;
 import com.huongque.productservice.entity.Category;
 import com.huongque.productservice.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,11 @@ import java.util.UUID;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public List<Category> getAllCategories(){
-        return  categoryRepository.findAll();
+   public List<CategoryResponseDTO> getAllCategories() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(category -> new CategoryResponseDTO(category.getId(), category.getName(),category.getSlug()))
+                .toList();
     }
     public Category getCategoryById(UUID id){
         return categoryRepository.findById(id)

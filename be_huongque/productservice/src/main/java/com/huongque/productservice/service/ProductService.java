@@ -55,9 +55,19 @@ public class ProductService {
         productRepository.findByIdAndTenantId(id, TenantContext.getTenantId())
                 .ifPresent(productRepository::delete);
     }
+    
+    public List<ProductResponseDTO> getAllProducts() {
+        return productRepository.findAll()
+                .stream()
+                .map(productMapper::toDto)
+                .collect(Collectors.toList());
+    }
 
-
-
-
-
+    public List<ProductResponseDTO> getTopProducts(int top) {
+        return productRepository.findAll().stream()
+                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
+                .limit(top)
+                .map(productMapper::toDto)
+                .collect(Collectors.toList());
+    }
 }
