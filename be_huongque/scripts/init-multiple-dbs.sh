@@ -24,4 +24,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
   CREATE USER paymentservice WITH PASSWORD 'payment';
   CREATE DATABASE paymentdb OWNER paymentservice;
 
+  CREATE USER notificationservice WITH PASSWORD 'notification';
+  CREATE DATABASE notificationdb OWNER notificationservice;
+
 EOSQL

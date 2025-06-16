@@ -6,6 +6,11 @@ spring:
     name: apigateway
   cloud:
     gateway:
+      routes:
+        - id: websocket-nofi
+          uri: ws://notiservice:8092
+          predicates:
+            - Path=/ws/**
       discovery:
         locator:
           enabled: true

@@ -2,9 +2,6 @@
 target/
 build/
 
-# Maven & Gradle specific files
-!.mvn/wrapper/maven-wrapper.jar
-.mvn/
 pom.xml.*
 .settings/
 .idea/

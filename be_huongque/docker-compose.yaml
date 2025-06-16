@@ -350,6 +350,32 @@ services:
       EUREKA_PORT: 8761
     volumes:
       - ./chatbotservice:/app
+
+  notiservice:
+    build:
+      context: ./notiservice
+      dockerfile: Dockerfile
+    ports:
+      - "8092:8092"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - eurekaserver
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: notificationservice
+      DB_PASSWORD: notification
+      DB_NAME: notificationdb
+      PORT: 8092
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+    volumes:
+      - ./notiservice:/app
 networks:
   default:
     driver: bridge

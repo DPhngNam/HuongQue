@@ -17,19 +17,18 @@
 # # Command to run the application
 # ENTRYPOINT ["java", "-jar", "app.jar"]
 
-FROM maven:3.9.9-eclipse-temurin-21-alpine
+FROM eclipse-temurin:21-jdk-alpine
+
 WORKDIR /app
 
-# Copy cấu trúc project cần thiết
-COPY pom.xml .
-COPY .mvn .mvn
-COPY mvnw .
+# Cài các tiện ích (nếu cần wget, curl, etc.)
+RUN apk add --no-cache bash curl
 
-# Download dependencies trước (cache)
-RUN ./mvnw dependency:go-offline
-
-# Copy toàn bộ mã nguồn
+# Copy toàn bộ code (bao gồm cả .mvn và mvnw)
 COPY . .
 
-# Cấu hình để chạy với DevTools
+# Cấp quyền cho mvnw
+RUN chmod +x mvnw
+
+# Chạy ứng dụng ở chế độ dev
 CMD ["./mvnw", "spring-boot:run"]
