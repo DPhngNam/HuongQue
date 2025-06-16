@@ -5,12 +5,17 @@ import CartItem from '../cartitem'
 import BreadcrumbNav from '../components/ui/breadcrumb-nav'
 import { Button } from '@/components/ui/button'
 import { useCartStore } from '../stores/cartStore'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from "react"
+import { orderService, Order } from "./service/service"
+import { toast } from "sonner"
 
 export default function CartPage() {
     const router = useRouter()
     const items = useCartStore(state => state.items)
     const updateQuantity = useCartStore(state => state.updateQuantity)
     const removeItem = useCartStore(state => state.removeItem)
+    const [isLoading, setIsLoading] = useState(false)
     
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
     const shipping = 15
@@ -29,8 +34,48 @@ export default function CartPage() {
         removeItem(id)
     }
 
-    const handleCheckout = () => {
-        router.push('/payment')
+    const handleCheckout = async () => {
+        if (isLoading) return; // Prevent multiple submissions
+
+        try {
+            setIsLoading(true)
+            // Create order data
+            const orderData: Order = {
+                userId: "b3b8c7e2-8e2a-4c2a-9e2a-8e2a4c2a9e2a", // Replace with actual user ID from your auth system
+                customerName: "Customer Name", // Replace with actual customer data
+                deliveryAddress: "Delivery Address", // Replace with actual address
+                customerPhone: "Phone Number", // Replace with actual phone
+                orderItems: items.map(item => ({
+                    productId: item.productId,
+                    quantity: item.quantity,    
+                    price: item.price,
+                    orderId: "b3b8c7e2-8e2a-4c2a-9e2a-8e2a4c2a9e2a", // This will be filled by the backend
+                    productName: item.productName,
+                    productImage: item.productImage
+                })),
+                orderStatus: "PENDING",
+                orderTotal: total.toFixed(2),
+                orderPaymentMethod: "CREDIT_CARD",
+                orderPaymentStatus: "PENDING",
+                orderPaymentDate: new Date().toISOString().split('T')[0],
+                orderPaymentAmount: total.toFixed(2)
+            }
+
+            // Create order
+            const order = await orderService.createOrder(orderData)
+
+            // Create payment
+            console.log(order)
+        } catch (error) {
+            console.error('Checkout error:', error)
+            if (error instanceof Error) {
+                toast.error(error.message)
+            } else {
+                toast.error('An unexpected error occurred. Please try again.')
+            }
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -46,7 +91,7 @@ export default function CartPage() {
                                 <div className="divide-y">
                                     {items.map((item) => (
                                         <CartItem
-                                            key={item.id}
+                                            key={item.productId}
                                             item={item}
                                             onUpdateQuantity={handleUpdateQuantity}
                                             onRemove={handleRemoveItem}
@@ -89,8 +134,9 @@ export default function CartPage() {
                                     <Button 
                                         className="w-full mt-6"
                                         onClick={handleCheckout}
+                                        disabled={isLoading}
                                     >
-                                        Proceed to Checkout
+                                        {isLoading ? 'Processing...' : 'Proceed to Checkout'}
                                     </Button>
                                 </div>
                             </div>
