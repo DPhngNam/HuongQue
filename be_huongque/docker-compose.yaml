@@ -97,6 +97,7 @@ services:
     depends_on:
       - postgres
       - eurekaserver
+      - apigateway
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -106,16 +107,8 @@ services:
       JWT_SIGNING_KEY: ${JWT_SIGNING_KEY}
       FRONTEND_URL: ${FRONTEND_URL}
       PORT: 8081
-      EUREKA_HOST: eurekaserver
-      EUREKA_PORT: 8761
     volumes:
       - ./authservice:/app
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
   userservice:
     build:
       context: ./userservice
