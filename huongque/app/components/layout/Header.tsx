@@ -1,49 +1,103 @@
+'use client';
+
+import { useAuthStore } from "@/app/stores/authStore";
+import { useCartStore } from "@/app/stores/cartStore";
 import { Button } from "@/components/ui/button";
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { Search, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
-import { FaRegUser } from "react-icons/fa6";
-import { FiShoppingCart } from "react-icons/fi";
-import { IoLogoChrome } from "react-icons/io";
-import { IoSearch } from "react-icons/io5";
-import NavMenu from "./NavMenu";
+import { usePathname, useRouter } from "next/navigation";
+import { NotificationDropdown } from './NotificationDropdown';
 
-type HeaderProps = {
-  isLogin: boolean;
-  totalItems: number;
-};
+const navigation = [
+  { name: 'Trang chủ', href: '/' },
+  { name: 'Sản phẩm', href: '/products' },
+  { name: 'Về chúng tôi', href: '/about' },
+  { name: 'Liên hệ', href: '/contact' },
+];
 
-export default function Header({ isLogin, totalItems }: HeaderProps) {
+export default function Header() {
+  const router = useRouter();
+  const pathname = usePathname();
+  // const isLogin = useAuthStore((state) => state.isLogin()) || true;
+  const isLogin = true;
+  const totalItems = useCartStore((state) => state.totalItems);
+
+  const handleCartClick = () => {
+    router.push('/cart');
+  };
+
+  const handleUserClick = () => {
+    router.push('/profile');
+  };
+
   return (
-    <nav className="flex z-50 justify-between items-center bg-transparent px-3 py-2">
-      <Link href={"/"} className="flex items-center gap-1 ">
-        <IoLogoChrome className="text-2xl" />
-        <span className="font-bold text-2xl ">Hương Quê</span>
-      </Link>
-      <NavMenu />
-      <div className="flex gap-4">
-        <Link href="/search" className="p-2 rounded-full hover:bg-gray-100">
-          <IoSearch className="text-xl" />
-        </Link>
-        <Link
-          href="/cart"
-          className="p-2 rounded-full hover:bg-gray-100 relative"
-        >
-          <FiShoppingCart className="text-xl" />
-          {totalItems > 0 && (
-            <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-              {totalItems > 99 ? "99+" : totalItems}
-            </div>
-          )}
-        </Link>
-        {isLogin ? (
-          <Link href="/settings" className="p-2 rounded-full hover:bg-gray-100">
-            <FaRegUser className="text-xl" />
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center">
+        <div className="mr-4 flex">
+          <Link href="/" className="mr-6 flex items-center space-x-2">
+            <span className="font-bold text-2xl">Hương Quê</span>
           </Link>
-        ) : (
-          <Button asChild>
-            <Link href="/login">Login</Link>
-          </Button>
-        )}
+          <nav className="flex items-center space-x-6 text-sm font-medium">
+            {navigation.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'transition-colors hover:text-foreground/80',
+                  pathname === item.href
+                    ? 'text-foreground'
+                    : 'text-foreground/60'
+                )}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+        </div>
+        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+          <div className="w-full flex-1 md:w-auto md:flex-none">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Tìm kiếm sản phẩm..."
+                className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[300px]"
+              />
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            {isLogin && <NotificationDropdown />}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleCartClick}
+              className="relative"
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {totalItems > 0 && (
+                <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                  {totalItems > 99 ? "99+" : totalItems}
+                </div>
+              )}
+            </Button>
+            {isLogin ? (
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleUserClick}
+              >
+                <User className="h-5 w-5" />
+              </Button>
+            ) : (
+              <Button asChild>
+                <Link href="/login">Đăng nhập</Link>
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
-    </nav>
+    </header>
   );
 }
