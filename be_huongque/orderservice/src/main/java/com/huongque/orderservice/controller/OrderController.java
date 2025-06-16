@@ -1,36 +1,40 @@
 package com.huongque.orderservice.controller;
 
-import com.huongque.orderservice.dto.OrderMessage;
-import com.huongque.orderservice.dto.createOrderDto;
-import com.huongque.orderservice.dto.updateOrderDto;
-import com.huongque.orderservice.dto.orderItemDto;
-import com.huongque.orderservice.entity.Order;
-import com.huongque.orderservice.entity.OrderItem;
-import com.huongque.orderservice.service.OrderService;
-import com.huongque.orderservice.config.RabbitConfig;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import com.huongque.orderservice.service.PaymentService;
-import com.huongque.orderservice.dto.PaymentRequest;
-import com.huongque.orderservice.dto.PaymentResponse;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import org.springframework.http.HttpStatus;
-
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.huongque.orderservice.dto.PaymentRequest;
+import com.huongque.orderservice.dto.PaymentResponse;
+import com.huongque.orderservice.dto.createOrderDto;
+import com.huongque.orderservice.dto.orderItemDto;
+import com.huongque.orderservice.dto.updateOrderDto;
+import com.huongque.orderservice.entity.Order;
+import com.huongque.orderservice.entity.OrderItem;
+import com.huongque.orderservice.service.OrderService;
+import com.huongque.orderservice.service.PaymentService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RequestMapping("/api/v1/orders")
 @RestController
@@ -40,9 +44,6 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private PaymentService paymentService;
