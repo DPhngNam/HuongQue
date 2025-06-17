@@ -25,4 +25,4 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 EXPOSE 8084
 
-CMD ["node", "dist/main"]
+CMD ["node", "dist/main.js"]

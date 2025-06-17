@@ -1,4 +1,4 @@
-[
+export const shops = [
   {
     "shop_id": "07b440cf-6a1a-4efa-8ef8-49f9f4493e96",
     "shop_name": "Công ty TNHH MTV Newstar",

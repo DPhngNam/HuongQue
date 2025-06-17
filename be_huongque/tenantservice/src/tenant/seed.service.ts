@@ -1,11 +1,9 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
+import { ElasticsearchService } from "@nestjs/elasticsearch";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { shops } from '../data/initialData'; // Adjust the path as necessary
 import { Tenant } from "./tenant.entity";
-import * as fs from 'fs';
-import * as path from 'path';
-import { ElasticsearchService } from "@nestjs/elasticsearch";
-
 @Injectable()
 export class SeedService implements OnModuleInit {
   constructor(
@@ -15,19 +13,16 @@ export class SeedService implements OnModuleInit {
 
   ) { }
   async onModuleInit() {
-    // Read JSON file
-    const filePath = path.resolve(__dirname, '../data/initialData.json');
-    const rawData = fs.readFileSync(filePath, 'utf-8');
-    const data = JSON.parse(rawData);
-
-    const tenants = data.shop.map(shop => ({
+    const data = shops;
+  
+    const tenants = data.map(shop => ({
       id: shop.shop_id, // Assuming shop_id is unique and can be used as id
       name: shop.shop_name,
       avatar: shop.shop_avatar,
       address: 'Quang Ninh', // or extract address from description if needed
       phone: '0123456789', // No phone in JSON, set as empty or extract if possible
       ShopDescription: shop.description,
-      owner: null, // No owner in JSON, set as empty or extract if possible
+      owner: '', // No owner in JSON, set as empty or extract if possible
       organization_info: shop.organization_info, // No organization info in JSON, set as empty or extract if possible
       created_at: new Date(), // Set current date for created_at
       updated_at: new Date(), // Set current date for updated_at

@@ -117,7 +117,6 @@ services:
       - postgres
       - rabbitmq
       - eurekaserver
-      - authservice
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -151,11 +150,8 @@ services:
       EUREKA_PORT: 8761
       HOSTNAME: tenantservice
     volumes:
-      - ./src:/app/src
-      - ./package.json:/app/package.json
-      - ./tsconfig.json:/app/tsconfig.json
-      - ./data:/app/src/data            # 👈 mount thư mục data
-    command: npm run start:dev
+      - ./tenantservice:/app
+      - /app/node_modules
   productservice:
     build:
       context: ./productservice
