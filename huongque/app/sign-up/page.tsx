@@ -3,42 +3,51 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardFooter,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import axiosInstance from "@/lib/axiosInstance";
 import { Label } from "@radix-ui/react-label";
 import Link from "next/link";
-import React, { useState, FormEvent } from "react";
+import { FormEvent, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import * as yup from "yup";
 
 const signUpSchema = yup.object().shape({
-  email: yup.string().email("Invalid email").required("Email is required"),
+  email: yup
+    .string()
+    .email("Email không hợp lệ")
+    .required("Vui lòng nhập email"),
   password: yup
     .string()
-    .min(8, "Password must be at least 8 characters")
-    .required("Password is required"),
+    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+    .required("Vui lòng nhập mật khẩu"),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref("password")], "Passwords must match")
-    .required("Confirm Password is required"),
+    .oneOf([yup.ref("password")], "Mật khẩu xác nhận không khớp")
+    .required("Vui lòng xác nhận mật khẩu"),
 });
 
 export default function SignUp() {
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [formValues, setFormValues] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const confirmPassword = formData.get("confirm-password") as string;
+    setIsLoading(true);
+    const email = formValues.email;
+    const password = formValues.password;
+    const confirmPassword = formValues.confirmPassword;
     const url = process.env.NEXT_PUBLIC_AUTH_API;
 
     try {
@@ -53,16 +62,16 @@ export default function SignUp() {
         password,
         confirmPassword,
       });
-
+      console.log("Đăng ký thành công:", res);
       if (res && res.status === 201) {
-        alert("Kiểm tra email để xác nhận tài khoản");
+        setTimeout(() => {
+          toast.success("Vui lòng kiểm tra email để xác nhận tài khoản");
+        }, 100);
       }
     } catch (err: any) {
       if (err.response) {
-        // Backend error (validation, conflict, etc.)
         setError(err.response.data?.message || "Đăng ký thất bại");
       } else if (err.inner && err.inner.length > 0) {
-        // Yup validation error
         const fieldErrors: { [key: string]: string } = {};
         err.inner.forEach((e: any) => {
           if (e.path && !fieldErrors[e.path]) fieldErrors[e.path] = e.message;
@@ -72,20 +81,53 @@ export default function SignUp() {
       } else {
         setError(err.message);
       }
+    } finally {
+      setIsLoading(false);
     }
   }
 
-  return (
-    <div className="flex justify-center items-center flex-col p-[96px]">
-      {/* Sign up form */}
-      <div className="w-96 justify-start text-gray-900 text-4xl font-bold font-['Montserrat'] leading-[56px]">
-        Create Account
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-white">
+        <div className="flex flex-col items-center">
+          <svg
+            className="animate-spin h-10 w-10 text-green-500 mb-4"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+          <div className="text-gray-900 text-2xl font-bold">Đang xử lý...</div>
+        </div>
       </div>
-      <Card className="w-[564px] mt-8">
+    );
+  }
+
+  return (
+    <div className="flex justify-center items-center flex-col px-4 py-12 min-h-screen bg-white">
+      <ToastContainer position="top-center" autoClose={3000} />
+      {/* Form đăng ký */}
+      <div className="w-full max-w-md text-center text-gray-900 text-3xl md:text-4xl font-bold font-['Montserrat'] leading-tight md:leading-[56px] mb-4">
+        Tạo tài khoản mới
+      </div>
+      <Card className="w-full max-w-md md:w-[564px] mt-4 md:mt-8">
         <CardHeader>
-          <CardTitle>Sign Up</CardTitle>
-          <CardDescription>
-            Create your account with email and password
+          <CardTitle className="text-xl md:text-2xl">Đăng ký</CardTitle>
+          <CardDescription className="text-sm md:text-base">
+            Đăng ký tài khoản bằng email và mật khẩu
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -94,7 +136,7 @@ export default function SignUp() {
             className="grid w-full items-center gap-4"
           >
             <div className="grid w-full items-center gap-4">
-              <div className="grid w-full items-center gap-4">
+              <div className="grid w-full items-center gap-2 md:gap-4">
                 <Label
                   htmlFor="email"
                   className="text-sm font-medium text-gray-700"
@@ -105,7 +147,11 @@ export default function SignUp() {
                   name="email"
                   type="email"
                   id="email"
-                  className="border border-gray-300 rounded-4xl p-2"
+                  value={formValues.email}
+                  onChange={(e) =>
+                    setFormValues((v) => ({ ...v, email: e.target.value }))
+                  }
+                  className="border border-gray-300 rounded-2xl md:rounded-4xl p-2"
                 />
                 {errors.email && (
                   <div className="text-red-500 text-xs mt-1">
@@ -113,19 +159,23 @@ export default function SignUp() {
                   </div>
                 )}
               </div>
-              <div className="grid w-full items-center gap-4">
+              <div className="grid w-full items-center gap-2 md:gap-4">
                 <Label
                   htmlFor="password"
                   className="text-sm font-medium text-gray-700"
                 >
-                  Password
+                  Mật khẩu
                 </Label>
                 <div className="relative">
                   <Input
                     name="password"
                     type={showPassword ? "text" : "password"}
                     id="password"
-                    className="border border-gray-300 rounded-4xl p-2 w-full"
+                    value={formValues.password}
+                    onChange={(e) =>
+                      setFormValues((v) => ({ ...v, password: e.target.value }))
+                    }
+                    className="border border-gray-300 rounded-2xl md:rounded-4xl p-2 w-full"
                   />
                   <Button
                     type="button"
@@ -173,19 +223,26 @@ export default function SignUp() {
                   </div>
                 )}
               </div>
-              <div className="grid w-full items-center gap-4">
+              <div className="grid w-full items-center gap-2 md:gap-4">
                 <Label
                   htmlFor="confirm-password"
                   className="text-sm font-medium text-gray-700"
                 >
-                  Confirm Password
+                  Xác nhận mật khẩu
                 </Label>
                 <div className="relative">
                   <Input
                     name="confirm-password"
                     type={showConfirmPassword ? "text" : "password"}
                     id="confirm-password"
-                    className="border border-gray-300 rounded-4xl p-2 w-full"
+                    value={formValues.confirmPassword}
+                    onChange={(e) =>
+                      setFormValues((v) => ({
+                        ...v,
+                        confirmPassword: e.target.value,
+                      }))
+                    }
+                    className="border border-gray-300 rounded-2xl md:rounded-4xl p-2 w-full"
                   />
                   <Button
                     type="button"
@@ -238,35 +295,25 @@ export default function SignUp() {
               )}
               <div className="grid w-full items-center gap-4">
                 <Button
+                  disabled={isLoading}
                   type="submit"
-                  className="w-full bg-green-500 text-white rounded-4xl p-2 hover:bg-green-600"
+                  className="w-full bg-green-500 text-white rounded-2xl md:rounded-4xl p-2 hover:bg-green-600 text-base md:text-lg"
                 >
-                  Sign Up
+                  Đăng ký
                 </Button>
               </div>
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-sm text-gray-500">
-                  Already have an account?
-                </p>
+              <div className="flex flex-col md:flex-row items-center justify-between gap-2">
+                <p className="text-sm text-gray-500">Đã có tài khoản?</p>
                 <Link href="/login" className="text-sm ml-3 text-[#00CC96]">
-                  Log In
+                  Đăng nhập
                 </Link>
               </div>
-              <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+              <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border mt-2 md:mt-4">
                 <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                  Or continue with
+                  Hoặc tiếp tục với
                 </span>
               </div>
-              <div className="grid grid-cols-3 gap-4">
-                <Button variant="outline" className="w-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path
-                      d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  <span className="sr-only">Sign up with Apple</span>
-                </Button>
+              <div className="grid grid-cols-1 gap-4">
                 <Button
                   onClick={() => {
                     window.location.href =
@@ -275,22 +322,18 @@ export default function SignUp() {
                   variant="outline"
                   className="w-full"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    className="h-5 w-5 mr-2"
+                  >
                     <path
                       d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
                       fill="currentColor"
                     />
                   </svg>
-                  <span className="sr-only">Sign up with Google</span>
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path
-                      d="M6.915 4.03c-1.968 0-3.683 1.28-4.871 3.113C.704 9.208 0 11.883 0 14.449c0 .706.07 1.369.21 1.973a6.624 6.624 0 0 0 .265.86 5.297 5.297 0 0 0 .371.761c.696 1.159 1.818 1.927 3.593 1.927 1.497 0 2.633-.671 3.965-2.444.76-1.012 1.144-1.626 2.663-4.32l.756-1.339.186-.325c.061.1.121.196.183.3l2.152 3.595c.724 1.21 1.665 2.556 2.47 3.314 1.046.987 1.992 1.22 3.06 1.22 1.075 0 1.876-.355 2.455-.843a3.743 3.743 0 0 0 .81-.973c.542-.939.861-2.127.861-3.745 0-2.72-.681-5.357-2.084-7.45-1.282-1.912-2.957-2.93-4.716-2.93-1.047 0-2.088.467-3.053 1.308-.652.57-1.257 1.29-1.82 2.05-.69-.875-1.335-1.547-1.958-2.056-1.182-.966-2.315-1.303-3.454-1.303zm10.16 2.053c1.147 0 2.188.758 2.992 1.999 1.132 1.748 1.647 4.195 1.647 6.4 0 1.548-.368 2.9-1.839 2.9-.58 0-1.027-.23-1.664-1.004-.496-.601-1.343-1.878-2.832-4.358l-.617-1.028a44.908 44.908 0 0 0-1.255-1.98c.07-.109.141-.224.211-.327 1.12-1.667 2.118-2.602 3.358-2.602zm-10.201.553c1.265 0 2.058.791 2.675 1.446.307.327.737.871 1.234 1.579l-1.02 1.566c-.757 1.163-1.882 3.017-2.837 4.338-1.191 1.649-1.81 1.817-2.486 1.817-.524 0-1.038-.237-1.383-.794-.263-.426-.464-1.13-.464-2.046 0-2.221.63-4.535 1.66-6.088.454-.687.964-1.226 1.533-1.533a2.264 2.264 0 0 1 1.088-.285z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  <span className="sr-only">Sign up with Meta</span>
+                  <span className="sr-only">Đăng ký với Google</span>
+                  Đăng ký với Google
                 </Button>
               </div>
             </div>

@@ -38,13 +38,11 @@ public class AuthService {
     private final EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
-
-
     @Transactional
     public void register(RegisterDto request){
-    
+
         if(userRepository.existsByEmail(request.getEmail())){
-            throw new UsernameAlreadyTakenException("Username is already taken!");
+            throw new UsernameAlreadyTakenException("Tên đăng nhập đã được sử dụng!");
         }
 
         User user = User.builder()
@@ -59,10 +57,10 @@ public class AuthService {
                 .build();
 
         try {
-          userProfileService.createUserProfile(userProfileDto);
+            userProfileService.createUserProfile(userProfileDto);
         } catch (Exception e) {
-            logger.error("Failed to create user profile", e.getMessage(),e);
-            throw new RuntimeException("Failed to create user profile", e);
+            logger.error("Không thể tạo hồ sơ người dùng", e.getMessage(), e);
+            throw new RuntimeException("Không thể tạo hồ sơ người dùng", e);
         }
         String token = UUID.randomUUID().toString();
         EmailVerificationToken verificationToken = new EmailVerificationToken();
@@ -72,50 +70,46 @@ public class AuthService {
         emailVerificationTokenRepository.save(verificationToken);
 
         try {
-           emailService.sendVerificationEmail(user.getEmail(),token);
+            emailService.sendVerificationEmail(user.getEmail(), token);
         }
         catch (Exception e){
-            logger.error("Failed to send verification email", e.getMessage(),e);
-            throw  new RuntimeException("Failed to send verification email", e);
+            logger.error("Không thể gửi email xác thực", e.getMessage(), e);
+            throw new RuntimeException("Không thể gửi email xác thực", e);
         }
-
-
     }
 
     public AuthResponse login(AuthRequest request){
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(()->new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
         if(!user.isEnabled()){
-            throw new RuntimeException("User not verified");
+            throw new RuntimeException("Người dùng chưa xác thực");
         }
-        if(!passwordEncoder.matches(request.getPassword(),user.getPasswordHash())){
-            throw new InvalidPasswordException("Invalid password");
+        if(!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())){
+            throw new InvalidPasswordException("Mật khẩu không đúng");
         }
         List<String> roles = user.getRoles().stream()
                 .map(role -> role.getName())
                 .toList();
         String accessToken = jwtUtils.generateAccessToken(user.getEmail(), roles);
         String refreshToken = jwtUtils.generateRefreshToken(user.getEmail());
-        return new AuthResponse(accessToken,refreshToken);
+        return new AuthResponse(accessToken, refreshToken);
     }
     public AuthResponse refreshToken(String refreshToken){
         if(!jwtUtils.isTokenValid(refreshToken)){
-            throw new RuntimeException("Invalid refresh token");
+            throw new RuntimeException("Refresh token không hợp lệ");
         }
         String username = jwtUtils.extractUsername(refreshToken);
         String newAccessToken = jwtUtils.generateAccessToken(username, List.of());
         String newRefreshToken = jwtUtils.generateRefreshToken(username);
 
-        return  new AuthResponse(newAccessToken,newRefreshToken);
+        return new AuthResponse(newAccessToken, newRefreshToken);
     }
 
     public String logout(String refreshToken){
         if(!jwtUtils.isTokenValid(refreshToken)){
-            throw new RuntimeException("Invalid refresh token");
+            throw new RuntimeException("Refresh token không hợp lệ");
         }
-        return "Logout success";
+        return "Đăng xuất thành công";
     }
-
-
 }
