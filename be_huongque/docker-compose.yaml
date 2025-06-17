@@ -75,8 +75,6 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      rabbitmq:
-        condition: service_started
       eurekaserver:
         condition: service_healthy
     environment:
@@ -119,6 +117,7 @@ services:
       - postgres
       - rabbitmq
       - eurekaserver
+      - authservice
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -126,6 +125,8 @@ services:
       DB_PASSWORD: user
       DB_NAME: userdb
       PORT: 8083
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
     volumes:
       - ./userservice:/app
   tenantservice:
@@ -150,7 +151,11 @@ services:
       EUREKA_PORT: 8761
       HOSTNAME: tenantservice
     volumes:
-      - ./tenantservice:/src
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./data:/app/src/data            # 👈 mount thư mục data
+    command: npm run start:dev
   productservice:
     build:
       context: ./productservice
@@ -205,6 +210,7 @@ services:
       HOSTNAME: registerservice
     volumes:
       - ./registerservice:/app
+      - /app/node_modules
   logsservice:
     build:
       context: ./logsservice

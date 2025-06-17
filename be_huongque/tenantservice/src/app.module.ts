@@ -15,7 +15,7 @@ import { ElasticsearchModule } from '@nestjs/elasticsearch';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST || 'localhost',
+      host: process.env.DB_HOST || 'postgres',
       port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5432,
       username: process.env.DB_USERNAME || 'tenantservice',
       password: process.env.DB_PASSWORD || 'tenant',

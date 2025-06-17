@@ -21,14 +21,16 @@ export class SeedService implements OnModuleInit {
     const data = JSON.parse(rawData);
 
     const tenants = data.shop.map(shop => ({
-      id: shop.id,
-      name: shop.title,
-      avatar: shop.image,
-      address: shop.description, // or extract address from description if needed
-      phone: '', // No phone in JSON, set as empty or extract if possible
+      id: shop.shop_id, // Assuming shop_id is unique and can be used as id
+      name: shop.shop_name,
+      avatar: shop.shop_avatar,
+      address: 'Quang Ninh', // or extract address from description if needed
+      phone: '0123456789', // No phone in JSON, set as empty or extract if possible
       ShopDescription: shop.description,
       owner: null, // No owner in JSON, set as empty or extract if possible
-      // created_at and updated_at will be set automatically by TypeORM
+      organization_info: shop.organization_info, // No organization info in JSON, set as empty or extract if possible
+      created_at: new Date(), // Set current date for created_at
+      updated_at: new Date(), // Set current date for updated_at
     }));
     await this.tenantRepository.clear();
 
