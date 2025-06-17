@@ -12,21 +12,22 @@ interface CartItemProps {
 
 export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
     const handleIncrement = () => {
-        onUpdateQuantity(item.id, item.quantity + 1);
+        onUpdateQuantity(item.productId, item.quantity + 1);
     };
 
     const handleDecrement = () => {
         if (item.quantity > 1) {
-            onUpdateQuantity(item.id, item.quantity - 1);
+            onUpdateQuantity(item.productId, item.quantity - 1);
         }
     };
+    console.log('CartItem rendered:', item.productName, item.quantity);
 
     return (
         <div className="flex items-center gap-4 py-4 border-b">
             <div className="relative h-24 w-24 overflow-hidden rounded-lg bg-gray-100">
                 <Image
-                    src={item.image}
-                    alt={item.name}
+                    src={item.productImage}
+                    alt={item.productName}
                     fill
                     className="object-cover"
                 />
@@ -34,9 +35,9 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
 
             <div className="flex flex-1 flex-col">
                 <div className="flex justify-between">
-                    <h3 className="text-base font-medium text-gray-900">{item.name}</h3>
+                    <h3 className="text-base font-medium text-gray-900">{item.productName}</h3>
                     <button
-                        onClick={() => onRemove(item.id)}
+                        onClick={() => onRemove(item.productId)}
                         className="text-gray-400 hover:text-gray-500"
                     >
                         <X className="h-5 w-5" />

@@ -1,11 +1,9 @@
 'use client'
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { CartItem as CartItemType } from '@/app/models/cart'
 import { X } from 'lucide-react'
-import { useCartStore } from './stores/cartStore'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 interface CartItemProps {
     item: CartItemType;
@@ -18,23 +16,23 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
     
     const handleIncrement = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent navigation when clicking the increment button
-        onUpdateQuantity(item.id, item.quantity + 1);
+        onUpdateQuantity(item.productId, item.quantity + 1);
     };
 
     const handleDecrement = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent navigation when clicking the decrement button
         if (item.quantity > 1) {
-            onUpdateQuantity(item.id, item.quantity - 1);
+            onUpdateQuantity(item.productId, item.quantity - 1);
         }
     };
     
     const handleRemove = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent navigation when clicking the remove button
-        onRemove(item.id);
+        onRemove(item.productId);
     };
     
     const navigateToProduct = () => {
-        router.push(`/shop/${item.id}?source=cart`);
+        router.push(`/shop/${item.productId}?source=cart`);
     };
 
     return (
@@ -44,8 +42,8 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
         >
             <div className="relative h-24 w-24 overflow-hidden rounded-lg bg-gray-100">
                 <Image
-                    src={item.image}
-                    alt={item.name}
+                    src={item.productImage}
+                    alt={item.productName}
                     fill
                     className="object-cover"
                 />
@@ -54,7 +52,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
             <div className="flex flex-1 flex-col">
                 <div className="flex justify-between">
                     <h3 className="text-base font-medium text-gray-900 hover:text-blue-600">
-                        {item.name}
+                        {item.productName}
                     </h3>
                     <button
                         onClick={handleRemove}

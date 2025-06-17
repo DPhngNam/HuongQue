@@ -1,32 +1,32 @@
 import { create } from 'zustand'
 import { CartItem } from '../models/cart'
-import { cartItems as initialCartItems } from '../utils/cartData'
+import { cartItems } from '../utils/cartData'
 
 interface CartState {
   items: CartItem[]
   totalItems: number
   addItem: (item: CartItem) => void
-  removeItem: (id: string) => void
-  updateQuantity: (id: string, quantity: number) => void
+  removeItem: (productId: string) => void
+  updateQuantity: (productId: string, quantity: number) => void
   clearCart: () => void
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
   // Initialize with data from cartData.ts
-  items: initialCartItems,
+  items: cartItems,
   
   // Calculate total items (sum of quantities)
-  totalItems: initialCartItems.reduce((total, item) => total + item.quantity, 0),
+  totalItems: cartItems.reduce((total, item) => total + item.quantity, 0),
   
   // Add an item to the cart
   addItem: (item: CartItem) => {
     const { items } = get()
-    const existingItem = items.find(i => i.id === item.id)
+    const existingItem = items.find(i => i.productId === item.productId)
     
     if (existingItem) {
       // If item exists, update quantity
       const updatedItems = items.map(i => 
-        i.id === item.id 
+        i.productId === item.productId 
           ? { ...i, quantity: i.quantity + item.quantity }
           : i
       )
@@ -47,9 +47,9 @@ export const useCartStore = create<CartState>((set, get) => ({
   },
   
   // Remove an item from the cart
-  removeItem: (id: string) => {
+  removeItem: (productId: string) => {
     const { items } = get()
-    const updatedItems = items.filter(item => item.id !== id)
+    const updatedItems = items.filter(item => item.productId !== productId)
     
     set({ 
       items: updatedItems,
@@ -58,10 +58,10 @@ export const useCartStore = create<CartState>((set, get) => ({
   },
   
   // Update quantity of an item
-  updateQuantity: (id: string, quantity: number) => {
+  updateQuantity: (productId: string, quantity: number) => {
     const { items } = get()
     const updatedItems = items.map(item => 
-      item.id === id 
+      item.productId === productId 
         ? { ...item, quantity: quantity }
         : item
     )
