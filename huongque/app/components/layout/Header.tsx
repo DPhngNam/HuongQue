@@ -20,8 +20,7 @@ const navigation = [
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const isLogin = useAuthStore((state) => state.isLogin()) || true;
-  //const isLogin = true;
+  const isLogin = useAuthStore((state) => state.isLogin()) 
   const totalItems = useCartStore((state) => state.totalItems);
 
   const handleCartClick = () => {
