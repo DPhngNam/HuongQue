@@ -14,7 +14,7 @@ import { RegistrationsModule } from './module/registrations/registrations.module
       username: process.env.DB_USERNAME || 'registerservice',
       password: process.env.DB_PASSWORD || 'register',
       database: process.env.DB_NAME || 'registerdb',
-      entities: ['src/module/registrations' + '/**/*.entity{.ts,.js}'],
+      entities: [__dirname + '/../module/registrations/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
     RegistrationsModule,

@@ -21,6 +21,9 @@ export class Tenant {
   @Column({ name: 'ownerId', type: 'uuid', nullable: true })
   owner: string;
 
+  @Column({ nullable: true })
+  organization_info: string;
+
   @CreateDateColumn()
   created_at: Date;
 
