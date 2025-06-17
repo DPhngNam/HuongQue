@@ -19,6 +19,7 @@ import axiosInstance from "@/lib/axiosInstance";
 import { useAuthStore } from "../stores/authStore";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Provider } from "@radix-ui/react-tooltip";
 
 export default function Login() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -44,10 +45,10 @@ export default function Login() {
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
     const password = formData.get("password");
-
+    const url = process.env.NEXT_PUBLIC_AUTH_API;
     try {
       const response = await axiosInstance.post(
-        "http://localhost:8081/auth/login",
+        `${url}/auth/login`,
         {
           email,
           password,
