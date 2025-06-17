@@ -70,4 +70,11 @@ public class ProductService {
                 .map(productMapper::toDto)
                 .collect(Collectors.toList());
     }
+    
+    public List<ProductResponseDTO> getAllProductsByCategorySlug(String categorySlug) {
+        return productRepository.findByCategorySlug(categorySlug)
+                .stream()
+                .map(productMapper::toDto)
+                .collect(Collectors.toList());
+    }
 }

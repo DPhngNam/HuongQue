@@ -1,58 +1,46 @@
-'use client';
+"use client";
 
 import { useAuthStore } from "@/app/stores/authStore";
 import { useCartStore } from "@/app/stores/cartStore";
 import { Button } from "@/components/ui/button";
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { Search, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { NotificationDropdown } from './NotificationDropdown';
-
-const navigation = [
-  { name: 'Trang chủ', href: '/' },
-  { name: 'Sản phẩm', href: '/products' },
-  { name: 'Về chúng tôi', href: '/about' },
-  { name: 'Liên hệ', href: '/contact' },
-];
+import { NotificationDropdown } from "./NotificationDropdown";
+import NavMenu from "./NavMenu";
 
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const isLogin = useAuthStore((state) => state.isLogin()) 
+  const isLogin = useAuthStore((state) => state.isLogin());
   const totalItems = useCartStore((state) => state.totalItems);
 
   const handleCartClick = () => {
-    router.push('/cart');
+    router.push("/cart");
   };
 
   const handleUserClick = () => {
-    router.push('/settings');
+    router.push("/settings");
   };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
         <div className="mr-4 flex">
+          <Image
+            src="/image/logo.png"
+            alt="Hương Quê Logo"
+            width={50}
+            height={50}
+          />
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <span className="font-bold text-2xl">Hương Quê</span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            {navigation.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'transition-colors hover:text-foreground/80',
-                  pathname === item.href
-                    ? 'text-foreground'
-                    : 'text-foreground/60'
-                )}
-              >
-                {item.name}
-              </Link>
-            ))}
+            <NavMenu />
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
@@ -68,9 +56,9 @@ export default function Header() {
           </div>
           <div className="flex items-center space-x-2">
             {isLogin && <NotificationDropdown />}
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={handleCartClick}
               className="relative"
             >
@@ -82,11 +70,7 @@ export default function Header() {
               )}
             </Button>
             {isLogin ? (
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={handleUserClick}
-              >
+              <Button variant="ghost" size="icon" onClick={handleUserClick}>
                 <User className="h-5 w-5" />
               </Button>
             ) : (

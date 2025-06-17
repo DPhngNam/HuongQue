@@ -54,5 +54,8 @@ public class ProductController {
 public ResponseEntity<List<ProductResponseDTO>> getTopProducts(@RequestParam int count) {
     return ResponseEntity.ok(productService.getTopProducts(count));
 }
-
+    @GetMapping("/category/{categorySlug}")
+    public ResponseEntity<List<ProductResponseDTO>> getAllProductsByCategorySlug(@PathVariable String categorySlug) {
+        return ResponseEntity.ok(productService.getAllProductsByCategorySlug(categorySlug));
+    }
 }
