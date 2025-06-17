@@ -1,5 +1,6 @@
 package com.huongque.authservice.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -10,10 +11,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.huongque.authservice.dto.UserResponse;
 import com.huongque.authservice.entity.User;
+import com.huongque.authservice.repository.EmailVerificationTokenRepository;
 import com.huongque.authservice.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final EmailVerificationTokenRepository emailVerificationTokenRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -60,5 +64,24 @@ public class UserService implements UserDetailsService {
                 true, true, true, true,
                 authorities
         );
+    }
+    
+    /**
+     * Xóa các user chưa xác thực nếu token xác thực email đã hết hạn
+     * Chạy mỗi 5 phút
+     */
+    @Scheduled(cron = "0 0/5 * * * *")
+    public void deleteUnverifiedUsersWithExpiredToken() {
+        Date now = new Date();
+        var expiredTokens = emailVerificationTokenRepository.findAll().stream()
+            .filter(token -> token.getExpirationTime().before(now))
+            .toList();
+        for (var token : expiredTokens) {
+            User user = token.getUser();
+            if (user != null && !user.isEnabled()) {
+                emailVerificationTokenRepository.delete(token);
+                userRepository.delete(user);
+            }
+        }
     }
 }
