@@ -1,18 +1,18 @@
 "use client";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ProductProps } from "@/app/models/Product.model";
-import axiosInstance from "@/lib/axiosInstance";
 import Product from "@/app/components/products/Product";
-import NavMenu from "@/app/components/layout/NavMenu";
+import { ProductProps } from "@/app/models/Product.model";
+import { useCategoryStore } from "@/app/stores/categoryStore";
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import axiosInstance from "@/lib/axiosInstance";
+import React, { useState } from "react";
 
 export default function CategoryPageContent({
   categorySlug,
@@ -21,6 +21,9 @@ export default function CategoryPageContent({
 }) {
   const [sort, setSort] = useState<"newest" | "bestseller">("newest");
   const [products, setProducts] = React.useState<ProductProps[]>([]);
+  const { categories } = useCategoryStore();
+  console.log("Categories", categories);
+
   React.useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -45,6 +48,42 @@ export default function CategoryPageContent({
           Dưới đây là danh sách các danh mục sản phẩm của chúng tôi. Bạn có thể
           chọn một danh mục để xem các sản phẩm liên quan.
         </p>
+        <div className="mb-4">
+          <label htmlFor="category-select" className="mr-2 font-medium">
+            Chọn danh mục:
+          </label>
+          {categories.length > 0 ? (
+            <select
+              id="category-select"
+              className="w-[220px] border rounded px-3 py-2"
+              value={categorySlug || ""}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (!value) {
+                  window.location.href = "/category";
+                } else {
+                  window.location.href = `/category/${value}`;
+                }
+              }}
+            >
+              <option value="">Tất cả danh mục</option>
+              {categories
+                .filter(
+                  (cat) =>
+                    typeof cat.slug === "string" &&
+                    cat.slug &&
+                    !cat.slug.includes("/")
+                )
+                .map((cat) => (
+                  <option key={cat.slug} value={cat.slug}>
+                    {cat.name}
+                  </option>
+                ))}
+            </select>
+          ) : (
+            <p>Không có danh mục nào</p>
+          )}
+        </div>
       </div>
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center gap-2">
@@ -61,7 +100,6 @@ export default function CategoryPageContent({
           >
             Bán chạy
           </Button>
-          
         </div>
 
         <select className=" border-1 ">
@@ -92,11 +130,11 @@ function CategoryBreadcrumb({ categorySlug }: { categorySlug?: string }) {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-         {categorySlug ? (
+          {categorySlug ? (
             <BreadcrumbPage>{categorySlug}</BreadcrumbPage>
-            ) : (
+          ) : (
             <BreadcrumbPage>Tất cả</BreadcrumbPage>
-            )}
+          )}
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

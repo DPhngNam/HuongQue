@@ -10,17 +10,13 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import axiosInstance from "@/lib/axiosInstance";
+import { useCategoryStore } from "@/app/stores/categoryStore";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
-
 export default function NavMenu() {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const setCategories = useCategoryStore((state) => state.setCategories);
+  const categories = useCategoryStore((state) => state.categories);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,7 +25,7 @@ export default function NavMenu() {
       .then((res) => setCategories(res.data))
       .catch(() => setCategories([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [setCategories]);
 
   return (
     <div>
