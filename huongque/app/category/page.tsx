@@ -9,18 +9,27 @@ import {
 } from "@/components/ui/breadcrumb";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import ProductCard from "./components/ProductCard";
+
 import Link from "next/link";
-const products = Array.from({ length: 20 }, (_, i) => ({
-  id: (i + 1).toString(),
-  name: `Sản phẩm mẫu ${i + 1}`,
-  price: `${100_000 + i * 10_000}đ`,
-  imageSrc: "/image/Product.png",
-}));
+import Product from "../components/products/Product";
+import { ProductProps } from "../models/Product.model";
+import axiosInstance from "@/lib/axiosInstance";
 
 export default function Page() {
   const [sort, setSort] = useState<"newest" | "bestseller">("newest");
-
+  const [products, setProducts] = React.useState<ProductProps[]>([]);
+  React.useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await axiosInstance.get(`productservice/all`);
+        setProducts(res.data || []);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setProducts([]);
+      }
+    };
+    fetchProducts();
+  }, []);
   return (
     <div className="flex justify-center  items-start flex-col p-[96px]">
       <CategoryBreadcrumb />
@@ -57,9 +66,7 @@ export default function Page() {
       </div>
       <div className="mt-6 grid w-full grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
         {products.map((product) => (
-          <Link href={`/products/${product.id}`} key={product.id}>
-            <ProductCard product={product} />
-          </Link>
+          <Product key={product.id} product={product} />
         ))}
       </div>
     </div>
