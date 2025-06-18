@@ -56,19 +56,24 @@ export default function Header() {
           </div>
           <div className="flex items-center space-x-2">
             {isLogin && <NotificationDropdown />}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleCartClick}
-              className="relative"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {totalItems > 0 && (
-                <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                  {totalItems > 99 ? "99+" : totalItems}
-                </div>
-              )}
-            </Button>
+            {
+              isLogin && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleCartClick}
+                  className="relative"
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                  {totalItems > 0 && (
+                    <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                      {totalItems > 99 ? "99+" : totalItems}
+                    </div>
+                  )}
+                </Button>
+              )
+            }
+
             {isLogin ? (
               <Button variant="ghost" size="icon" onClick={handleUserClick}>
                 <User className="h-5 w-5" />

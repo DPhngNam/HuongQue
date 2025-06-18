@@ -11,6 +11,7 @@ import { Phase1Form } from "./Phase1Form";
 import { Phase2Form } from "./Phase2Form";
 import { Phase3Form } from "./Phase3Form";
 import { formSchema, FormValues } from "./schema";
+import { createRegistration, RegistrationPayload } from "@/app/registration/service/regis.service";
 
 const businessTypes = [
   { value: "retail", label: "Bán lẻ" },
@@ -46,10 +47,21 @@ export function StoreRegistrationForm() {
     },
   });
 
-  function onSubmit(values: FormValues) {
-    console.log(values);
-    // Handle form submission
-  }
+  const handleFormSubmit = async (values: FormValues) => {
+    try {
+      // Ensure avatar is always a string
+      const payload: RegistrationPayload = {
+        ...values,
+        avatar: values.avatar ?? "", // fallback to empty string if undefined
+        banner: values.banner ?? "", // fallback to empty string if undefined
+      }
+      await createRegistration(payload);
+      console.log("Registration successful");
+      // Optionally reset the form or redirect
+    } catch (error) {
+      console.error("Registration failed", error);
+    }
+  };
 
   const handleNextPhase = () => {
     setCurrentPhase((prev) => prev + 1);
@@ -77,7 +89,7 @@ export function StoreRegistrationForm() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
               {currentPhase === 1 && <Phase1Form form={form} />}
               {currentPhase === 2 && <Phase2Form form={form} />}
               {currentPhase === 3 && <Phase3Form form={form} />}
