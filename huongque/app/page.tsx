@@ -6,7 +6,7 @@ export default async function Home() {
   
   let products = [];
   try {
-    const res = await axiosInstance.get(`/productservice/top`, {
+    const res = await axiosInstance.get(`http://localhost:8080/productservice/top`, {
       params: { count: 12 },
     });
     products = res.data || [];
