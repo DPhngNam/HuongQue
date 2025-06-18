@@ -67,7 +67,6 @@ export default function Login() {
       } else if (error.message) {
         errorMsg = error.message;
       }
-      console.error("Đăng nhập thất bại:", errorMsg);
       toast.error("Đăng nhập thất bại: " + errorMsg);
     }
   }
@@ -175,7 +174,7 @@ export default function Login() {
                 <Button
                   onClick={() => {
                     window.location.href =
-                      "http://localhost:8081/oauth2/authorization/google";
+                      "http://localhost:8080/authservice/oauth2/authorization/google";
                   }}
                   variant="outline"
                   className="w-full"

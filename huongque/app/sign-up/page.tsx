@@ -317,7 +317,7 @@ export default function SignUp() {
                 <Button
                   onClick={() => {
                     window.location.href =
-                      "http://localhost:8081/oauth2/authorization/google";
+                      "http://localhost:8080/authservice/oauth2/authorization/google";
                   }}
                   variant="outline"
                   className="w-full"
