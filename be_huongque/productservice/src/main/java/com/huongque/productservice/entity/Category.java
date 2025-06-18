@@ -30,8 +30,7 @@ public class Category {
     private String slug;
 
     @CreationTimestamp // Automatically sets the timestamp on entity creation
-    @Column(name = "created_at", nullable = false, updatable = false) // Ensures it's not null and can't be changed
-                                                                      // after creation
+    @Column(name = "created_at", nullable = false, updatable = false) // Ensures it's not null and can't be changed                                                               // after creation
     private LocalDateTime createdAt;
 
     @UpdateTimestamp // Automatically updates the timestamp on entity modification

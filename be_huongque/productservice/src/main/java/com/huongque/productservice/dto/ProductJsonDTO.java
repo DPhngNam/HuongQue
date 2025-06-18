@@ -20,4 +20,7 @@ public class ProductJsonDTO {
     private String categoryId;
     @JsonProperty("shop")
     private String tenant_id;
+    @JsonProperty("papers")
+    private String description;
+
 }

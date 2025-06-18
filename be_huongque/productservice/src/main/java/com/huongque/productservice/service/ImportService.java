@@ -53,6 +53,9 @@ public class ImportService {
                 product.setCategory(category);
                 UUID tenantId = java.util.UUID.fromString(productJsonDTO.getTenant_id());
                 product.setTenantId(tenantId);
+                product.setDescription(productJsonDTO.getDescription());
+
+
                 productRepository.save(product);
             }
         }

@@ -46,8 +46,7 @@ public class ProductService {
 
     }
     public Optional<ProductResponseDTO> getProductById(UUID id) {
-        UUID tenantId = TenantContext.getTenantId();
-        return productRepository.findByIdAndTenantId(id, tenantId)
+        return productRepository.findById(id)
                 .map(productMapper::toDto);
     }
 

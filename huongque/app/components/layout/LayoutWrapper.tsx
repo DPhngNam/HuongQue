@@ -21,7 +21,7 @@ export default function LayoutWrapper({
   return (
     <>
       <AuthInit />
-      {showHeaderFooter && <Header isLogin={isLogin} totalItems={totalItems} />}
+      {showHeaderFooter && <Header />}
       {children}
       {showHeaderFooter && <Footer />}
     </>
