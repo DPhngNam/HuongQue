@@ -36,6 +36,8 @@ import com.huongque.authservice.exception.InvalidPasswordException;
 import com.huongque.authservice.repository.EmailVerificationTokenRepository;
 import com.huongque.authservice.repository.UserRepository;
 import com.huongque.authservice.service.AuthService;
+import com.huongque.authservice.dto.UserProfileDto;
+import com.huongque.authservice.client.UserProfileService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -61,6 +63,7 @@ public class AuthController {
     private UserRepository userRepository;
     @Value("${app.frontend-url}")
     private String frontendUrl;
+    private final UserProfileService userProfileService;
 
 
     @PostMapping("/register")
@@ -163,16 +166,26 @@ public void socialLoginSuccess(OAuth2AuthenticationToken authentication, HttpSer
     OAuth2User oauthUser = authentication.getPrincipal();
     String email = oauthUser.getAttribute("email");
 
-  
     User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("User not found after OAuth login"));
     List<String> roles = user.getRoles().stream()
             .map(role -> role.getName())
             .toList();
+    // Gọi userservice để lưu thông tin user đăng nhập thành công (cập nhật lastLogin hoặc tạo mới nếu cần)
+    try {
+        UserProfileDto profile = UserProfileDto.builder()
+                .id(user.getId())
+                .gmail(email)
+                .fullName(oauthUser.getAttribute("name"))
+                .build();
+        userProfileService.createUserProfile(profile); // FeignClient gọi sang userservice
+    } catch (Exception e) {
+        System.err.println("[OAuth2] Không thể lưu user profile vào userservice: " + e.getMessage());
+    }
     String accessToken = jwtUtils.generateAccessToken(email, roles);
     String refreshToken = jwtUtils.generateRefreshToken(email);
     String redirectUrl = "http://localhost:3000/login/social-login-success?access_token=" + accessToken + "&refresh_token=" + refreshToken;
-
+    
     response.sendRedirect(redirectUrl);
 }
 
