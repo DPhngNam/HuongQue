@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class Oauth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private final AuthService authService;
+    
     private final UserProfileService userProfileService;
     private final UserRepository userRepository;
     @Override
