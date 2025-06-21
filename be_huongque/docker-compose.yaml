@@ -131,7 +131,7 @@ services:
   tenantservice:
     build:
       context: ./tenantservice
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "8084:8084"
     depends_on:

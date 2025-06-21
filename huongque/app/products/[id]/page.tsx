@@ -22,7 +22,7 @@ export default function ShopProductPage({
   // Unwrap params using React.use()
   const resolvedParams = use(params);
   const [quantity, setQuantity] = useState(1);
-  const [showShopInfo, setShowShopInfo] = useState(true);
+
   const [addedToCart, setAddedToCart] = useState(false);
   const searchParams = useSearchParams();
   const [product, setProduct] = useState<
@@ -58,25 +58,7 @@ export default function ShopProductPage({
     fetchProduct();
   }, [resolvedParams.id]);
 
-  // Check where user came from and set shop info visibility accordingly
-  useEffect(() => {
-    const source = searchParams.get("source");
-    // Only show shop info if explicitly coming from shop page
-    // If coming from home, cart, or other pages, don't show shop info
-    if (source === "shop") {
-      setShowShopInfo(true);
-    } else {
-      // Explicitly handle other sources
-      if (source === "home" || source === "cart" || !source) {
-        setShowShopInfo(true);
-      } else {
-        // Default behavior for any other unrecognized source
-        setShowShopInfo(true);
-      }
-    }
-  }, [searchParams]);
-
-  // Breadcrumb navigation
+ 
   const breadcrumbItems = [
     { label: "Trang chủ", href: "/" },
     { label: "Cửa hàng", href: "/shop" },
@@ -122,15 +104,8 @@ export default function ShopProductPage({
       <div className="mx-auto max-w-7xl px-2 py-4 sm:px-4 md:px-6 lg:px-8">
         <BreadcrumbNav items={breadcrumbItems} />
 
-        {/* Shop Avatar - Only shown when navigating from shop page */}
-        {showShopInfo && (
-          <ShopAvatar
-            shopName={shopContactInfo.shopName}
-            shopImage={shopContactInfo.shopImage}
-            shopDescription={shopContactInfo.shopDescription}
-            contactInfo={shopContactInfo.contactInfo}
-          />
-        )}
+   
+        
 
         <div className="mt-8 grid grid-cols-1 gap-y-10 gap-x-8 md:grid-cols-2">
           {/* Product Image */}
@@ -223,6 +198,13 @@ export default function ShopProductPage({
             />
           )}
         </div>
+
+               <ShopAvatar
+            shopName={shopContactInfo.shopName}
+            shopImage={shopContactInfo.shopImage}
+            shopDescription={shopContactInfo.shopDescription}
+            contactInfo={shopContactInfo.contactInfo}
+          />
 
         {/* Related Products Section */}
         <div className="mt-16 border-t pt-16">

@@ -1,0 +1,11 @@
+FROM node:22-slim
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install -g @nestjs/cli && npm install
+
+COPY . .
+
+# Gắn volume nên không cần build thủ công
+CMD ["npm", "run", "start:dev"]

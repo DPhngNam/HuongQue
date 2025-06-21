@@ -1,21 +1,20 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
-import { ElasticsearchService } from "@nestjs/elasticsearch";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { shops } from '../data/initialData'; // Adjust the path as necessary
-import { Tenant } from "./tenant.entity";
+import { Tenant } from './tenant.entity';
 @Injectable()
 export class SeedService implements OnModuleInit {
   constructor(
     @InjectRepository(Tenant)
     private tenantRepository: Repository<Tenant>,
     private readonly elasticService: ElasticsearchService,
-
-  ) { }
+  ) {}
   async onModuleInit() {
     const data = shops;
-  
-    const tenants = data.map(shop => ({
+
+    const tenants = data.map((shop) => ({
       id: shop.shop_id, // Assuming shop_id is unique and can be used as id
       name: shop.shop_name,
       avatar: shop.shop_avatar,
@@ -29,10 +28,12 @@ export class SeedService implements OnModuleInit {
     }));
     await this.tenantRepository.clear();
 
-    await this.tenantRepository.save(tenants)
+    await this.tenantRepository
+      .save(tenants)
       .then(async () => {
         console.log('Seed data inserted successfully');
         await this.seedElasticsearch(tenants);
+        console.log('All seed steps completed successfully!'); // Add log here
       })
       .catch((error) => {
         console.error('Error inserting seed data:', error);
@@ -47,8 +48,7 @@ export class SeedService implements OnModuleInit {
       return;
     }
 
-
-    const body = tenants.flatMap(tenant => [
+    const body = tenants.flatMap((tenant) => [
       { index: { _index: 'tenants', _id: tenant.id.toString() } },
       {
         id: tenant.id,
@@ -58,7 +58,7 @@ export class SeedService implements OnModuleInit {
         phone: tenant.phone,
         ShopDescription: tenant.ShopDescription,
         owner: tenant.owner,
-      }
+      },
     ]);
     const maxRetries = 5;
     let attempt = 0;
@@ -70,12 +70,15 @@ export class SeedService implements OnModuleInit {
         return;
       } catch (error) {
         attempt++;
-        console.error(`Elasticsearch bulk insert failed (attempt ${attempt}):`, error.message);
+        console.error(
+          `Elasticsearch bulk insert failed (attempt ${attempt}):`,
+          error.message,
+        );
         if (attempt >= maxRetries) {
           console.error('Max retries reached. Giving up.');
           break;
         }
-        await new Promise(res => setTimeout(res, 3000)); // wait 3 seconds before retry
+        await new Promise((res) => setTimeout(res, 3000)); // wait 3 seconds before retry
       }
     }
   }
