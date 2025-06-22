@@ -1,12 +1,42 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Camera } from 'lucide-react';
+import axios from 'axios';
 
 export default function Personal() {
+  const [user, setUser] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    birthday: '',
+  })
+
+  useEffect(() => {
+    
+    // Simulate fetching user data from an API
+    const fetchUserData = async () => {
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
+        console.error("No access token found");
+      }
+      console.log("Access Token:", accessToken);
+      // Replace with actual API call
+      const userData = await axios.get('http://localhost:8080/userservice/users/{user.id}')
+        .then(response => response.data)
+        .catch(error => {
+          console.error("Error fetching user data:", error);
+        });
+
+      console.log("User data fetched:", userData);
+      setUser(userData);
+    }
+    fetchUserData();
+  }, []);
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-6">Thông tin cá nhân</h2>
