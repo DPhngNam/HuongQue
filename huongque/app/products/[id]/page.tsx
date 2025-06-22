@@ -11,7 +11,7 @@ import axiosInstance from "@/lib/axiosInstance";
 import { Check, Heart, Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { use, useEffect, useState } from "react";
 
 export default function ShopProductPage({
@@ -80,12 +80,14 @@ export default function ShopProductPage({
     // Create a cart item from the product
     const cartItem: CartItem = {
       productId: String(product.id),
-      name: product.name,
+      productName: product.name,
       price: typeof product.price === "number" ? product.price : 0,
       quantity: quantity,
-      image:
+      productImage:
         product.images && product.images.length > 0 ? product.images[0] : "",
     };
+
+    console.log("Adding to cart:", cartItem);
 
     // Add to cart using the Zustand store
     addItem(cartItem);
