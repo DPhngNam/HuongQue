@@ -207,25 +207,25 @@ services:
     volumes:
       - ./registerservice:/app
       - /app/node_modules
-  logsservice:
-    build:
-      context: ./logsservice
-      dockerfile: Dockerfile
-    ports:
-      - "8082:8082"
-    depends_on:
-      - postgres
-      - rabbitmq
-      - eurekaserver
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USERNAME: logsservice
-      DB_PASSWORD: logs
-      DB_NAME: logsdb
-      PORT: 8082
-    volumes:
-      - ./logsservice:/app
+  # logsservice:
+  #   build:
+  #     context: ./logsservice
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8082:8082"
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #     - eurekaserver
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USERNAME: logsservice
+  #     DB_PASSWORD: logs
+  #     DB_NAME: logsdb
+  #     PORT: 8082
+  #   volumes:
+  #     - ./logsservice:/app
   s3bucket:
     build:
       context: ./s3bucket
@@ -320,31 +320,31 @@ services:
       EUREKA_HOST: eurekaserver
       EUREKA_PORT: 8761
 
-  chatbotservice:
-    build:
-      context: ./chatbotservice
-      dockerfile: Dockerfile
-    ports:
-      - "8090:8090"
-    depends_on:
-      - postgres
-      - rabbitmq
-      - eurekaserver
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USERNAME: chatbotservice
-      DB_PASSWORD: chatbot
-      DB_NAME: chatbotdb
-      PORT: 8090
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USERNAME: adminhuongque
-      RABBITMQ_PASSWORD: huongque
-      EUREKA_HOST: eurekaserver
-      EUREKA_PORT: 8761
-    volumes:
-      - ./chatbotservice:/app
+  # chatbotservice:
+  #   build:
+  #     context: ./chatbotservice
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8090:8090"
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #     - eurekaserver
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USERNAME: chatbotservice
+  #     DB_PASSWORD: chatbot
+  #     DB_NAME: chatbotdb
+  #     PORT: 8090
+  #     RABBITMQ_HOST: rabbitmq
+  #     RABBITMQ_PORT: 5672
+  #     RABBITMQ_USERNAME: adminhuongque
+  #     RABBITMQ_PASSWORD: huongque
+  #     EUREKA_HOST: eurekaserver
+  #     EUREKA_PORT: 8761
+  #   volumes:
+  #     - ./chatbotservice:/app
 
   notiservice:
     build:

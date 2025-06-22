@@ -18,7 +18,7 @@ public class EmailService {
     public void sendVerificationEmail(String toEmail, String token) {
         String subject = "Verify your email";
         String message = "Click the link to verify your email: " +
-                "http://localhost:8081/auth/verify-email?token=" + token;
+                "http://localhost:8080/authservice/auth/verify-email?token=" + token;
 
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(toEmail);
@@ -35,7 +35,7 @@ public class EmailService {
     public void sendPasswordResetEmail(String toEmail, String token) {
         String subject = "Reset your password";
         String message = "Click the link to reset your password: " +
-                "http://localhost:8081/auth/reset-password?token=" + token;
+                "http://localhost:8080/authservice/auth/reset-password?token=" + token;
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(toEmail);
         email.setSubject(subject);

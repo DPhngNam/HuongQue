@@ -2,27 +2,24 @@ package com.huongque.notiservice.entities;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import org.hibernate.annotations.GenericGenerator;
-
 import com.huongque.notiservice.enums.NotificationStatus;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+
 @Entity
 @Data
 @Table(name = "AdminNotification")
 public class AdminNotification {
 
     @Id
-    @GeneratedValue
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "notification_id", updatable = false, nullable = false)
     private UUID notificationId;
 
