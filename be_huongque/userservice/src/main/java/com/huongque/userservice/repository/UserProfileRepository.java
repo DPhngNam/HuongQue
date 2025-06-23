@@ -9,5 +9,6 @@ import java.util.UUID;
 public interface UserProfileRepository extends JpaRepository<UserProfile, UUID> {
     UserProfile findByGmail(String gmail);
     UserProfile findByPhone(String phone);
+    
 
 }

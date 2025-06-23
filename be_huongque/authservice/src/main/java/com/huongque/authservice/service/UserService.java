@@ -70,7 +70,7 @@ public class UserService implements UserDetailsService {
      * Xóa các user chưa xác thực nếu token xác thực email đã hết hạn
      * Chạy mỗi 5 phút
      */
-    @Scheduled(cron = "0 0/10 * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void deleteUnverifiedUsersWithExpiredToken() {
         Date now = new Date();
         var expiredTokens = emailVerificationTokenRepository.findAll().stream()

@@ -19,9 +19,9 @@ public class UserController {
         return ResponseEntity.ok(userProfileService.getAllUserProfiles());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserProfileDto> getUserProfile(@PathVariable UUID id){
-        return ResponseEntity.ok(userProfileService.getUserProfile(id));
+    @GetMapping("/{email}")
+    public ResponseEntity<UserProfileDto> getUserProfile(@PathVariable String email){
+        return ResponseEntity.ok(userProfileService.getUserProfile(email));
     }
 
     @PutMapping("/{id}")

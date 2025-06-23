@@ -24,4 +24,8 @@ public class UserProfile {
     @Column(unique = true)
     private  String gmail;
     private String phone;
+    public UserProfile orElseThrow(Object object) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
+    }
 }

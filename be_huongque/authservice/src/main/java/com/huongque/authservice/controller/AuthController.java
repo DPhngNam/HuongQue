@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -47,8 +46,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
-
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -64,7 +61,6 @@ public class AuthController {
     @Value("${app.frontend-url}")
     private String frontendUrl;
     private final UserProfileService userProfileService;
-
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody @Valid RegisterDto request) {
@@ -121,7 +117,7 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestBody EmailRequest request) {
-        
+
         Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -136,7 +132,6 @@ public class AuthController {
             emailService.sendPasswordResetEmail(request.getEmail(), token);
 
         }
-
 
         return ResponseEntity.ok("Check your email for reset password link.");
     }
@@ -161,34 +156,37 @@ public class AuthController {
         tokenRepository.delete(resetToken); // xoá token sau khi dùng
         return ResponseEntity.ok("Đặt lại mật khẩu thành công.");
     }
-     @GetMapping("/social-login-success")
-public void socialLoginSuccess(OAuth2AuthenticationToken authentication, HttpServletResponse response) throws IOException {
-    OAuth2User oauthUser = authentication.getPrincipal();
-    String email = oauthUser.getAttribute("email");
 
-    User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("User not found after OAuth login"));
-    List<String> roles = user.getRoles().stream()
-            .map(role -> role.getName())
-            .toList();
-    // Gọi userservice để lưu thông tin user đăng nhập thành công (cập nhật lastLogin hoặc tạo mới nếu cần)
-    try {
-        UserProfileDto profile = UserProfileDto.builder()
-                .id(user.getId())
-                .gmail(email)
-                .fullName(oauthUser.getAttribute("name"))
-                .build();
-        userProfileService.createUserProfile(profile); // FeignClient gọi sang userservice
-    } catch (Exception e) {
-        System.err.println("[OAuth2] Không thể lưu user profile vào userservice: " + e.getMessage());
+    @GetMapping("/social-login-success")
+    public void socialLoginSuccess(OAuth2AuthenticationToken authentication, HttpServletResponse response)
+            throws IOException {
+        OAuth2User oauthUser = authentication.getPrincipal();
+        String email = oauthUser.getAttribute("email");
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found after OAuth login"));
+        List<String> roles = user.getRoles().stream()
+                .map(role -> role.getName())
+                .toList();
+        // Gọi userservice để lưu thông tin user đăng nhập thành công (cập nhật
+        // lastLogin hoặc tạo mới nếu cần)
+        try {
+            UserProfileDto profile = UserProfileDto.builder()
+                    .id(user.getId())
+                    .gmail(email)
+                    .fullName(oauthUser.getAttribute("name"))
+                    .build();
+            userProfileService.createUserProfile(profile); // FeignClient gọi sang userservice
+        } catch (Exception e) {
+            System.err.println("[OAuth2] Không thể lưu user profile vào userservice: " + e.getMessage());
+        }
+        String accessToken = jwtUtils.generateAccessToken(email, roles);
+        String refreshToken = jwtUtils.generateRefreshToken(email);
+        String redirectUrl = "http://localhost:3000/login/social-login-success?access_token=" + accessToken
+                + "&refresh_token=" + refreshToken;
+
+        response.sendRedirect(redirectUrl);
     }
-    String accessToken = jwtUtils.generateAccessToken(email, roles);
-    String refreshToken = jwtUtils.generateRefreshToken(email);
-    String redirectUrl = "http://localhost:3000/login/social-login-success?access_token=" + accessToken + "&refresh_token=" + refreshToken;
-    
-    response.sendRedirect(redirectUrl);
-}
-
 
     @GetMapping("/social-login-failure")
     public ResponseEntity<String> socialLoginFailure() {
@@ -201,6 +199,5 @@ public void socialLoginSuccess(OAuth2AuthenticationToken authentication, HttpSer
             HttpServletRequest request) {
         return ResponseEntity.ok(new AuthResponse("accessToken", "refreshToken"));
     }
-
 
 }

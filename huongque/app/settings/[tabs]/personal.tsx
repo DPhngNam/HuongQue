@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Camera } from 'lucide-react';
 import axios from 'axios';
-
+import { jwtDecode } from "jwt-decode";
+import Image from "next/image";
 export default function Personal() {
   const [user, setUser] = useState({
     firstName: '',
@@ -17,16 +18,18 @@ export default function Personal() {
   })
 
   useEffect(() => {
-    
+
     // Simulate fetching user data from an API
     const fetchUserData = async () => {
       const accessToken = localStorage.getItem('accessToken');
       if (!accessToken) {
         console.error("No access token found");
+        return;
       }
-      console.log("Access Token:", accessToken);
-      // Replace with actual API call
-      const userData = await axios.get('http://localhost:8080/userservice/users/{user.id}')
+      const decoded = jwtDecode(accessToken);
+      const email = decoded.sub;
+
+      const userData = await axios.get('http://localhost:8080/userservice/users/' + email)
         .then(response => response.data)
         .catch(error => {
           console.error("Error fetching user data:", error);
@@ -40,27 +43,35 @@ export default function Personal() {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-6">Thông tin cá nhân</h2>
-      
+
       {/* Avatar Section */}
       <div className="mb-8">
         <div className="flex items-center gap-6">
           <div className="relative">
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200">
-              <img 
-                src="/placeholder-avatar.jpg" 
-                alt="Avatar" 
+              {/* <img
+                src="/placeholder-avatar.jpg"
+                alt="Avatar"
                 className="w-full h-full object-cover"
+              /> */}
+              <Image
+                src="/image/avatar.jpg"
+                alt="Avatar"
+                width={96}
+                height={96}
+                className="rounded-full border-2 border-gray-200 object-cover"
               />
+
             </div>
-            <label 
-              htmlFor="avatar-upload" 
+            <label
+              htmlFor="avatar-upload"
               className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-50"
             >
               <Camera size={18} className="text-gray-600" />
-              <input 
-                type="file" 
-                id="avatar-upload" 
-                className="hidden" 
+              <input
+                type="file"
+                id="avatar-upload"
+                className="hidden"
                 accept="image/*"
               />
             </label>
