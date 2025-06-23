@@ -18,6 +18,9 @@ public class UserProfile {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    
+    private String avatar;
+
     private String fullName;
     private LocalDate dob;
 
