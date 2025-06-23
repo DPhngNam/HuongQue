@@ -78,6 +78,7 @@ services:
       eurekaserver:
         condition: service_healthy
     environment:
+      JWT_SIGNING_KEY: ${JWT_SIGNING_KEY}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USERNAME: adminhuongque

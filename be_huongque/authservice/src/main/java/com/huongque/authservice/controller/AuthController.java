@@ -180,8 +180,8 @@ public class AuthController {
         } catch (Exception e) {
             System.err.println("[OAuth2] Không thể lưu user profile vào userservice: " + e.getMessage());
         }
-        String accessToken = jwtUtils.generateAccessToken(email, roles);
-        String refreshToken = jwtUtils.generateRefreshToken(email);
+        String accessToken = jwtUtils.generateAccessToken(email, user.getId(), roles);
+        String refreshToken = jwtUtils.generateRefreshToken(email, user.getId());
         String redirectUrl = "http://localhost:3000/login/social-login-success?access_token=" + accessToken
                 + "&refresh_token=" + refreshToken;
 

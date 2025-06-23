@@ -27,25 +27,27 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateAccessToken(String username, List<String> roles) {
-        return Jwts.builder()
-                .subject(username)
-                .claim("roles", roles)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10)) // 10 phút
-                .signWith(getSigningKey())
-                .compact();
-    }
+    public String generateAccessToken(String username, UUID userId, List<String> roles) {
+    return Jwts.builder()
+            .setSubject(username)
+            .claim("userId", userId.toString())
+            .claim("roles", roles)
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10)) // 10 phút
+            .signWith(getSigningKey())
+            .compact();
+}
 
 
-    public String generateRefreshToken(String username) {
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7 ngày
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
-                .compact();
-    }
+    public String generateRefreshToken(String username, UUID userId) {
+    return Jwts.builder()
+            .setSubject(username)
+            .claim("userId", userId.toString())
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7 ngày
+            .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+            .compact();
+}
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);

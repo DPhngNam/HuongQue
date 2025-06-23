@@ -92,8 +92,8 @@ public class AuthService {
         List<String> roles = user.getRoles().stream()
                 .map(role -> role.getName())
                 .toList();
-        String accessToken = jwtUtils.generateAccessToken(user.getEmail(), roles);
-        String refreshToken = jwtUtils.generateRefreshToken(user.getEmail());
+        String accessToken = jwtUtils.generateAccessToken(user.getEmail(), user.getId(), roles);
+        String refreshToken = jwtUtils.generateRefreshToken(user.getEmail(), user.getId());
         return new AuthResponse(accessToken, refreshToken);
     }
     public AuthResponse refreshToken(String refreshToken){
@@ -101,8 +101,13 @@ public class AuthService {
             throw new RuntimeException("Refresh token không hợp lệ");
         }
         String username = jwtUtils.extractUsername(refreshToken);
-        String newAccessToken = jwtUtils.generateAccessToken(username, List.of());
-        String newRefreshToken = jwtUtils.generateRefreshToken(username);
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        List<String> roles = user.getRoles().stream()
+                .map(role -> role.getName())
+                .toList();
+        String newAccessToken = jwtUtils.generateAccessToken(username, user.getId(), roles);
+        String newRefreshToken = jwtUtils.generateRefreshToken(username, user.getId());
 
         return new AuthResponse(newAccessToken, newRefreshToken);
     }

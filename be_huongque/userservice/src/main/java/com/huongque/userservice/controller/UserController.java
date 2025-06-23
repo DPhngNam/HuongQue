@@ -18,6 +18,10 @@ public class UserController {
     public ResponseEntity<List<UserProfileDto>> getAllUserProfiles() {
         return ResponseEntity.ok(userProfileService.getAllUserProfiles());
     }
+    @GetMapping("/me")
+    public ResponseEntity<UserProfileDto> getCurrentUserProfile(@RequestHeader("X-User-Id") String userId) {
+        return ResponseEntity.ok(userProfileService.getUserProfile(userId));
+    }
 
     @GetMapping("/{email}")
     public ResponseEntity<UserProfileDto> getUserProfile(@PathVariable String email){

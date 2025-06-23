@@ -18,7 +18,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import reactor.core.publisher.Mono;
 
-@Component
+// @Component
 public class JwtAuthFilter implements GlobalFilter, Ordered {
 
     @Value("${jwt.signing-key}")
