@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.huongque.authservice.dto.UserResponse;
+import com.huongque.authservice.entity.EmailVerificationToken;
 import com.huongque.authservice.entity.User;
 import com.huongque.authservice.repository.EmailVerificationTokenRepository;
 import com.huongque.authservice.repository.UserRepository;
@@ -65,23 +66,20 @@ public class UserService implements UserDetailsService {
                 authorities
         );
     }
-    
-    /**
-     * Xóa các user chưa xác thực nếu token xác thực email đã hết hạn
-     * Chạy mỗi 5 phút
-     */
-    @Scheduled(cron = "0 0 * * * *")
-    public void deleteUnverifiedUsersWithExpiredToken() {
+
+    @Scheduled(cron = "0 0 * * * *") // mỗi giờ
+    public void deleteExpiredUnverifiedUsers() {
         Date now = new Date();
-        var expiredTokens = emailVerificationTokenRepository.findAll().stream()
-            .filter(token -> token.getExpirationTime().before(now))
-            .toList();
-        for (var token : expiredTokens) {
+        var expiredTokens = emailVerificationTokenRepository.findAllByExpirationTimeBefore(now);
+
+        for (EmailVerificationToken token : expiredTokens) {
             User user = token.getUser();
             if (user != null && !user.isEnabled()) {
-                emailVerificationTokenRepository.delete(token);
-                userRepository.delete(user);
+                userRepository.delete(user); // xóa user
             }
+            emailVerificationTokenRepository.delete(token); // xóa token
         }
     }
+
+    
 }
