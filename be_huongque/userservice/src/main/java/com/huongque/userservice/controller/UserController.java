@@ -20,12 +20,9 @@ public class UserController {
     }
     @GetMapping("/me")
     public ResponseEntity<UserProfileDto> getCurrentUserProfile(@RequestHeader("X-User-Id") String userId) {
-        return ResponseEntity.ok(userProfileService.getUserProfile(userId));
-    }
-
-    @GetMapping("/{email}")
-    public ResponseEntity<UserProfileDto> getUserProfile(@PathVariable String email){
-        return ResponseEntity.ok(userProfileService.getUserProfile(email));
+        System.out.println("User ID from header: " + userId);
+        UUID uuid = UUID.fromString(userId);
+        return ResponseEntity.ok(userProfileService.getUserProfile(uuid));
     }
 
     @PutMapping("/{id}")

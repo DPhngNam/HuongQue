@@ -11,6 +11,7 @@ spring:
           uri: ws://notiservice:8092
           predicates:
             - Path=/ws/**
+      
       discovery:
         locator:
           enabled: true

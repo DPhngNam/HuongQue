@@ -18,7 +18,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import reactor.core.publisher.Mono;
 
-// @Component
+@Component
 public class JwtAuthFilter implements GlobalFilter, Ordered {
 
     @Value("${jwt.signing-key}")
@@ -29,9 +29,10 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         String path = exchange.getRequest().getPath().toString();
 
         // Bỏ qua filter cho /auth/**
-        if (path.startsWith("/auth/")) {
+        if (path.startsWith("/authservice/")) {
             return chain.filter(exchange);
         }
+        
 
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -47,11 +48,13 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
                 .getBody();
 
             // Optionally, add user info to header
-            String userId = claims.getSubject(); // Đây là UUID nếu bạn set như vậy
+            String userId = claims.getSubject();
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                 .header("X-User-Id", userId)
                 .build();
-
+            
+            
+            System.out.println("User ID from JWT: " + userId);
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
 
         } catch (Exception e) {

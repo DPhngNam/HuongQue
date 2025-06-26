@@ -27,10 +27,10 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateAccessToken(String username, UUID userId, List<String> roles) {
+    public String generateAccessToken(String email, UUID userId, List<String> roles) {
     return Jwts.builder()
-            .setSubject(username)
-            .claim("userId", userId.toString())
+            .setSubject(userId.toString())
+            .claim("email", email.toString())
             .claim("roles", roles)
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10)) // 10 phút
@@ -39,10 +39,10 @@ public class JwtUtils {
 }
 
 
-    public String generateRefreshToken(String username, UUID userId) {
+    public String generateRefreshToken(String email, UUID userId) {
     return Jwts.builder()
-            .setSubject(username)
-            .claim("userId", userId.toString())
+            .setSubject(userId.toString())
+            .claim("email", email.toString())
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7 ngày
             .signWith(getSigningKey(), SignatureAlgorithm.HS512)

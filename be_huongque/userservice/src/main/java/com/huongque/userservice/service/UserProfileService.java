@@ -17,18 +17,16 @@ public class UserProfileService {
 
     private  final UserProfileRepository userProfileRepository;
 
-    public UserProfileDto getUserProfile(String email) {
-        UserProfile userProfile = userProfileRepository.findByGmail(email);
-        if (userProfile == null) {
-            throw new UsernameNotFoundException("User not found with email: " + email);
-        }
-                
-        return  new UserProfileDto(
-                userProfile.getId(),
-                userProfile.getFullName(),
-                userProfile.getDob(),
-                userProfile.getGmail(),
-                userProfile.getPhone()
+    public UserProfileDto getUserProfile(UUID userId) {
+        UserProfile user = userProfileRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        return new UserProfileDto(
+                user.getId(),
+                user.getFullName(),
+                user.getDob(),
+                user.getGmail(),
+                user.getPhone()
         );
     }
 
