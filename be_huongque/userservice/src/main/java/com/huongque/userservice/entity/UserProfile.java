@@ -16,10 +16,7 @@ import java.util.UUID;
 public class UserProfile {
     @Id
     private UUID id;
-
-    
     private String avatar;
-
     private String fullName;
     private LocalDate dob;
 

@@ -50,24 +50,13 @@ public class AuthService {
                 .email(request.getEmail())
                 .build();
         userRepository.save(user);
+        System.out.println("Tạo người dùng thành công: " + user);
 
-        UserProfileDto userProfileDto = UserProfileDto.builder()
-                .id(user.getId())
-                .gmail(user.getEmail())
-                .build();
-
-        try {
-            userProfileService.createUserProfile(userProfileDto);
-            System.out.println("Tạo hồ sơ người dùng thành công: " + userProfileDto);
-        } catch (Exception e) {
-            logger.error("Không thể tạo hồ sơ người dùng", e.getMessage(), e);
-            throw new RuntimeException("Không thể tạo hồ sơ người dùng", e);
-        }
         String token = UUID.randomUUID().toString();
         EmailVerificationToken verificationToken = new EmailVerificationToken();
         verificationToken.setToken(token);
         verificationToken.setUser(user);
-        verificationToken.setExpirationTime(new Date(System.currentTimeMillis()+60*1000)); // 1 phút
+        verificationToken.setExpirationTime(new Date(System.currentTimeMillis()+10*60*1000)); // 10 phút
         emailVerificationTokenRepository.save(verificationToken);
 
         try {

@@ -42,6 +42,7 @@ public class UserProfileService {
     }
     public UserProfileDto createUserProfile(UserProfileDto userDto) {
         UserProfile user = new UserProfile();
+        user.setId(userDto.getId());
         user.setFullName(userDto.getFullName());
         user.setDob(userDto.getDob());
         user.setGmail(userDto.getGmail());

@@ -84,24 +84,39 @@ public class AuthController {
     }
 
     @GetMapping("/verify-email")
-    public void verifyEmail(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
-        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid token"));
+public void verifyEmail(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
+    EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token)
+            .orElseThrow(() -> new RuntimeException("Invalid token"));
 
-        User user = verificationToken.getUser();
-        if (user.isEnabled()) {
-            response.sendRedirect(frontendUrl + "/login?status=already");
-            return;
-        }
-        if (verificationToken.getExpirationTime().before(new java.util.Date())) {
-            response.sendRedirect(frontendUrl + "/login?status=expired");
-            return;
-        }
-        user.setEnabled(true);
-        userRepository.save(user);
-        emailVerificationTokenRepository.delete(verificationToken);
-        response.sendRedirect(frontendUrl + "/login?status=success");
+    User user = verificationToken.getUser();
+    if (user.isEnabled()) {
+        response.sendRedirect(frontendUrl + "/login?status=already");
+        return;
     }
+    if (verificationToken.getExpirationTime().before(new java.util.Date())) {
+        response.sendRedirect(frontendUrl + "/login?status=expired");
+        return;
+    }
+
+    user.setEnabled(true);
+    userRepository.save(user);
+    emailVerificationTokenRepository.delete(verificationToken);
+
+    // ✅ Gọi UserProfileService sau khi xác thực thành công
+    try {
+        UserProfileDto profile = UserProfileDto.builder()
+                .id(user.getId())
+                .gmail(user.getEmail())
+                .build();
+        userProfileService.createUserProfile(profile);
+    } catch (Exception e) {
+        // Logging lỗi nếu không tạo được UserProfile
+        System.err.println("[Verify] Không thể tạo hồ sơ người dùng: " + e.getMessage());
+    }
+
+    response.sendRedirect(frontendUrl + "/login?status=success");
+}
+
 
     @ExceptionHandler(InvalidPasswordException.class)
     public ResponseEntity<Object> handleInvalidPasswordException(InvalidPasswordException ex) {
