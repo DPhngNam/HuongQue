@@ -35,25 +35,30 @@ public class ProductController {
     public ResponseEntity<List<ProductResponseDTO>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProductsForTenant());
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable UUID id){
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable UUID id) {
         return productService.getProductById(id)
-                .map(ResponseEntity::ok) 
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable UUID id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/all")
     public ResponseEntity<List<ProductResponseDTO>> getAllProductsNoTenant() {
         return ResponseEntity.ok(productService.getAllProducts());
     }
+
     @GetMapping("/top")
-public ResponseEntity<List<ProductResponseDTO>> getTopProducts(@RequestParam int count) {
-    return ResponseEntity.ok(productService.getTopProducts(count));
-}
+    public ResponseEntity<List<ProductResponseDTO>> getTopProducts(@RequestParam int count) {
+        return ResponseEntity.ok(productService.getTopProducts(count));
+    }
+
     @GetMapping("/category/{categorySlug}")
     public ResponseEntity<List<ProductResponseDTO>> getAllProductsByCategorySlug(@PathVariable String categorySlug) {
         return ResponseEntity.ok(productService.getAllProductsByCategorySlug(categorySlug));

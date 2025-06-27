@@ -1,20 +1,26 @@
+'use client';
+
+import { useEffect, useState } from "react";
 import axiosInstance from "@/lib/axiosInstance";
 import HomeBanner from "./components/home/HomeBanner";
 import HomeProducts from "./components/home/HomeProducts";
-export default async function Home() {
+import { ProductProps } from "./models/Product.model";
 
-  
-  let products = [];
-  try {
-    const res = await axiosInstance.get(`http://localhost:8080/productservice/top`, {
-      params: { count: 12 },
-    });
-    products = res.data || [];
-  } catch (error) {
-    console.error("Failed to fetch products:", error);
-    products = [];
-  }
-  
+export default function Home() {
+  const [products, setProducts] = useState<ProductProps[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await axiosInstance.get("/productservice/top?count=10");
+        setProducts(res.data || []);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        setProducts([]);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   return (
     <div className="flex flex-col p-[96px]">
