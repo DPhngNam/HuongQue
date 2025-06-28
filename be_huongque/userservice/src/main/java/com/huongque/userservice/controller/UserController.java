@@ -57,4 +57,17 @@ public class UserController {
         return ResponseEntity.ok(userProfileService.partialUpdateUserProfile(uuid, updateUserDTO));
     }
 
+    @PostMapping("/internal")
+public ResponseEntity<UserProfileDto> createUserProfileInternal(
+        @RequestHeader("X-INTERNAL-CALL") String internal,
+        @RequestBody UserProfileDto userProfileDto) {
+
+    if (!"true".equalsIgnoreCase(internal)) {
+        return ResponseEntity.status(401).build();
+    }
+
+    return ResponseEntity.ok(userProfileService.createUserProfile(userProfileDto));
+}
+
+
 }
