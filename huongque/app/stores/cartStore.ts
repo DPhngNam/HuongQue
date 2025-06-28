@@ -21,9 +21,13 @@ interface CartState {
 // Helper function to get user ID from token
 const getUserIdFromToken = (): string | '' => {
   try {
-    const accessToken = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    const accessToken = localStorage.getItem('accessToken');
     console.log(accessToken)
-    const decodedToken = jwtDecode<MyJwtPayload>(accessToken || '');
+    if (!accessToken) {
+      console.log("No access token found");
+      return '';
+    }
+    const decodedToken = jwtDecode<MyJwtPayload>(accessToken);
     return decodedToken.sub || '';
   } catch (error) {
     console.log("Error decoding token:", error);

@@ -26,6 +26,7 @@ import Registration from "./[tabs]/Registration";
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
   DialogHeader,
   DialogFooter,
 } from "@/components/ui/dialog";
@@ -47,7 +48,9 @@ export default function SettingsPage() {
     <div className="p-8 md:p-8">
       <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
         <DialogContent>
-          <DialogHeader>Bạn có chắc chắn muốn đăng xuất?</DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Bạn có chắc chắn muốn đăng xuất?</DialogTitle>
+          </DialogHeader>
           <DialogFooter>
             <Button
               variant="outline"

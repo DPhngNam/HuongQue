@@ -14,10 +14,10 @@ import NavMenu from "./NavMenu";
 
 export default function Header() {
   const router = useRouter();
-  const pathname = usePathname();
   const isLogin = useAuthStore((state) => state.isLogin());
-  const fetchCartItems = useCartStore((state) => state.fetchCartItems());
-  const totalItems = useCartStore((state) => state.totalItems);
+  const totalItems = useCartStore((state) => state.totalItems); // Always call the hook
+  const displayTotalItems = isLogin ? totalItems : 0; // Use conditional logic here instead
+
   const handleCartClick = () => {
     router.push("/cart");
   };
