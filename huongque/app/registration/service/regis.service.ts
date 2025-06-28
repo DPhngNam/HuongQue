@@ -1,3 +1,5 @@
+import axiosInstance from "@/lib/axiosInstance";
+
 export interface RegistrationPayload {
   email: string;
   name: string;
@@ -22,30 +24,28 @@ export interface RegistrationPayload {
 const API_BASE = "http://localhost:8080/registerservice/api/register";
 
 export async function createRegistration(payload: RegistrationPayload) {
-  const res = await fetch(API_BASE, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) {
+  const res = await axiosInstance.post(API_BASE, payload);
+  if (res.status !== 201) {
     throw new Error("Failed to create registration");
   }
-  return res.json();
+  return res.data;
 }
 
 export async function getRegistrationsByUser(email: string) {
-  const res = await fetch(API_BASE + `/all/user?email=${email}&page=1&limit=10`);
+  const res = await axiosInstance.get(API_BASE + `/all/user`, {
+    params: { email, page: 1, limit: 10 },
+  });
   console.log(res);
-  if (!res.ok) {
+  if (res.status !== 200) {
     throw new Error("Failed to fetch registrations");
   }
-  return res.json();
+  return res.data;
 }
 
 export async function getRegistrationById(id: string) {
-  const res = await fetch(`${API_BASE}/${id}`);
-  if (!res.ok) {
+  const res = await axiosInstance.get(`${API_BASE}/${id}`);
+  if (res.status !== 200) {
     throw new Error("Failed to fetch registration");
   }
-  return res.json();
+  return res.data;
 }

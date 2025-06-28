@@ -1,14 +1,13 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import { useState } from "react"
+import { toast } from "sonner"
 import CartItem from '../cartitem'
 import BreadcrumbNav from '../components/ui/breadcrumb-nav'
-import { Button } from '@/components/ui/button'
 import { useCartStore } from '../stores/cartStore'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { useState } from "react"
-import { orderService, Order } from "./service/service"
-import { toast } from "sonner"
+import { Order, orderService } from "./service/service"
 
 export default function CartPage() {
     const router = useRouter()
@@ -17,7 +16,7 @@ export default function CartPage() {
     const removeItem = useCartStore(state => state.removeItem)
     const [isLoading, setIsLoading] = useState(false)
     
-    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    const subtotal = 10000
     const shipping = 15
     const total = subtotal + shipping
 
@@ -78,6 +77,9 @@ export default function CartPage() {
         }
     }
 
+    
+
+
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
@@ -99,11 +101,11 @@ export default function CartPage() {
                                     ))}
                                 </div>
                             ) : (
-                                <div className="text-center py-8">
+                                <div className="text-center py-8 w-full">
                                     <p className="text-gray-500">Your cart is empty</p>
                                     <Button 
                                         className="mt-4"
-                                        onClick={() => router.push('/products')}
+                                        onClick={() => router.push('/category/thuc-pham-am-thuc')}
                                     >
                                         Continue Shopping
                                     </Button>

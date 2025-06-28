@@ -12,6 +12,8 @@ import { Phase2Form } from "./Phase2Form";
 import { Phase3Form } from "./Phase3Form";
 import { formSchema, FormValues } from "./schema";
 import { createRegistration, RegistrationPayload } from "@/app/registration/service/regis.service";
+import { MyJwtPayload } from "@/app/settings/[tabs]/Registration";
+import { jwtDecode } from "jwt-decode";
 
 const businessTypes = [
   { value: "retail", label: "Bán lẻ" },
@@ -23,10 +25,20 @@ const businessTypes = [
 export function StoreRegistrationForm() {
   const [currentPhase, setCurrentPhase] = useState(1);
 
+  const accessToken = localStorage.getItem("accessToken");
+  if (!accessToken) {
+    console.log("No access token found");
+    return <div className="text-red-500">Bạn cần đăng nhập để xem lịch sử đăng ký.</div>;
+  }
+
+  const decodedToken = jwtDecode<MyJwtPayload>(accessToken);
+  const email = decodedToken.email;
+  console.log("Decoded email:", email);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      email: email,
       name: "",
       phone: "",
       shopName: "",

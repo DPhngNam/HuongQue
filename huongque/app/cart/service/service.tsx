@@ -1,4 +1,6 @@
-import axios from 'axios';
+import axiosInstance from "@/lib/axiosInstance";
+import { StringDecoder } from "node:string_decoder";
+
 
 // Types
 export interface OrderItem {
@@ -30,44 +32,48 @@ export interface PaymentResponse {
   status: 'SUCCESS' | 'FAILED' | 'PENDING';
 }
 
-// API endpoints
-const API_BASE_URL = 'http://localhost:8080/orderservice/api/v1';
+// Cart Types
+export interface CartItemDto {
+  cartItemId: string;
+  productId: string;
+  quantity: number;
+  price: number;
+  productName: string;
+  productImage: string;
+}
 
-// Create axios instance with default config
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  },
-  withCredentials: false,
-});
+export interface CartDto {
+  cartId: string;
+  userId: number;
+  cartItems: CartItemDto[];
+  totalAmount: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
-// Add request interceptor for error handling
-api.interceptors.request.use(
-  (config) => {
-    // You can add auth token here if needed
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+export interface CreateCartItemDto {
+  productId: string;
+  quantity: number;
+}
 
-// Add response interceptor for error handling
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    throw error;
-  }
-);
+export interface UpdateCartItemDto {
+  cartItemId: string;
+  quantity: number;
+}
+
+// axiosInstance endpoints
+const axiosInstance_BASE_URL = 'http://localhost:8080/orderservice/api/';
+
+
 
 // Service functions
 export const orderService = {
+  url: axiosInstance_BASE_URL + 'orders',
+  // Get all orders
   // Create a new order
   createOrder: async (orderData: Order)=> {
     try {
-      const response = await api.post('/orders',orderData);
+      const response = await axiosInstance.post(orderService.url ,orderData);
       console.log(response);
 
       return response.data;
@@ -81,7 +87,7 @@ export const orderService = {
   // Get order by ID
   getOrderById: async (orderId: string): Promise<Order> => {
     try {
-      const response = await api.get(`/orders/${orderId}`);
+      const response = await axiosInstance.get(`${orderService.url}/${orderId}`);
       return response.data;
     } catch (error) {
       
@@ -92,7 +98,7 @@ export const orderService = {
   // Update order status
   updateOrderStatus: async (orderId: string, status: Order['orderStatus']): Promise<Order> => {
     try {
-      const response = await api.patch(`/orders/${orderId}/status`, { status });
+      const response = await axiosInstance.patch(`/orders/${orderId}/status`, { status });
       return response.data;
     } catch (error) {
      
@@ -106,7 +112,7 @@ export const orderService = {
     paymentStatus: Order['orderPaymentStatus']
   ): Promise<Order> => {
     try {
-      const response = await api.patch(`/orders/${orderId}/payment`, {
+      const response = await axiosInstance.patch(`/orders/${orderId}/payment`, {
         paymentStatus,
       });
       return response.data;
@@ -119,7 +125,7 @@ export const orderService = {
   // Get orders by user ID
   getOrdersByUserId: async (userId: string): Promise<Order[]> => {
     try {
-      const response = await api.get(`/orders/user/${userId}`);
+      const response = await axiosInstance.get(`/orders/user/${userId}`);
       return response.data;
     } catch (error) {
       
@@ -130,7 +136,7 @@ export const orderService = {
   // Cancel order
   cancelOrder: async (orderId: string): Promise<Order> => {
     try {
-      const response = await api.post(`/orders/${orderId}/cancel`);
+      const response = await axiosInstance.post(`/orders/${orderId}/cancel`);
       return response.data;
     } catch (error) {
       
@@ -138,3 +144,84 @@ export const orderService = {
     }
   },
 };
+export const cartService = {
+  url: axiosInstance_BASE_URL + 'cart',
+  // Get cart by user ID
+  getCartByUserId: async (userId: string): Promise<CartDto | null> => {
+    try {
+      const response = await axiosInstance.get(`${cartService.url}/user/${userId}`);
+      return response.data;
+    } catch (error: any) {
+      console.error(error);
+      if (error.response?.status === 404) {
+        return null;
+      }
+      throw error;
+    }
+  },
+
+  // Create a new cart for user
+  createCart: async (userId: string): Promise<CartDto> => {
+    try {
+      const response = await axiosInstance.post(`${cartService.url}/user/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+
+  // Delete cart by cart ID
+  deleteCart: async (cartId: string): Promise<void> => {
+    try {
+      await axiosInstance.delete(`${cartService.url}/${cartId}`);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+
+  // Add item to cart
+  addCartItem: async (userId: string, createCartItemDto: CreateCartItemDto): Promise<CartItemDto> => {
+    try {
+      const response = await axiosInstance.post(`${cartService.url}/user/${userId}/items`, createCartItemDto);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+
+  // Update cart item quantity
+  updateCartItem: async (userId: string, updateCartItemDto: UpdateCartItemDto): Promise<CartItemDto> => {
+    try {
+      const response = await axiosInstance.put(`${cartService.url}/user/${userId}/items`, updateCartItemDto);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+
+  // Remove item from cart by cart item ID
+  removeCartItem: async (userId: string, cartItemId: string): Promise<void> => {
+    try {
+      await axiosInstance.delete(`${cartService.url}/user/${userId}/items/${cartItemId}`);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+
+  // Get all cart items for user
+  getCartItems: async (userId: string): Promise<CartItemDto[]> => {
+    try {
+      const response = await axiosInstance.get(`${cartService.url}/user/${userId}/items`);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+
+}

@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CartService {
-    CartDto getCartByUserId(Long userId);
-    CartDto createCart(Long userId);
+    CartDto getCartByUserId(UUID userId);
+    CartDto createCart(UUID userId);
     void deleteCart(UUID cartId);
 
-    CartItemDto addCartItem(Long userId, CreateCartItemDto dto);
-    CartItemDto updateCartItem(Long userId, UpdateCartItemDto dto);
-    void removeCartItem(Long userId, UUID cartItemId);
-    List<CartItemDto> getCartItems(Long userId);
+    CartItemDto addCartItem(UUID userId, CreateCartItemDto dto);
+    CartItemDto updateCartItem(UUID userId, UpdateCartItemDto dto);
+    void removeCartItem(UUID userId, UUID cartItemId);
+    List<CartItemDto> getCartItems(UUID userId);
 }

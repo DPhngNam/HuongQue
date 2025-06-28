@@ -7,6 +7,6 @@ import java.util.UUID;
 @Data
 public class CartDto {
     private UUID id;
-    private Long userId;
+    private UUID userId;
     private List<CartItemDto> cartItems;
 }

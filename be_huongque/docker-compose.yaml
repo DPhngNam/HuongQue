@@ -315,11 +315,12 @@ services:
       - elasticsearch
       - eurekaserver
     environment:
-      PORT: 8091
-      ELASTICSEARCH_HOST: elasticsearch
-      ELASTICSEARCH_PORT: 9200
-      EUREKA_HOST: eurekaserver
-      EUREKA_PORT: 8761
+      - PORT=8091
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9200
+      - EUREKA_HOST=eurekaserver
+      - EUREKA_PORT=8761
+      - JAVA_OPTS=--add-opens java.base/java.util=ALL-UNNAMED
 
   # chatbotservice:
   #   build:

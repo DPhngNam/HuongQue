@@ -24,5 +24,4 @@ RUN ./mvnw dependency:go-offline
 
 
 
-# Cấu hình để chạy với DevTools
-CMD ["./mvnw", "spring-boot:run"]
+CMD ["./mvnw", "spring-boot:run", "-Dspring-boot.run.jvmArguments=--add-opens java.base/java.util=ALL-UNNAMED"]

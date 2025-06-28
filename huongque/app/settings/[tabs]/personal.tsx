@@ -32,7 +32,7 @@ export default function Personal() {
       const userData = await axios.get('http://localhost:8080/userservice/users/' + email)
         .then(response => response.data)
         .catch(error => {
-          console.error("Error fetching user data:", error);
+          console.log("Error fetching user data:", error);
         });
 
       console.log("User data fetched:", userData);

@@ -19,14 +19,14 @@ public class CartServiceImpl implements CartService {
     private final CartItemRepository cartItemRepository;
 
     @Override
-    public CartDto getCartByUserId(Long userId) {
+    public CartDto getCartByUserId(UUID userId) {
         Cart cart = cartRepository.findByUserId(userId);
         if (cart == null) return null;
         return toDto(cart);
     }
 
     @Override
-    public CartDto createCart(Long userId) {
+    public CartDto createCart(UUID userId) {
         Cart cart = new Cart();
         cart.setUserId(userId);
         cart.setCartItems(new ArrayList<>());
@@ -40,7 +40,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartItemDto addCartItem(Long userId, CreateCartItemDto dto) {
+    public CartItemDto addCartItem(UUID userId, CreateCartItemDto dto) {
         Cart cart = cartRepository.findByUserId(userId);
         if (cart == null) cart = cartRepository.save(new Cart(null, userId, new ArrayList<>()));
         CartItem item = CartItem.builder()
@@ -57,7 +57,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartItemDto updateCartItem(Long userId, UpdateCartItemDto dto) {
+    public CartItemDto updateCartItem(UUID userId, UpdateCartItemDto dto) {
         Cart cart = cartRepository.findByUserId(userId);
         if (cart == null) throw new RuntimeException("Cart not found");
         Optional<CartItem> opt = cart.getCartItems().stream().filter(i -> i.getId().equals(dto.getId())).findFirst();
@@ -70,7 +70,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void removeCartItem(Long userId, UUID cartItemId) {
+    public void removeCartItem(UUID userId, UUID cartItemId) {
         Cart cart = cartRepository.findByUserId(userId);
         if (cart == null) throw new RuntimeException("Cart not found");
         cart.getCartItems().removeIf(i -> i.getId().equals(cartItemId));
@@ -78,7 +78,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<CartItemDto> getCartItems(Long userId) {
+    public List<CartItemDto> getCartItems(UUID userId) {
         Cart cart = cartRepository.findByUserId(userId);
         if (cart == null) return Collections.emptyList();
         return cart.getCartItems().stream().map(this::toDto).collect(Collectors.toList());

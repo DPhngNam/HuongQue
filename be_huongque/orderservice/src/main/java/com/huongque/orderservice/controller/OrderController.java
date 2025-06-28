@@ -36,7 +36,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RequestMapping("/api/v1/orders")
+@RequestMapping("/api/orders")
 @RestController
 @Tag(name = "Order API", description = "API for managing orders")
 public class OrderController {

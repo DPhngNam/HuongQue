@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { useAuthStore } from "@/app/stores/authStore";
+import { jwtDecode } from "jwt-decode";
 
 interface Registration {
   id: string;
@@ -17,20 +18,31 @@ interface Registration {
   createdAt: string;
   updatedAt: string;
 }
+export interface MyJwtPayload {
+  email: string;
+  [key: string]: any;
+}
 
 export default function Registration() {
   const router = useRouter();
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [loading, setLoading] = useState(true);
-  const { accessToken } = useAuthStore();
+  const accessToken = localStorage.getItem("accessToken");
+  if (!accessToken) {
+    console.log("No access token found");
+  }
+
+  const decodedToken = jwtDecode<MyJwtPayload>(accessToken || "");
+  const email = decodedToken.email;
+  console.log("Decoded email:", email);
 
   useEffect(() => {
     const fetchRegistrations = async () => {
       try {
-        const data = await getRegistrationsByUser("kbn60432@toaik.com");
+        const data = await getRegistrationsByUser(email);
         setRegistrations(data);
       } catch (error) {
-        console.error("Failed to fetch registrations:", error);
+        console.log("Failed to fetch registrations:", error);
       } finally {
         setLoading(false);
       }

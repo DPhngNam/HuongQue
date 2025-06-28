@@ -16,8 +16,8 @@ export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const isLogin = useAuthStore((state) => state.isLogin());
+  const fetchCartItems = useCartStore((state) => state.fetchCartItems());
   const totalItems = useCartStore((state) => state.totalItems);
-
   const handleCartClick = () => {
     router.push("/cart");
   };

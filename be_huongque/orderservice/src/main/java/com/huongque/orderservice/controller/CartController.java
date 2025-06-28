@@ -10,20 +10,20 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/carts")
+@RequestMapping("/api/cart")
 @RequiredArgsConstructor
 public class CartController {
     private final CartService cartService;
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<CartDto> getCart(@PathVariable Long userId) {
+    public ResponseEntity<CartDto> getCart(@PathVariable UUID userId) {
         CartDto cart = cartService.getCartByUserId(userId);
         if (cart == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(cart);
     }
 
     @PostMapping("/user/{userId}")
-    public ResponseEntity<CartDto> createCart(@PathVariable Long userId) {
+    public ResponseEntity<CartDto> createCart(@PathVariable UUID userId) {
         return ResponseEntity.ok(cartService.createCart(userId));
     }
 
@@ -34,23 +34,23 @@ public class CartController {
     }
 
     @PostMapping("/user/{userId}/items")
-    public ResponseEntity<CartItemDto> addCartItem(@PathVariable Long userId, @RequestBody CreateCartItemDto dto) {
+    public ResponseEntity<CartItemDto> addCartItem(@PathVariable UUID userId, @RequestBody CreateCartItemDto dto) {
         return ResponseEntity.ok(cartService.addCartItem(userId, dto));
     }
 
     @PutMapping("/user/{userId}/items")
-    public ResponseEntity<CartItemDto> updateCartItem(@PathVariable Long userId, @RequestBody UpdateCartItemDto dto) {
+    public ResponseEntity<CartItemDto> updateCartItem(@PathVariable UUID userId, @RequestBody UpdateCartItemDto dto) {
         return ResponseEntity.ok(cartService.updateCartItem(userId, dto));
     }
 
     @DeleteMapping("/user/{userId}/items/{cartItemId}")
-    public ResponseEntity<Void> removeCartItem(@PathVariable Long userId, @PathVariable UUID cartItemId) {
+    public ResponseEntity<Void> removeCartItem(@PathVariable UUID userId, @PathVariable UUID cartItemId) {
         cartService.removeCartItem(userId, cartItemId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/user/{userId}/items")
-    public ResponseEntity<List<CartItemDto>> getCartItems(@PathVariable Long userId) {
+    public ResponseEntity<List<CartItemDto>> getCartItems(@PathVariable UUID userId) {
         return ResponseEntity.ok(cartService.getCartItems(userId));
     }
 }

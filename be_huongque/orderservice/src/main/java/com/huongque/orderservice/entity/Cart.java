@@ -28,7 +28,7 @@ public class Cart {
     private UUID id;
 
     @Column(name = "user_id")
-    private Long userId;
+    private UUID userId;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<CartItem> cartItems;
