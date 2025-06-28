@@ -1,45 +1,40 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Camera } from 'lucide-react';
-import axios from 'axios';
-import { jwtDecode } from "jwt-decode";
+import { Camera } from "lucide-react";
 import Image from "next/image";
+import axiosInstance from "@/lib/axiosInstance";
 export default function Personal() {
   const [user, setUser] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    birthday: '',
-  })
+    name: "",
+    email: "",
+    phone: "",
+    birthday: "",
+    avatar: "/image/avatar.jpg", // default avatar
+  });
 
   useEffect(() => {
-
-    // Simulate fetching user data from an API
     const fetchUserData = async () => {
-      const accessToken = localStorage.getItem('accessToken');
-      if (!accessToken) {
-        console.error("No access token found");
-        return;
-      }
-      const decoded = jwtDecode(accessToken);
-      const email = decoded.sub;
-
-      const userData = await axios.get('http://localhost:8080/userservice/users/' + email)
-        .then(response => response.data)
-        .catch(error => {
-          console.error("Error fetching user data:", error);
+      try {
+        const res = await axiosInstance.get("/userservice/users/me");
+        const data = res.data;
+        setUser({
+          name: data.name || data.fullName || "",
+          email: data.email || data.gmail || "",
+          phone: data.phone || "",
+          birthday: data.birthday || data.dob || "",
+          avatar: data.avatar || "/image/avatar.jpg",
         });
-
-      console.log("User data fetched:", userData);
-      setUser(userData);
-    }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
     fetchUserData();
   }, []);
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-6">Thông tin cá nhân</h2>
@@ -55,13 +50,12 @@ export default function Personal() {
                 className="w-full h-full object-cover"
               /> */}
               <Image
-                src="/image/avatar.jpg"
+                src={user.avatar || "/image/avatar.jpg"}
                 alt="Avatar"
                 width={96}
                 height={96}
                 className="rounded-full border-2 border-gray-200 object-cover"
               />
-
             </div>
             <label
               htmlFor="avatar-upload"
@@ -76,40 +70,58 @@ export default function Personal() {
               />
             </label>
           </div>
-          <div className="space-y-2">
+          {!user.avatar &&(
+            <div className="space-y-2">
             <h3 className="font-medium">Ảnh đại diện</h3>
             <p className="text-sm text-gray-500">
               JPG, GIF hoặc PNG. Kích thước tối đa 2MB
             </p>
           </div>
+          )}
         </div>
       </div>
 
       <form className="space-y-6 max-w-2xl">
-        <div className="grid grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="firstName">Họ</Label>
-            <Input id="firstName" placeholder="Nhập họ của bạn" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="lastName">Tên</Label>
-            <Input id="lastName" placeholder="Nhập tên của bạn" />
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="fullName">Họ và tên</Label>
+          <Input
+            id="fullName"
+            placeholder="Nhập họ và tên của bạn"
+            value={user.name || ""}
+            readOnly
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="Nhập email của bạn" />
+          <Input
+            id="email"
+            type="email"
+            placeholder="Nhập email của bạn"
+            value={user.email || ""}
+            readOnly
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="phone">Số điện thoại</Label>
-          <Input id="phone" type="tel" placeholder="Nhập số điện thoại của bạn" />
+          <Input
+            id="phone"
+            type="tel"
+            placeholder="Nhập số điện thoại của bạn"
+            value={user.phone || ""}
+            readOnly
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="birthday">Ngày sinh</Label>
-          <Input id="birthday" type="date" />
+          <Input
+            id="birthday"
+            type="date"
+            value={user.birthday || ""}
+            readOnly
+          />
         </div>
 
         <div className="space-y-2">

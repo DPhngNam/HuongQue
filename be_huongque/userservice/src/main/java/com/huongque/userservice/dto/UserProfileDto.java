@@ -12,6 +12,7 @@ import java.util.UUID;
 @Builder
 public class UserProfileDto {
     private UUID id;
+    private String avatar;
     private String fullName;
     private LocalDate dob;
     private String gmail;

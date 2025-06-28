@@ -24,13 +24,7 @@ public class UserProfileService {
         UserProfile user = userProfileRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        return new UserProfileDto(
-                user.getId(),
-                user.getFullName(),
-                user.getDob(),
-                user.getGmail(),
-                user.getPhone()
-        );
+        return userProfileMapper.toDto(user);
     }
 
     public UserProfileDto updateUserProfile(UUID userId, UserProfileDto userDto) {
@@ -51,26 +45,15 @@ public class UserProfileService {
         user.setDob(userDto.getDob());
         user.setGmail(userDto.getGmail());
         user.setPhone(userDto.getPhone());
+        user.setAvatar(userDto.getAvatar());
         userProfileRepository.save(user);
-        return new UserProfileDto(
-                user.getId(),
-                user.getFullName(),
-                user.getDob(),
-                user.getGmail(),
-                user.getPhone()
-        );
+        return userProfileMapper.toDto(user);
     }
 
     public List<UserProfileDto> getAllUserProfiles() {
         return userProfileRepository.findAll()
                 .stream()
-                .map(user -> new UserProfileDto(
-                        user.getId(),
-                        user.getFullName(),
-                        user.getDob(),
-                        user.getGmail(),
-                        user.getPhone()
-                ))
+                .map(userProfileMapper::toDto)
                 .collect(Collectors.toList());
     }
 

@@ -55,12 +55,9 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
       try {
-        const response = await axios.post(
-          `${process.env.BASE_URL}/auth/refresh-token`,
-          {
-            refreshToken,
-          }
-        );
+        const response = await axios.post(`/auth/refresh-token`, {
+          refreshToken,
+        });
         const newAccessToken = response.data.accessToken;
         const newRefreshToken = response.data.refreshToken;
         setTokens(newAccessToken, newRefreshToken);

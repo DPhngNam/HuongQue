@@ -177,7 +177,10 @@ public void verifyEmail(@RequestParam("token") String token, HttpServletResponse
     public void socialLoginSuccess(OAuth2AuthenticationToken authentication, HttpServletResponse response)
             throws IOException {
         OAuth2User oauthUser = authentication.getPrincipal();
+        System.out.println("OAuth2 Attributes: " + oauthUser.getAttributes());
+
         String email = oauthUser.getAttribute("email");
+        
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found after OAuth login"));
@@ -193,6 +196,7 @@ public void verifyEmail(@RequestParam("token") String token, HttpServletResponse
                     .id(user.getId())
                     .gmail(email)
                     .fullName(oauthUser.getAttribute("name"))
+                    .avatar(oauthUser.getAttribute("picture"))
                     .build();
            userProfileService.createUserProfile("true", profile);
 
