@@ -15,42 +15,48 @@ import java.util.UUID;
 public class CartController {
     private final CartService cartService;
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<CartDto> getCart(@PathVariable UUID userId) {
-        CartDto cart = cartService.getCartByUserId(userId);
+    @GetMapping("/user")
+    public ResponseEntity<CartDto> getCart(@RequestHeader("X-User-Id") String userId) {
+        UUID userUUID = UUID.fromString(userId);
+        CartDto cart = cartService.getCartByUserId(userUUID);
         if (cart == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(cart);
     }
 
-    @PostMapping("/user/{userId}")
-    public ResponseEntity<CartDto> createCart(@PathVariable UUID userId) {
-        return ResponseEntity.ok(cartService.createCart(userId));
+    @PostMapping("/user")
+    public ResponseEntity<CartDto> createCart(@RequestHeader("X-User-Id") String userId) {
+        UUID userUUID = UUID.fromString(userId);
+        return ResponseEntity.ok(cartService.createCart(userUUID));
     }
 
     @DeleteMapping("/{cartId}")
-    public ResponseEntity<Void> deleteCart(@PathVariable UUID cartId) {
+    public ResponseEntity<Void> deleteCart(@RequestHeader("X-User-Id") String userId,@PathVariable UUID cartId) {
         cartService.deleteCart(cartId);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/user/{userId}/items")
-    public ResponseEntity<CartItemDto> addCartItem(@PathVariable UUID userId, @RequestBody CreateCartItemDto dto) {
-        return ResponseEntity.ok(cartService.addCartItem(userId, dto));
+    @PostMapping("/user/items")
+    public ResponseEntity<CartItemDto> addCartItem(@RequestHeader("X-User-Id") String userId, @RequestBody CreateCartItemDto dto) {
+        UUID userUUID = UUID.fromString(userId);
+        return ResponseEntity.ok(cartService.addCartItem(userUUID, dto));
     }
 
-    @PutMapping("/user/{userId}/items")
-    public ResponseEntity<CartItemDto> updateCartItem(@PathVariable UUID userId, @RequestBody UpdateCartItemDto dto) {
-        return ResponseEntity.ok(cartService.updateCartItem(userId, dto));
+    @PutMapping("/user/items")
+    public ResponseEntity<CartItemDto> updateCartItem(@RequestHeader("X-User-Id") String userId, @RequestBody UpdateCartItemDto dto) {
+        UUID userUUID = UUID.fromString(userId);
+        return ResponseEntity.ok(cartService.updateCartItem(userUUID, dto));
     }
 
-    @DeleteMapping("/user/{userId}/items/{cartItemId}")
-    public ResponseEntity<Void> removeCartItem(@PathVariable UUID userId, @PathVariable UUID cartItemId) {
-        cartService.removeCartItem(userId, cartItemId);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/user/items/{cartItemId}")
+    public ResponseEntity<Void> removeCartItem(@RequestHeader("X-User-Id") String userId, @PathVariable UUID cartItemId) {
+        UUID userUUID = UUID.fromString(userId);
+        cartService.removeCartItem(userUUID, cartItemId);
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/user/{userId}/items")
-    public ResponseEntity<List<CartItemDto>> getCartItems(@PathVariable UUID userId) {
-        return ResponseEntity.ok(cartService.getCartItems(userId));
+    @GetMapping("/user/items")
+    public ResponseEntity<List<CartItemDto>> getCartItems(@RequestHeader("X-User-Id") String userId) {
+        UUID userUUID = UUID.fromString(userId);
+        return ResponseEntity.ok(cartService.getCartItems(userUUID));
     }
 }
