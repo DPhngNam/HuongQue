@@ -11,12 +11,19 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { NotificationDropdown } from "./NotificationDropdown";
 import NavMenu from "./NavMenu";
+import { use, useEffect } from "react";
 
 export default function Header() {
   const router = useRouter();
   const isLogin = useAuthStore((state) => state.isLogin());
-  const totalItems = useCartStore((state) => state.totalItems); // Always call the hook
-  const displayTotalItems = isLogin ? totalItems : 0; // Use conditional logic here instead
+  useEffect(() => {
+    if (!isLogin) {
+      router.push("/login");
+    }
+    useCartStore.getState().fetchCartItems();
+  },[isLogin]);
+
+  const totalItems = useCartStore((state) => state.totalItems);
 
   const handleCartClick = () => {
     router.push("/cart");

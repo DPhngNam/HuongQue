@@ -18,22 +18,6 @@ interface CartState {
   clearCart: () => void
 }
 
-// Helper function to get user ID from token
-const getUserIdFromToken = (): string | '' => {
-  try {
-    const accessToken = localStorage.getItem('accessToken');
-    console.log(accessToken)
-    if (!accessToken) {
-      console.log("No access token found");
-      return '';
-    }
-    const decodedToken = jwtDecode<MyJwtPayload>(accessToken);
-    return decodedToken.sub || '';
-  } catch (error) {
-    console.log("Error decoding token:", error);
-    return '';
-  }
-};
 
 export const useCartStore = create<CartState>((set, get) => ({
   // Synchronous state properties
@@ -44,15 +28,9 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   // Async action to fetch cart items
   fetchCartItems: async () => {
-    const userId = getUserIdFromToken();
-    if (!userId) {
-      set({ error: "User not authenticated", isLoading: false });
-      return;
-    }
-
     set({ isLoading: true, error: null });
     try {
-      const cartData = await cartService.getCartByUserId(userId);
+      const cartData = await cartService.getCartByUserId();
       const items = cartData?.cartItems || [];
       const totalItems = items.reduce((total, item) => total + item.quantity, 0);
       
@@ -72,11 +50,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   // Add an item to the cart
   addItem: async (item: CartItem) => {
-    const userId = getUserIdFromToken();
-    if (!userId) {
-      set({ error: "User not authenticated" });
-      return;
-    }
+    
 
     const { items } = get();
     const existingItem = items.find(i => i.productId === item.productId);
@@ -105,9 +79,12 @@ export const useCartStore = create<CartState>((set, get) => ({
       }
 
       // Sync with backend
-      await cartService.addCartItem(userId, {
+      await cartService.addCartItem( {
         productId: item.productId,
-        quantity: item.quantity
+        quantity: item.quantity,
+        price: item.price,
+        productName: item.productName,
+        productImage: item.productImage
       });
       
       console.log("Item added to cart successfully");
@@ -121,11 +98,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   // Remove an item from the cart
   removeItem: async (productId: string) => {
-    const userId = getUserIdFromToken();
-    if (!userId) {
-      set({ error: "User not authenticated" });
-      return;
-    }
+    
 
     const { items } = get();
     const itemToRemove = items.find(item => item.productId === productId);
@@ -141,7 +114,7 @@ export const useCartStore = create<CartState>((set, get) => ({
       });
 
       // Sync with backend - you'll need to implement this method in cartService
-      await cartService.removeCartItem(userId, itemToRemove.productId);
+      await cartService.removeCartItem(itemToRemove.productId);
       
       console.log("Item removed from cart successfully");
     } catch (error) {
@@ -154,11 +127,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   // Update quantity of an item
   updateQuantity: async (productId: string, quantity: number) => {
-    const userId = getUserIdFromToken();
-    if (!userId) {
-      set({ error: "User not authenticated" });
-      return;
-    }
+    
 
     const { items } = get();
     const itemToUpdate = items.find(item => item.productId === productId);
@@ -178,7 +147,7 @@ export const useCartStore = create<CartState>((set, get) => ({
       });
 
       // Sync with backend
-      await cartService.updateCartItem(userId, {
+      await cartService.updateCartItem({
         cartItemId: itemToUpdate.productId,
         quantity: quantity
       });

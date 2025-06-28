@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { useState } from "react"
 import { toast } from "sonner"
-import CartItem from '../cartitem'
+
 import BreadcrumbNav from '../components/ui/breadcrumb-nav'
 import { useCartStore } from '../stores/cartStore'
 import { Order, orderService } from "./service/service"
+import CartItem from '../components/cart_components/cartitem'
 
 export default function CartPage() {
     const router = useRouter()

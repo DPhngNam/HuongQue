@@ -54,6 +54,9 @@ export interface CartDto {
 export interface CreateCartItemDto {
   productId: string;
   quantity: number;
+  price: number;
+  productName: string;
+  productImage: string;
 }
 
 export interface UpdateCartItemDto {
@@ -147,23 +150,24 @@ export const orderService = {
 export const cartService = {
   url: axiosInstance_BASE_URL + 'cart',
   // Get cart by user ID
-  getCartByUserId: async (userId: string): Promise<CartDto | null> => {
+  getCartByUserId: async (): Promise<CartDto | null> => {
     try {
-      const response = await axiosInstance.get(`${cartService.url}/user/${userId}`);
+      const response = await axiosInstance.get(`${cartService.url}/user`);
+      console.log(response);
       return response.data;
     } catch (error: any) {
-      console.error(error);
+     
       if (error.response?.status === 404) {
         return null;
       }
-      throw error;
+      return null;
     }
   },
 
   // Create a new cart for user
-  createCart: async (userId: string): Promise<CartDto> => {
+  createCart: async (): Promise<CartDto> => {
     try {
-      const response = await axiosInstance.post(`${cartService.url}/user/${userId}`);
+      const response = await axiosInstance.post(`${cartService.url}/user`);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -182,9 +186,10 @@ export const cartService = {
   },
 
   // Add item to cart
-  addCartItem: async (userId: string, createCartItemDto: CreateCartItemDto): Promise<CartItemDto> => {
+  addCartItem: async (createCartItemDto: CreateCartItemDto): Promise<CartItemDto> => {
     try {
-      const response = await axiosInstance.post(`${cartService.url}/user/${userId}/items`, createCartItemDto);
+      const response = await axiosInstance.post(`${cartService.url}/user/items`, createCartItemDto);
+      console.log(response);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -193,9 +198,9 @@ export const cartService = {
   },
 
   // Update cart item quantity
-  updateCartItem: async (userId: string, updateCartItemDto: UpdateCartItemDto): Promise<CartItemDto> => {
+  updateCartItem: async (updateCartItemDto: UpdateCartItemDto): Promise<CartItemDto> => {
     try {
-      const response = await axiosInstance.put(`${cartService.url}/user/${userId}/items`, updateCartItemDto);
+      const response = await axiosInstance.put(`${cartService.url}/user/items`, updateCartItemDto);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -204,9 +209,9 @@ export const cartService = {
   },
 
   // Remove item from cart by cart item ID
-  removeCartItem: async (userId: string, cartItemId: string): Promise<void> => {
+  removeCartItem: async (cartItemId: string): Promise<void> => {
     try {
-      await axiosInstance.delete(`${cartService.url}/user/${userId}/items/${cartItemId}`);
+      await axiosInstance.delete(`${cartService.url}/user/items/${cartItemId}`);
     } catch (error) {
       console.error(error);
       throw error;
@@ -214,9 +219,9 @@ export const cartService = {
   },
 
   // Get all cart items for user
-  getCartItems: async (userId: string): Promise<CartItemDto[]> => {
+  getCartItems: async (): Promise<CartItemDto[]> => {
     try {
-      const response = await axiosInstance.get(`${cartService.url}/user/${userId}/items`);
+      const response = await axiosInstance.get(`${cartService.url}/user/items`);
       return response.data;
     } catch (error) {
       console.error(error);

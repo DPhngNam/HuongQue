@@ -27,7 +27,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
             <div className="relative h-24 w-24 overflow-hidden rounded-lg bg-gray-100">
                 <Image
                     src={item.productImage}
-                    alt={item.productName}
+                    alt="Product Image"
                     fill
                     className="object-cover"
                 />
