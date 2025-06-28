@@ -18,33 +18,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class Oauth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    
-    private final UserProfileService userProfileService;
+
     private final UserRepository userRepository;
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oauth2User = new DefaultOAuth2UserService().loadUser(userRequest);
+public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+    OAuth2User oauth2User = new DefaultOAuth2UserService().loadUser(userRequest);
+    String email = oauth2User.getAttribute("email");
 
-        String email = oauth2User.getAttribute("email");
-        String name = oauth2User.getAttribute("name");
+    userRepository.findByEmail(email).orElseGet(() -> {
+        User newUser = User.builder()
+                .email(email)
+                .enabled(true)
+                .passwordHash("OAUTH@_USER")
+                .build();
+        return userRepository.save(newUser);
+    });
 
-        User user = userRepository.findByEmail(email).orElseGet(() -> {
-            User newUser = User.builder()
-                    .email(email)
-                    .enabled(true)
-                    .passwordHash("OAUTH@_USER")
-                    .build();
-            userRepository.save(newUser);
-
-            UserProfileDto profile = UserProfileDto.builder()
-                    .id(newUser.getId())
-                    .gmail(email)
-                    .fullName(name)
-                    .build();
-            userProfileService.createUserProfile(profile);
-            return newUser;
-        });
-
-        return oauth2User;
-    }
+    return oauth2User;
+}
 }

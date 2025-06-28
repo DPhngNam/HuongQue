@@ -89,9 +89,10 @@ public class AuthService {
         if(!jwtUtils.isTokenValid(refreshToken)){
             throw new RuntimeException("Refresh token không hợp lệ");
         }
-        String username = jwtUtils.extractUsername(refreshToken);
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        UUID userId = jwtUtils.extractUserId(refreshToken);
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        String username = user.getEmail();
         List<String> roles = user.getRoles().stream()
                 .map(role -> role.getName())
                 .toList();

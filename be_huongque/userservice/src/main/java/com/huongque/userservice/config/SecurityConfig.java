@@ -18,6 +18,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers("/users").permitAll()
                         .requestMatchers("/users/**").permitAll()
+                        .requestMatchers("/users/internal").permitAll()
+                       
                         .anyRequest().authenticated()
 
                 )

@@ -1,17 +1,12 @@
 package com.huongque.userservice.dto;
 
-import lombok.*;
+import jakarta.persistence.Column;
+import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class UserProfileDto {
-    private UUID id;
+@Data
+public class UpdateUserDTO {
     private String avatar;
     private String fullName;
     private LocalDate dob;

@@ -108,10 +108,11 @@ public void verifyEmail(@RequestParam("token") String token, HttpServletResponse
                 .id(user.getId())
                 .gmail(user.getEmail())
                 .build();
-        userProfileService.createUserProfile(profile);
+        userProfileService.createUserProfile("true", profile);
+
     } catch (Exception e) {
         // Logging lỗi nếu không tạo được UserProfile
-        System.err.println("[Verify] Không thể tạo hồ sơ người dùng: " + e.getMessage());
+        throw new RuntimeException("[OAuth2] Không thể lưu user profile vào userservice", e);
     }
 
     response.sendRedirect(frontendUrl + "/login?status=success");
@@ -176,7 +177,10 @@ public void verifyEmail(@RequestParam("token") String token, HttpServletResponse
     public void socialLoginSuccess(OAuth2AuthenticationToken authentication, HttpServletResponse response)
             throws IOException {
         OAuth2User oauthUser = authentication.getPrincipal();
+        System.out.println("OAuth2 Attributes: " + oauthUser.getAttributes());
+
         String email = oauthUser.getAttribute("email");
+        
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found after OAuth login"));
@@ -185,17 +189,21 @@ public void verifyEmail(@RequestParam("token") String token, HttpServletResponse
                 .toList();
         // Gọi userservice để lưu thông tin user đăng nhập thành công (cập nhật
         // lastLogin hoặc tạo mới nếu cần)
+        
+
         try {
             UserProfileDto profile = UserProfileDto.builder()
                     .id(user.getId())
                     .gmail(email)
                     .fullName(oauthUser.getAttribute("name"))
+                    .avatar(oauthUser.getAttribute("picture"))
                     .build();
-            userProfileService.createUserProfile(profile); // FeignClient gọi sang userservice
+           userProfileService.createUserProfile("true", profile);
+
         } catch (Exception e) {
             System.err.println("[OAuth2] Không thể lưu user profile vào userservice: " + e.getMessage());
         }
-        String accessToken = jwtUtils.generateAccessToken(email, user.getId(), roles);
+          String accessToken = jwtUtils.generateAccessToken(email, user.getId(), roles);
         String refreshToken = jwtUtils.generateRefreshToken(email, user.getId());
         String redirectUrl = "http://localhost:3000/login/social-login-success?access_token=" + accessToken
                 + "&refresh_token=" + refreshToken;

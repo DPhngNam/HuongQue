@@ -29,9 +29,10 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         String path = exchange.getRequest().getPath().toString();
 
         // Bỏ qua filter cho /auth/**
-        if (path.startsWith("/authservice/")) {
-            return chain.filter(exchange);
-        }
+       if (path.startsWith("/authservice/") || path.equals("/userservice/users/internal")) {
+    return chain.filter(exchange);
+}
+
         
 
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
@@ -50,6 +51,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             // Optionally, add user info to header
             String userId = claims.getSubject();
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
+            .header("Authorization", authHeader)
                 .header("X-User-Id", userId)
                 .build();
             
