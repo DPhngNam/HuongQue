@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Camera } from "lucide-react";
 import Image from "next/image";
 import axiosInstance from "@/lib/axiosInstance";
+import { toast, ToastContainer } from "react-toastify";
+
 export default function Personal() {
   const [user, setUser] = useState({
     name: "",
@@ -15,9 +17,31 @@ export default function Personal() {
     birthday: "",
     avatar: "/image/avatar.jpg", // default avatar
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        fullName: user.name,
+        phone: user.phone,
+        dob: user.birthday,
+      };
+      await axiosInstance.patch("/userservice/users/me", payload);
+      toast.success("Cập nhật thông tin thành công!");
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      toast.error("Có lỗi xảy ra khi cập nhật thông tin!");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
+      setIsLoading(true);
       try {
         const res = await axiosInstance.get("/userservice/users/me");
         const data = res.data;
@@ -30,13 +54,25 @@ export default function Personal() {
         });
       } catch (error) {
         console.error("Error fetching user data:", error);
+        toast.error("Có lỗi khi tải thông tin người dùng!");
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchUserData();
   }, []);
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="loader">loading</div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
+      <ToastContainer />
       <h2 className="text-2xl font-semibold mb-6">Thông tin cá nhân</h2>
 
       {/* Avatar Section */}
@@ -70,25 +106,25 @@ export default function Personal() {
               />
             </label>
           </div>
-          {!user.avatar &&(
+          {!user.avatar && (
             <div className="space-y-2">
-            <h3 className="font-medium">Ảnh đại diện</h3>
-            <p className="text-sm text-gray-500">
-              JPG, GIF hoặc PNG. Kích thước tối đa 2MB
-            </p>
-          </div>
+              <h3 className="font-medium">Ảnh đại diện</h3>
+              <p className="text-sm text-gray-500">
+                JPG, GIF hoặc PNG. Kích thước tối đa 2MB
+              </p>
+            </div>
           )}
         </div>
       </div>
 
-      <form className="space-y-6 max-w-2xl">
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
         <div className="space-y-2">
           <Label htmlFor="fullName">Họ và tên</Label>
           <Input
             id="fullName"
             placeholder="Nhập họ và tên của bạn"
             value={user.name || ""}
-            readOnly
+            onChange={(e) => setUser({ ...user, name: e.target.value })} // Allow editing
           />
         </div>
 
@@ -99,7 +135,7 @@ export default function Personal() {
             type="email"
             placeholder="Nhập email của bạn"
             value={user.email || ""}
-            readOnly
+            onChange={(e) => setUser({ ...user, email: e.target.value })} // Allow editing
           />
         </div>
 
@@ -110,7 +146,7 @@ export default function Personal() {
             type="tel"
             placeholder="Nhập số điện thoại của bạn"
             value={user.phone || ""}
-            readOnly
+            onChange={(e) => setUser({ ...user, phone: e.target.value })} // Allow editing
           />
         </div>
 
@@ -120,7 +156,7 @@ export default function Personal() {
             id="birthday"
             type="date"
             value={user.birthday || ""}
-            readOnly
+            onChange={(e) => setUser({ ...user, birthday: e.target.value })} // Allow editing
           />
         </div>
 
@@ -134,8 +170,12 @@ export default function Personal() {
           </select>
         </div>
 
-        <Button type="submit" className="w-full md:w-auto">
-          Lưu thay đổi
+        <Button
+          type="submit"
+          className="w-full md:w-auto"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Đang lưu..." : "Lưu thay đổi"}
         </Button>
       </form>
     </div>
