@@ -4,13 +4,22 @@ import Image from 'next/image'
 import { CartItem as CartItemType } from '@/app/models/cart'
 import { X } from 'lucide-react'
 
-interface CartItemProps {
+export interface CartItemProps {
     item: CartItemType;
     onUpdateQuantity: (id: string, quantity: number) => void;
     onRemove: (id: string) => void;
 }
 
 export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(amount)
+    }
+
     const handleIncrement = () => {
         onUpdateQuantity(item.productId, item.quantity + 1);
     };
@@ -27,7 +36,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
             <div className="relative h-24 w-24 overflow-hidden rounded-lg bg-gray-100">
                 <Image
                     src={item.productImage}
-                    alt="Product Image"
+                    alt="Hình ảnh sản phẩm"
                     fill
                     className="object-cover"
                 />
@@ -43,7 +52,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
                         <X className="h-5 w-5" />
                     </button>
                 </div>
-                <p className="mt-1 text-sm font-medium text-gray-900">${item.price}</p>
+                <p className="mt-1 text-sm font-medium text-gray-900">{formatCurrency(item.price)}</p>
                 
                 <div className="mt-2 flex items-center gap-2">
                     <button

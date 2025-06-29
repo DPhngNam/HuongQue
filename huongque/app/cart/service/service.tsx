@@ -147,6 +147,21 @@ export const orderService = {
     }
   },
 };
+
+// User Profile Service
+export const userProfileService = {
+  // Get current user profile
+  getUserProfile: async () => {
+    try {
+      const response = await axiosInstance.get("/userservice/users/me");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      throw error;
+    }
+  },
+};
+
 export const cartService = {
   url: axiosInstance_BASE_URL + 'cart',
   // Get cart by user ID

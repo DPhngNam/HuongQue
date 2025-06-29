@@ -11,8 +11,8 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set, get) => {
   const state = {
-    accessToken: null,
-    refreshToken: null,
+    accessToken: '',
+    refreshToken: '',
     setTokens: (accessToken: string, refreshToken: string) => {
       if (typeof window !== 'undefined') {
         localStorage.setItem('accessToken', accessToken);
