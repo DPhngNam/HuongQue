@@ -33,7 +33,7 @@ public class JwtUtils {
             .claim("email", email.toString())
             .claim("roles", roles)
             .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10)) // 10 phút
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7 ngày
             .signWith(getSigningKey())
             .compact();
 }
