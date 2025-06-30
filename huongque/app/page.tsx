@@ -14,8 +14,14 @@ export default function Home() {
       try {
         const res = await axiosInstance.get("/productservice/top?count=10");
         setProducts(res.data || []);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to fetch products:", error);
+        // Handle network errors or server unavailable
+        if (!error.response) {
+          console.error("Network error or server unavailable");
+        } else {
+          console.error("Server responded with error:", error.response.status);
+        }
         setProducts([]);
       }
     };

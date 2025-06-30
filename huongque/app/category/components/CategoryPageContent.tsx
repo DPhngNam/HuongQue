@@ -33,7 +33,11 @@ export default function CategoryPageContent({
         }
         const res = await axiosInstance.get(url);
         setProducts(res.data || []);
-      } catch (error) {
+      } catch (error: any) {
+        console.error("Failed to fetch products:", error);
+        if (!error.response) {
+          console.error("Network error or server unavailable");
+        }
         setProducts([]);
       }
     };

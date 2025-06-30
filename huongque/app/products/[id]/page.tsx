@@ -45,13 +45,16 @@ export default function ShopProductPage({
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const res = await axiosInstance.get(
-        `/productservice/${resolvedParams.id}`
-      );
       try {
+        const res = await axiosInstance.get(
+          `/productservice/${resolvedParams.id}`
+        );
         setProduct(res.data);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching product:", error);
+        if (!error.response) {
+          console.error("Network error or server unavailable");
+        }
       }
     };
 

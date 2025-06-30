@@ -35,7 +35,7 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
     const { refreshToken, setTokens, clearTokens } = useAuthStore.getState();
 
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       if (!refreshToken) {
         clearTokens();
         return Promise.reject(error);
