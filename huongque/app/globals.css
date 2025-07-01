@@ -124,3 +124,215 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom styles for HTML content from dangerouslySetInnerHTML */
+@layer utilities {
+  .product-description {
+    @apply text-gray-700 leading-relaxed;
+  }
+  
+  .product-description h1,
+  .product-description h2,
+  .product-description h3,
+  .product-description h4,
+  .product-description h5,
+  .product-description h6 {
+    @apply font-semibold text-gray-900 mt-6 mb-3;
+  }
+  
+  .product-description h1 {
+    @apply text-2xl;
+  }
+  
+  .product-description h2 {
+    @apply text-xl;
+  }
+  
+  .product-description h3 {
+    @apply text-lg;
+  }
+  
+  .product-description p {
+    @apply mb-4 leading-7;
+  }
+  
+  .product-description ul,
+  .product-description ol {
+    @apply mb-4 pl-6;
+  }
+  
+  .product-description ul {
+    @apply list-disc;
+  }
+  
+  .product-description ol {
+    @apply list-decimal;
+  }
+  
+  .product-description li {
+    @apply mb-1;
+  }
+  
+  .product-description a {
+    @apply text-blue-600 hover:text-blue-800 underline;
+  }
+  
+  .product-description strong,
+  .product-description b {
+    @apply font-semibold text-gray-900;
+  }
+  
+  .product-description em,
+  .product-description i {
+    @apply italic;
+  }
+  
+  .product-description blockquote {
+    @apply border-l-4 border-gray-300 pl-4 italic text-gray-600 my-4;
+  }
+  
+  .product-description pre {
+    @apply bg-gray-100 p-4 rounded-md overflow-x-auto mb-4;
+  }
+  
+  .product-description code {
+    @apply bg-gray-100 px-1 py-0.5 rounded text-sm;
+  }
+  
+  .product-description table {
+    @apply w-full border-collapse border border-gray-300 mb-4;
+  }
+  
+  .product-description th,
+  .product-description td {
+    @apply border border-gray-300 px-3 py-2 text-left;
+  }
+  
+  .product-description th {
+    @apply bg-gray-50 font-semibold;
+  }
+  
+  .product-description img {
+    @apply max-w-full h-auto rounded-md my-4;
+  }
+  
+  .product-description hr {
+    @apply border-gray-300 my-6;
+  }
+  
+  /* Bootstrap-compatible grid system for legacy HTML content */
+  .product-description .row {
+    @apply flex flex-wrap -mx-2 mb-3;
+  }
+  
+  .product-description .row > div[class*="col-"] {
+    @apply px-2 mb-2;
+  }
+  
+  /* Column widths for different breakpoints */
+  .product-description .col-xs-5 {
+    @apply w-5/12;
+  }
+  
+  .product-description .col-xs-7 {
+    @apply w-7/12;
+  }
+  
+  .product-description .col-xs-12 {
+    @apply w-full;
+  }
+  
+  .product-description .col-md-5 {
+    @apply w-5/12;
+  }
+  
+  .product-description .col-md-6 {
+    @apply w-full;
+  }
+  
+  .product-description .col-md-7 {
+    @apply w-7/12;
+  }
+  
+  .product-description .col-md-12 {
+    @apply w-full;
+  }
+  
+  /* Medium screens and up */
+  @media (min-width: 768px) {
+    .product-description .col-md-5 {
+      @apply w-5/12;
+    }
+    
+    .product-description .col-md-6 {
+      @apply w-1/2;
+    }
+    
+    .product-description .col-md-7 {
+      @apply w-7/12;
+    }
+    
+    .product-description .col-md-12 {
+      @apply w-full;
+    }
+  }
+  
+  /* Product info specific styling */
+  .product-description .product-info {
+    @apply border border-gray-200 rounded-lg p-4 bg-gray-50;
+  }
+  
+  .product-description .product-info h4 {
+    @apply text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200;
+  }
+  
+  .product-description .product-info .row {
+    @apply border-b border-gray-100 py-2 last:border-b-0;
+  }
+  
+  .product-description .product-info .row:last-child {
+    @apply border-b-0;
+  }
+  
+  .product-description .product-info [class*="col-"]:first-child {
+    @apply font-medium text-gray-700;
+  }
+  
+  .product-description .product-info [class*="col-"]:last-child {
+    @apply text-gray-900;
+  }
+  
+  /* Certificate images styling */
+  .product-description .fancybox img {
+    @apply rounded border border-gray-200 hover:border-gray-400 transition-colors cursor-pointer;
+  }
+  
+  .product-description .fancybox {
+    @apply inline-block;
+  }
+  
+  /* Specific styling for certificate sections */
+  .product-description .certificates-section {
+    @apply mt-6 p-4 bg-white border border-gray-200 rounded-lg;
+  }
+  
+  .product-description .certificates-section h4 {
+    @apply text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 mt-0;
+  }
+  
+  .product-description .certificates-section .row {
+    @apply flex flex-wrap items-start gap-4 mb-4 p-3 bg-gray-50 rounded border-0;
+  }
+  
+  .product-description .certificates-section .row [class*="col-"]:first-child {
+    @apply flex-shrink-0 w-auto min-w-[200px] font-medium text-gray-700;
+  }
+  
+  .product-description .certificates-section .row [class*="col-"]:last-child {
+    @apply flex-1 text-gray-900;
+  }
+  
+  .product-description .certificates-section img {
+    @apply max-w-[120px] max-h-[120px] object-cover;
+  }
+}
