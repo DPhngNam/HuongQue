@@ -84,39 +84,40 @@ public class AuthController {
     }
 
     @GetMapping("/verify-email")
-public void verifyEmail(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
-    EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token)
-            .orElseThrow(() -> new RuntimeException("Invalid token"));
+    public void verifyEmail(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
+        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
 
-    User user = verificationToken.getUser();
-    if (user.isEnabled()) {
-        response.sendRedirect(frontendUrl + "/login?status=already");
-        return;
+        User user = verificationToken.getUser();
+        if (user.isEnabled()) {
+            response.sendRedirect(frontendUrl + "/login?status=already");
+            return;
+        }
+        if (verificationToken.getExpirationTime().before(new java.util.Date())) {
+            response.sendRedirect(frontendUrl + "/login?status=expired");
+            return;
+        }
+
+        user.setEnabled(true);
+        userRepository.save(user);
+        emailVerificationTokenRepository.delete(verificationToken);
+
+        try {
+            UserProfileDto profile = UserProfileDto.builder()
+                    .id(user.getId())
+                    .gmail(user.getEmail())
+                    .build();
+            userProfileService.createUserProfile("true", profile);
+
+            response.sendRedirect(frontendUrl + "/login?status=success");
+        } catch (Exception e) {
+            // Rollback: set lại enabled = false nếu lưu user profile thất bại
+            user.setEnabled(false);
+            userRepository.save(user);
+            // Có thể log lỗi chi tiết ở đây nếu cần
+            response.sendRedirect(frontendUrl + "/login?status=profile_error");
+        }
     }
-    if (verificationToken.getExpirationTime().before(new java.util.Date())) {
-        response.sendRedirect(frontendUrl + "/login?status=expired");
-        return;
-    }
-
-    user.setEnabled(true);
-    userRepository.save(user);
-    emailVerificationTokenRepository.delete(verificationToken);
-
-    // ✅ Gọi UserProfileService sau khi xác thực thành công
-    try {
-        UserProfileDto profile = UserProfileDto.builder()
-                .id(user.getId())
-                .gmail(user.getEmail())
-                .build();
-        userProfileService.createUserProfile("true", profile);
-
-    } catch (Exception e) {
-        // Logging lỗi nếu không tạo được UserProfile
-        throw new RuntimeException("[OAuth2] Không thể lưu user profile vào userservice", e);
-    }
-
-    response.sendRedirect(frontendUrl + "/login?status=success");
-}
 
 
     @ExceptionHandler(InvalidPasswordException.class)
