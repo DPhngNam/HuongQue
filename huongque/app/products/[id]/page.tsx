@@ -241,10 +241,7 @@ export default function ShopProductPage({
         </div>
 
         <ShopAvatar
-          shopName={shopContactInfo.shopName}
-          shopImage={shopContactInfo.shopImage}
-          shopDescription={shopContactInfo.shopDescription}
-          contactInfo={shopContactInfo.contactInfo}
+         tenantId={product.tenantId || ""}
         />
 
         {/* Related Products Section */}

@@ -16,5 +16,6 @@ public class ProductResponseDTO {
     private String categoryName;
     private Timestamp createAt;
     private String description;
+    private UUID tenantId;
 }
 

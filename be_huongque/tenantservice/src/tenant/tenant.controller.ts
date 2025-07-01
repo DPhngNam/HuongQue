@@ -39,7 +39,7 @@ export class TenantController {
     return this.tenantService.findAll();
   }
 
-  @Get('id/:id')
+  @Get(':id')
   async findById(@Param('id') id: string) {
     return this.tenantService.findById(id);
   }
