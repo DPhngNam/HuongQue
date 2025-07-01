@@ -11,13 +11,13 @@ export default function HomeBanner() {
           {/* Left side - Text content */}
           <div className="flex flex-col space-y-6 lg:w-1/2">
             <span className="text-blue-600 font-medium">
-              - Sản phẩm chăm sóc da
+              Hương Quê - Nơi tôn vinh giá trị quê hương
             </span>
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight">
-              Chúng tôi cung cấp những sản phẩm tốt nhất cho làn da của bạn
+              Tôn vinh giá trị quê hương qua những sản phẩm đạt chuẩn OCOP
             </h1>
             <Link
-              href="/products"
+              href="/category/thuc-pham-am-thuc"
               className="inline-flex w-fit items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-emerald-600 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
             >
               Mua ngay
