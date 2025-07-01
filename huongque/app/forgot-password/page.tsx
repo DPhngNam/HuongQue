@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -9,8 +9,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import axiosInstance from "@/lib/axiosInstance";
 import { Label } from "@radix-ui/react-label";
 import { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
@@ -26,31 +29,35 @@ export default function Page() {
 
     setLoading(true);
     try {
-      const res = await fetch(`${url}/auth/forgot-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-      if (!res.ok) throw new Error("Request failed");
-      alert("Check your email for reset link.");
-    } catch (error) {
-      console.error("Error sending forgot password email:", error);
-      alert("Failed to send reset email.");
-    } finally {
+      const res = await axiosInstance.post(
+        "/authservice/auth/forgot-password",
+        {
+          email,
+        }
+      );
+      console.log("Response:", res.data);
       setLoading(false);
+      toast.success(
+        "Chúng tôi đã gửi liên kết đặt lại mật khẩu đến email của bạn."
+      );
+    } catch (error) {
+      console.error("Error sending reset link:", error);
+      setLoading(false);
+      toast.error(
+        "Đã xảy ra lỗi khi gửi liên kết đặt lại mật khẩu. Vui lòng thử lại sau."
+      );
     }
   };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
+      <ToastContainer />
       <Card className="w-[564px] gap-4 h-[400px] justify-center p-9 ">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Forgot Password</CardTitle>
+          <CardTitle className="text-2xl font-bold">Quên mật khẩu</CardTitle>
           <CardDescription className="text-sm text-gray-500">
-            Enter your email address and we will send you a link to reset your
-            password.
+            Nhập địa chỉ email của bạn, chúng tôi sẽ gửi cho bạn một liên kết để
+            đặt lại mật khẩu.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -80,7 +87,7 @@ export default function Page() {
               className="bg-[#00CC96] text-white rounded-4xl w-full h-[56px] mt-7"
               disabled={loading}
             >
-              {loading ? "Sending..." : "Send Reset Link"}
+              {loading ? "Đang gửi..." : "Gửi liên kết đặt lại mật khẩu"}
             </Button>
           </form>
         </CardContent>

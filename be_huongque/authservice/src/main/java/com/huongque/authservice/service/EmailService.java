@@ -2,6 +2,7 @@ package com.huongque.authservice.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.resend.Resend;
@@ -13,7 +14,11 @@ import com.resend.services.emails.model.CreateEmailResponse;
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
-    private final Resend resend = new Resend("re_HpnJAUxy_9aFpGVNmGfdajA38hN8w5P2m"); // 💡 Bạn có thể lấy key từ @Value nếu muốn bảo mật hơn
+    private final Resend resend;
+
+    public EmailService(@Value("${resend.api-key}") String resendApiKey) {
+        this.resend = new Resend(resendApiKey);
+    }
 
     public void sendVerificationEmail(String toEmail, String token) {
         String subject = "Verify your email";
