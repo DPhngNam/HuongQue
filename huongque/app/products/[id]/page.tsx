@@ -2,11 +2,13 @@
 
 import ShopAvatar from "@/app/components/shop/ShopAvatar";
 import BreadcrumbNav from "@/app/components/ui/breadcrumb-nav";
+import Tabs from "@/app/components/ui/tabs";
 import { CartItem } from "@/app/models/cart";
 import { ProductProps } from "@/app/models/Product.model";
 import { useCartStore } from "@/app/stores/cartStore";
 import { products } from "@/app/utils/homeData";
 import { shopContactInfo } from "@/app/utils/shopData";
+import { useParseProductDescription } from "@/hooks/use-parse-product-description";
 import axiosInstance from "@/lib/axiosInstance";
 import { Check, Heart, Minus, Plus } from "lucide-react";
 import Image from "next/image";
@@ -42,6 +44,14 @@ export default function ShopProductPage({
   });
 
   const addItem = useCartStore((state) => state.addItem);
+  
+  // Parse the product description into separate sections
+  const { mainContent, certificates, hasCertificates } = useParseProductDescription(product.description || "");
+  
+  // Debug logging
+  console.log("Has certificates:", hasCertificates);
+  console.log("Main content length:", mainContent.length);
+  console.log("Certificates length:", certificates.length);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -60,8 +70,8 @@ export default function ShopProductPage({
 
     fetchProduct();
   }, [resolvedParams.id]);
+  console.log("Product data:", product);
 
- 
   const breadcrumbItems = [
     { label: "Trang chủ", href: "/" },
     { label: "Cửa hàng", href: "/shop" },
@@ -108,10 +118,6 @@ export default function ShopProductPage({
     <div className="min-h-screen bg-white">
       <div className="mx-auto max-w-7xl px-2 py-4 sm:px-4 md:px-6 lg:px-8">
         <BreadcrumbNav items={breadcrumbItems} />
-
-   
-        
-
         <div className="mt-8 grid grid-cols-1 gap-y-10 gap-x-8 md:grid-cols-2">
           {/* Product Image */}
           <div className="aspect-square w-full max-w-md mx-auto overflow-hidden rounded-lg border bg-gray-100 flex items-center justify-center">
@@ -172,11 +178,10 @@ export default function ShopProductPage({
               </div>
               <button
                 onClick={handleAddToCart}
-                className={`flex-1 py-2 px-4 text-white rounded-md transition-colors flex items-center justify-center gap-2 ${
-                  addedToCart
+                className={`flex-1 py-2 px-4 text-white rounded-md transition-colors flex items-center justify-center gap-2 ${addedToCart
                     ? "bg-green-600 hover:bg-green-700"
                     : "bg-blue-600 hover:bg-blue-700"
-                }`}
+                  }`}
                 disabled={addedToCart}
               >
                 {addedToCart ? (
@@ -196,20 +201,51 @@ export default function ShopProductPage({
         </div>
         {/* Product Description */}
         <div className="mt-8 flex flex-col">
+          <h3 className="text-xl font-semibold mb-4 text-gray-900">Thông tin sản phẩm</h3>
           {product.description && (
-            <div
-              className="prose max-w-none"
-              dangerouslySetInnerHTML={{ __html: product.description }}
-            />
+            <>
+              {hasCertificates ? (
+                <Tabs
+                  tabs={[
+                    {
+                      id: "info",
+                      label: "Thông tin chung",
+                      content: (
+                        <div
+                          className="product-description prose prose-lg max-w-none"
+                          dangerouslySetInnerHTML={{ __html: mainContent }}
+                        />
+                      )
+                    },
+                    {
+                      id: "certificates",
+                      label: "Chứng nhận & Xác nhận",
+                      content: (
+                        <div
+                          className="product-description"
+                          dangerouslySetInnerHTML={{ __html: certificates }}
+                        />
+                      )
+                    }
+                  ]}
+                  defaultTab="info"
+                />
+              ) : (
+                <div
+                  className="product-description prose prose-lg max-w-none"
+                  dangerouslySetInnerHTML={{ __html: product.description }}
+                />
+              )}
+            </>
           )}
         </div>
 
-               <ShopAvatar
-            shopName={shopContactInfo.shopName}
-            shopImage={shopContactInfo.shopImage}
-            shopDescription={shopContactInfo.shopDescription}
-            contactInfo={shopContactInfo.contactInfo}
-          />
+        <ShopAvatar
+          shopName={shopContactInfo.shopName}
+          shopImage={shopContactInfo.shopImage}
+          shopDescription={shopContactInfo.shopDescription}
+          contactInfo={shopContactInfo.contactInfo}
+        />
 
         {/* Related Products Section */}
         <div className="mt-16 border-t pt-16">

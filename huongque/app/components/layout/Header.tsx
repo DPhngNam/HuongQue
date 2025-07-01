@@ -4,24 +4,21 @@ import { useAuthStore } from "@/app/stores/authStore";
 import { useCartStore } from "@/app/stores/cartStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { Search, ShoppingCart, User } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import { NotificationDropdown } from "./NotificationDropdown";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import NavMenu from "./NavMenu";
-import { use, useEffect } from "react";
+import { NotificationDropdown } from "./NotificationDropdown";
 
 export default function Header() {
   const router = useRouter();
   const isLogin = useAuthStore((state) => state.isLogin());
+  console.log("isLogin", isLogin);
   useEffect(() => {
-    if (!isLogin) {
-      router.push("/login");
-    }
     useCartStore.getState().fetchCartItems();
-  },[isLogin]);
+  },[]);
 
   const totalItems = useCartStore((state) => state.totalItems);
 
