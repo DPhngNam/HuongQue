@@ -63,4 +63,6 @@ public class ProductController {
     public ResponseEntity<List<ProductResponseDTO>> getAllProductsByCategorySlug(@PathVariable String categorySlug) {
         return ResponseEntity.ok(productService.getAllProductsByCategorySlug(categorySlug));
     }
+
+
 }

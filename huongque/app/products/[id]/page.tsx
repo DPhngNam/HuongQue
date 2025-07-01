@@ -241,6 +241,7 @@ export default function ShopProductPage({
         </div>
 
         <ShopAvatar
+        
          tenantId={product.tenantId || ""}
         />
 
