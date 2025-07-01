@@ -116,6 +116,7 @@ public class AuthController {
             userRepository.save(user);
             // Có thể log lỗi chi tiết ở đây nếu cần
             response.sendRedirect(frontendUrl + "/login?status=profile_error");
+            System.err.println(e.getMessage());
         }
     }
 
