@@ -1,7 +1,7 @@
 package com.huongque.userservice.controller;
 
-import com.huongque.userservice.dto.CreateUserAddressDto;
-import com.huongque.userservice.dto.UpdateUserAddressDto;
+
+
 import com.huongque.userservice.dto.UserAddressDto;
 import com.huongque.userservice.service.UserAddressService;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +56,7 @@ public class UserAddressController {
     @PostMapping("/me/addresses")
     public ResponseEntity<UserAddressDto> createAddress(
             @RequestHeader("X-User-Id") String userId,
-            @Valid @RequestBody CreateUserAddressDto createDto) {
+            @Valid @RequestBody UserAddressDto createDto) {
         UUID uuid = UUID.fromString(userId);
         UserAddressDto createdAddress = userAddressService.createAddress(uuid, createDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAddress);
@@ -67,7 +67,7 @@ public class UserAddressController {
     public ResponseEntity<UserAddressDto> updateAddress(
             @PathVariable UUID addressId,
             @RequestHeader("X-User-Id") String userId,
-            @Valid @RequestBody UpdateUserAddressDto updateDto) {
+            @Valid @RequestBody UserAddressDto updateDto) {
         UUID userUuid = UUID.fromString(userId);
         
         // Check if address belongs to the user

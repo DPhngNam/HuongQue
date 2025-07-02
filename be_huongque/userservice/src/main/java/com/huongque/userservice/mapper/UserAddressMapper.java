@@ -1,7 +1,4 @@
 package com.huongque.userservice.mapper;
-
-import com.huongque.userservice.dto.CreateUserAddressDto;
-import com.huongque.userservice.dto.UpdateUserAddressDto;
 import com.huongque.userservice.dto.UserAddressDto;
 import com.huongque.userservice.entity.UserAddress;
 import com.huongque.userservice.entity.UserProfile;
@@ -18,24 +15,34 @@ public class UserAddressMapper {
         return UserAddressDto.builder()
                 .id(userAddress.getId())
                 .address(userAddress.getAddress())
+                .name(userAddress.getName())           
+                .phone(userAddress.getPhone())        
+                .type(userAddress.getType())           
                 .userProfileId(userAddress.getUserProfile() != null ? userAddress.getUserProfile().getId() : null)
                 .build();
     }
 
-    public UserAddress toEntity(CreateUserAddressDto createDto, UserProfile userProfile) {
-        if (createDto == null) {
+    public UserAddress toEntity(UserAddressDto userAddressDto, UserProfile userProfile) {
+        if (userAddressDto == null) {
             return null;
         }
-        
+
         return UserAddress.builder()
-                .address(createDto.getAddress())
+                .id(userAddressDto.getId())
+                .address(userAddressDto.getAddress())
+                .name(userAddressDto.getName())       
+                .phone(userAddressDto.getPhone())      
+                .type(userAddressDto.getType())        
                 .userProfile(userProfile)
                 .build();
     }
 
-    public void updateEntity(UserAddress userAddress, UpdateUserAddressDto updateDto) {
+    public void updateEntity(UserAddress userAddress, UserAddressDto updateDto) {
         if (updateDto != null) {
             userAddress.setAddress(updateDto.getAddress());
+            userAddress.setName(updateDto.getName());        
+            userAddress.setPhone(updateDto.getPhone());      
+            userAddress.setType(updateDto.getType());        
         }
     }
 }

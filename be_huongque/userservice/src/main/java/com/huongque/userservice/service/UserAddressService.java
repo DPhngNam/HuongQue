@@ -1,7 +1,6 @@
 package com.huongque.userservice.service;
 
-import com.huongque.userservice.dto.CreateUserAddressDto;
-import com.huongque.userservice.dto.UpdateUserAddressDto;
+
 import com.huongque.userservice.dto.UserAddressDto;
 import com.huongque.userservice.entity.UserAddress;
 import com.huongque.userservice.entity.UserProfile;
@@ -40,7 +39,7 @@ public class UserAddressService {
         return userAddressMapper.toDto(userAddress);
     }
 
-    public UserAddressDto createAddress(UUID userId, CreateUserAddressDto createDto) {
+    public UserAddressDto createAddress(UUID userId, UserAddressDto createDto) {
         UserProfile userProfile = userProfileRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
 
@@ -50,7 +49,7 @@ public class UserAddressService {
         return userAddressMapper.toDto(savedAddress);
     }
 
-    public UserAddressDto updateAddress(UUID addressId, UpdateUserAddressDto updateDto) {
+    public UserAddressDto updateAddress(UUID addressId, UserAddressDto updateDto) {
         UserAddress userAddress = userAddressRepository.findById(addressId)
                 .orElseThrow(() -> new AddressNotFoundException("Address not found with id: " + addressId));
 

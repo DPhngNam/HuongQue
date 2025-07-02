@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { useRouter } from "next/navigation";
+import { ToastContainer } from "react-toastify";
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState("personal");
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -46,6 +47,7 @@ export default function SettingsPage() {
 
   return (
     <div className="p-8 md:p-8">
+      <ToastContainer />
       <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
         <DialogContent>
           <DialogHeader>
