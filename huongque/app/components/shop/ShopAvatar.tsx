@@ -12,7 +12,7 @@ export interface ShopInfoProps {
   avatar: string;
   address: string;
   phone: string;
-  description: string;
+  ShopDescription: string;
   owner: string;
   organization_info: string;
   created_at: string;
@@ -54,8 +54,12 @@ export default function ShopAvatar({ tenantId }: { tenantId: string }) {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-4">
             <div>
               <h3 className="text-xl font-semibold text-gray-900">{shopInfo?.name}</h3>
-              {shopInfo?.description && (
-                <p className="text-sm text-gray-600 mt-1 line-clamp-2">{shopInfo.description}</p>
+              {shopInfo?.ShopDescription && (
+                <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                  <div dangerouslySetInnerHTML={{ 
+                    __html: shopInfo.ShopDescription.substring(0, 100) + "..." 
+                  }} />
+                </p>
               )}
               <div className="mt-3 space-y-1 text-sm text-gray-700">
                 <div className="flex items-center gap-2">
