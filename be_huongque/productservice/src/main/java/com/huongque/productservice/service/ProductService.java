@@ -2,6 +2,7 @@ package com.huongque.productservice.service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,8 +64,9 @@ public class ProductService {
     }
 
     public List<ProductResponseDTO> getTopProducts(int top) {
-        return productRepository.findAll().stream()
-                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
+        List<Product> allProducts = productRepository.findAll();
+        Collections.shuffle(allProducts);
+        return allProducts.stream()
                 .limit(top)
                 .map(productMapper::toDto)
                 .collect(Collectors.toList());

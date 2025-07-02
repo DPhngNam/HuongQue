@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Plus, MapPin, Edit, Trash2 } from 'lucide-react';
 
 export default function Address() {
+  
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">

@@ -160,16 +160,6 @@ export default function Personal() {
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="gender">Giới tính</Label>
-          <select id="gender" className="w-full p-2 border rounded-md">
-            <option value="">Chọn giới tính</option>
-            <option value="male">Nam</option>
-            <option value="female">Nữ</option>
-            <option value="other">Khác</option>
-          </select>
-        </div>
-
         <Button
           type="submit"
           className="w-full md:w-auto"

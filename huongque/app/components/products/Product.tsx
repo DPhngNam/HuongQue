@@ -23,18 +23,18 @@ export default function Product({ product }: { product: ProductProps }) {
           </div>
         )}
       </div>
-      <div className="mt-4 flex justify-between">
-        <div>
-          <h3 className="text-sm text-gray-700">
-            <Link
-              href={`/products/${product.id}`}
-              className="hover:text-indigo-600"
-            >
-              {product.name}
-            </Link>
-          </h3>
-        </div>
-        <p className="text-sm font-medium text-gray-900">
+      <div className="mt-4 flex flex-col gap-1 justify-between min-h-[70px]">
+        <h3 className="text-sm text-gray-800 font-medium leading-5 line-clamp-2 min-h-[40px]">
+          <Link
+            href={`/products/${product.id}`}
+            className="hover:text-indigo-600"
+          >
+            {product.name}
+          </Link>
+        </h3>
+        {/* Nếu có mô tả ngắn, có thể thêm ở đây */}
+        {/* <p className="text-xs text-gray-500 line-clamp-2 mt-1">{product.description}</p> */}
+        <p className="text-base font-semibold text-gray-900 mt-1">
           {!product.price || product.price === 0
             ? "Liên hệ"
             : product.price.toLocaleString("vi-VN") + " ₫"}

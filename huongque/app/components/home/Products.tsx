@@ -3,7 +3,7 @@
 import { ProductProps } from "@/app/models/Product.model";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { memo, useCallback, useEffect, useState } from "react";
+import { JSX, memo, useCallback, useEffect, useState } from "react";
 import Product from "../products/Product";
 import { Button } from "@/components/ui/button";
 
@@ -29,43 +29,28 @@ const ProductSkeleton = memo(() => (
 ProductSkeleton.displayName = "ProductSkeleton";
 
 // Custom hook for loading state
-const useLoadingState = (delay: number = 1000) => {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, delay);
-
-    return () => clearTimeout(timer);
-  }, [delay]);
-
-  return isLoading;
-};
-
-export default function HomeProducts({
-  products,
-}: {
+interface ProductsProps {
   products: ProductProps[];
-}) {
-  const [showAll, setShowAll] = useState(false);
-  const isLoading = useLoadingState();
-
-  const hasMoreProducts = products.length > 8;
-
-  const handleShowMore = useCallback(() => {
-    setShowAll((prev) => !prev);
-  }, []);
-
+  loading?: boolean;
+  error?: string;
+}
+export default function Products({
+  products,
+  loading,
+  error,
+}: ProductsProps) {
   return (
     <div className="">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-          Các sản phẩm nổi bật
-        </h2>
+    
+        {error && (
+          <div className="mb-4 text-center text-red-500 font-medium">
+            {error}
+          </div>
+        )}
 
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          {isLoading
+          {loading
             ? // Show 8 skeleton items while loading
               Array.from({ length: 8 }).map((_, index) => (
                 <ProductSkeleton key={index} />
@@ -75,13 +60,7 @@ export default function HomeProducts({
               ))}
         </div>
 
-        <div className="mt-10 text-center">
-          <Link href={"/category"}>
-          <Button>
-            Xem Thêm
-          </Button>
-          </Link>
-        </div>
+        
       </div>
     </div>
   );

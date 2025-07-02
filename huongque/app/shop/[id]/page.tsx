@@ -1,5 +1,6 @@
 'use client'
 
+import Products from "@/app/components/home/Products"
 import ProductsSection from "@/app/components/shop/ProductsSection"
 import { ShopInfoProps } from "@/app/components/shop/ShopAvatar"
 import ShopBanner from "@/app/components/shop/ShopBanner"
@@ -78,11 +79,7 @@ export default function ShopPage() {
       />
 
       {/* Products Section */}
-      <ProductsSection 
-        title={productsSection.title}
-        description={productsSection.description}
-        products={products}
-      />
+     <Products products={products} />
     </div>
   )
 }

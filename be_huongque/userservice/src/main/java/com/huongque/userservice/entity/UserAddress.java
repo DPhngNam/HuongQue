@@ -23,4 +23,10 @@ public class UserAddress {
 
     @Column(nullable = false)
     private String address;
+
+    private String name;
+    private String phone;
+    
+    private String type;
+
 }

@@ -1,18 +1,17 @@
 "use client";
 
+import Products from "@/app/components/home/Products";
 import ShopAvatar from "@/app/components/shop/ShopAvatar";
 import BreadcrumbNav from "@/app/components/ui/breadcrumb-nav";
 import Tabs from "@/app/components/ui/tabs";
 import { CartItem } from "@/app/models/cart";
 import { ProductProps } from "@/app/models/Product.model";
 import { useCartStore } from "@/app/stores/cartStore";
-import { products } from "@/app/utils/homeData";
-import { shopContactInfo } from "@/app/utils/shopData";
 import { useParseProductDescription } from "@/hooks/use-parse-product-description";
+import { useProducts } from "@/hooks/useProduct";
 import axiosInstance from "@/lib/axiosInstance";
 import { Check, Heart, Minus, Plus } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { use, useEffect, useState } from "react";
 
@@ -47,7 +46,7 @@ export default function ShopProductPage({
   
   // Parse the product description into separate sections
   const { mainContent, certificates, hasCertificates } = useParseProductDescription(product.description || "");
-  
+  const {products,loading,error}= useProducts(4);
   // Debug logging
   console.log("Has certificates:", hasCertificates);
   console.log("Main content length:", mainContent.length);
@@ -245,7 +244,7 @@ export default function ShopProductPage({
          tenantId={product.tenantId || ""}
         />
 
-        {/* Related Products Section */}
+        {/* Related Products Section
         <div className="mt-16 border-t pt-16">
           <h2 className="text-2xl font-bold">Có thể bạn sẽ thích</h2>
           <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
@@ -285,7 +284,9 @@ export default function ShopProductPage({
                 )
             )}
           </div>
-        </div>
+        </div> */}
+
+        <Products products={products} loading={loading} error={error ?? undefined} />
       </div>
     </div>
   );
