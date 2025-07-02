@@ -33,55 +33,84 @@ export default function RevenueChart() {
   const [tab, setTab] = useState<"day" | "month">("day");
 
   return (
-    <div className="bg-white rounded-xl shadow p-4">
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold">Biểu đồ doanh thu</h2>
-        <p className="text-sm text-gray-500">
-          Theo dõi doanh thu  theo thời gian
-        </p>
+    <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900">Biểu đồ doanh thu</h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Theo dõi doanh thu theo thời gian
+          </p>
+        </div>
+        
+        <div className="flex bg-gray-100 rounded-lg p-1">
+          <button
+            onClick={() => setTab("day")}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+              tab === "day"
+                ? "bg-white text-blue-600 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            Theo ngày
+          </button>
+          <button
+            onClick={() => setTab("month")}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+              tab === "month"
+                ? "bg-white text-blue-600 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            Theo tháng
+          </button>
+        </div>
       </div>
-
-      <div className="flex gap-4 mb-2">
-        <button
-          className={`px-4 py-1 rounded ${
-            tab === "day"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-100 text-gray-700"
-          }`}
-          onClick={() => setTab("day")}
-        >
-          Theo ngày
-        </button>
-        <button
-          className={`px-4 py-1 rounded ${
-            tab === "month"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-100 text-gray-700"
-          }`}
-          onClick={() => setTab("month")}
-        >
-          Theo tháng
-        </button>
-      </div>
-
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={350}>
         <AreaChart data={tab === "day" ? dailyData : monthlyData}>
           <defs>
             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.4} />
-              <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
+              <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.1} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis tickFormatter={(val) => `${(val / 1000).toFixed(0)}N`} />
-          <Tooltip formatter={(val: number) => `${val.toLocaleString()} đ`} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+          <XAxis 
+            dataKey="date" 
+            stroke="#64748b"
+            fontSize={12}
+            tickLine={false}
+            axisLine={false}
+          />
+          <YAxis 
+            stroke="#64748b"
+            fontSize={12}
+            tickLine={false}
+            axisLine={false}
+            tickFormatter={(value) => `${value/1000}K`}
+          />
+          <Tooltip
+            content={({ active, payload, label }) => {
+              if (active && payload && payload.length) {
+                return (
+                  <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+                    <p className="text-sm font-medium text-gray-900">{label}</p>
+                    <p className="text-sm text-blue-600">
+                      Doanh thu: {payload[0].value?.toLocaleString('vi-VN')} VNĐ
+                    </p>
+                  </div>
+                );
+              }
+              return null;
+            }}
+          />
           <Area
             type="monotone"
             dataKey="revenue"
             stroke="#3b82f6"
-            fill="url(#colorRevenue)"
             strokeWidth={3}
+            fill="url(#colorRevenue)"
+            dot={{ fill: "#3b82f6", strokeWidth: 2, r: 4 }}
+            activeDot={{ r: 6, stroke: "#3b82f6", strokeWidth: 2 }}
           />
         </AreaChart>
       </ResponsiveContainer>
