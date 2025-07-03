@@ -11,6 +11,7 @@ import {
   Settings,
   Key,
   Shield,
+  ClipboardList,
 } from "lucide-react";
 
 // Import individual tab content components
@@ -22,6 +23,7 @@ import PromotionsTab from "./tabs/PromotionsTab";
 import SettingsTab from "./tabs/SettingsTab";
 import AccessTab from "./tabs/AccessTab";
 import IntegrationTab from "./tabs/IntegrationTab";
+import RegistrationsTab from "./tabs/RegistrationsTab";
 
 interface TabItem {
   id: string;
@@ -48,6 +50,12 @@ const tabItems: TabItem[] = [
     name: "Người dùng",
     icon: <Users className="w-4 h-4" />,
     component: UserManagementTab,
+  },
+  {
+    id: "registrations",
+    name: "Đăng ký",
+    icon: <ClipboardList className="w-4 h-4" />,
+    component: RegistrationsTab,
   },
   {
     id: "reports",
