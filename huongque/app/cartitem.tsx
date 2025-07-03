@@ -45,6 +45,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
                     src={item.productImage}
                     alt="Product Image"
                     fill
+                    sizes="(max-width: 768px) 96px, 96px"
                     className="object-cover"
                 />
             </div>

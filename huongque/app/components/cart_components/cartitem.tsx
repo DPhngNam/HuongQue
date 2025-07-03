@@ -38,6 +38,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
                     src={item.productImage}
                     alt="Hình ảnh sản phẩm"
                     fill
+                    sizes="(max-width: 768px) 96px, 96px"
                     className="object-cover"
                 />
             </div>
