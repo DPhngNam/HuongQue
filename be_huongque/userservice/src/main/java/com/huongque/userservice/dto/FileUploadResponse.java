@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FileUploadResponse {
-    private boolean success;
+
+    private String userId;
     private String fileUrl;
 }

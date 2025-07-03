@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FileUploadRequest {
-    private String bucketName;
     private String fileName;
-    private String contentType;
-    private String fileContent; // base64 encoded
+    private String fileType;
+    private byte[] data;
+    private String userId; // Assuming this is the ID of the user uploading the file
 }

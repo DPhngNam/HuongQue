@@ -128,6 +128,12 @@ services:
       PORT: 8083
       EUREKA_HOST: eurekaserver
       EUREKA_PORT: 8761
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      RABBITMQ_QUEUE: file.upload
+      RABBITMQ_QUEUE_RESPONSE: file.upload.response
     volumes:
       - ./userservice:/app
   tenantservice:

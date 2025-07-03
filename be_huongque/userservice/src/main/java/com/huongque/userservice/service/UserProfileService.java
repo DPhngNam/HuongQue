@@ -75,4 +75,13 @@ public class UserProfileService {
         return userProfileMapper.toDto(profile);
     }
 
+    public void updateAvatarUrl(UUID userId, String avatarUrl) {
+        UserProfile user = userProfileRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        user.setAvatar(avatarUrl);
+        userProfileRepository.save(user);
+    }
+
+
 }
