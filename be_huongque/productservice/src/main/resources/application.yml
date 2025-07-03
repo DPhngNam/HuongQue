@@ -35,8 +35,17 @@ eureka:
   client:
     service-url:
       defaultZone: http://${EUREKA_SERVER_HOST:localhost}:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 30
+    eureka-server-connect-timeout-seconds: 5
+    eureka-server-read-timeout-seconds: 8
+    eureka-server-total-connections: 200
+    eureka-server-total-connections-per-host: 50
   instance:
     prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     metadata-map:
       instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}

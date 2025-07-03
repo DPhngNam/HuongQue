@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    
+    <!-- Reduce noise from connection errors -->
+    <logger name="org.glassfish.jersey.server.ServerRuntime" level="WARN"/>
+    <logger name="org.apache.catalina.connector" level="WARN"/>
+    <logger name="com.netflix.eureka" level="WARN"/>
+    <logger name="com.netflix.discovery" level="WARN"/>
+    
+    <!-- Keep important Eureka logs -->
+    <logger name="com.netflix.eureka.registry" level="INFO"/>
+    <logger name="com.netflix.eureka.lease" level="INFO"/>
+    
+    <!-- Application logs -->
+    <logger name="com.huongque" level="INFO"/>
+</configuration>

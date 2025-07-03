@@ -39,6 +39,13 @@ services:
       - "8761:8761"
     environment:
       EUREKA_HOSTNAME: eurekaserver
+      JAVA_OPTS: >-
+        -Xms512m -Xmx1g
+        -Dserver.tomcat.connection-timeout=20000
+        -Dserver.tomcat.keep-alive-timeout=20000
+        -Dserver.tomcat.max-keep-alive-requests=100
+        -Dlogging.level.org.glassfish.jersey.server.ServerRuntime=WARN
+        -Dlogging.level.org.apache.catalina.connector=WARN
     healthcheck:
       test:
         [
@@ -52,6 +59,9 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
+    restart: unless-stopped
+    networks:
+      - default
   rabbitmq:
     image: rabbitmq:latest
     ports:
