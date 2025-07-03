@@ -55,11 +55,11 @@ export default function ShopAvatar({ tenantId }: { tenantId: string }) {
             <div>
               <h3 className="text-xl font-semibold text-gray-900">{shopInfo?.name}</h3>
               {shopInfo?.ShopDescription && (
-                <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                <div className="text-sm text-gray-600 mt-1 line-clamp-2">
                   <div dangerouslySetInnerHTML={{ 
                     __html: shopInfo.ShopDescription.substring(0, 100) + "..." 
                   }} />
-                </p>
+                </div>
               )}
               <div className="mt-3 space-y-1 text-sm text-gray-700">
                 <div className="flex items-center gap-2">

@@ -3,17 +3,17 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useRouter } from 'next/navigation'
-import { useState, useEffect } from "react"
-import { toast } from "sonner"
+import { useState } from "react"
+import { ToastContainer, toast } from "react-toastify";
 
-import BreadcrumbNav from '../components/ui/breadcrumb-nav'
-import { useCartStore } from '../stores/cartStore'
-import { useAuthStore } from '../stores/authStore'
-import { Order, orderService, userProfileService } from "./service/service"
 import CartItem from '../components/cart_components/cartitem'
+import BreadcrumbNav from '../components/ui/breadcrumb-nav'
+import { useAuthStore } from '../stores/authStore'
+import { useCartStore } from '../stores/cartStore'
+import { Order, orderService, userProfileService } from "./service/service"
 
 interface CustomerInfo {
   customerName: string
@@ -137,16 +137,14 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     if (isLoading) return; // Prevent multiple submissions
-
-    if (!validateCustomerInfo()) {
-      return
-    }
-
+    toast.success('Handling checkout...')
+    
+    // Test toast to ensure it's working
+    toast.info('Đang xử lý đơn hàng...')
     try {
       setIsLoading(true)
       // Create order data
       const orderData: Order = {
-        userId: "b3b8c7e2-8e2a-4c2a-9e2a-8e2a4c2a9e2a", // Replace with actual user ID from your auth system
         customerName: customerInfo.customerName,
         deliveryAddress: customerInfo.deliveryAddress,
         customerPhone: customerInfo.customerPhone,
@@ -154,24 +152,41 @@ export default function CartPage() {
           productId: item.productId,
           quantity: item.quantity,
           price: item.price,
-          orderId: "b3b8c7e2-8e2a-4c2a-9e2a-8e2a4c2a9e2a", 
           productName: item.productName,
           productImage: item.productImage
         })),
         orderStatus: "PENDING",
-        orderTotal: total.toFixed(2),
+        orderTotal: total,
         orderPaymentMethod: customerInfo.paymentMethod === 'STRIPE' ? 'CREDIT_CARD' : 'CASH',
         orderPaymentStatus: customerInfo.paymentMethod === 'COD' ? 'PENDING' : 'PENDING',
         orderPaymentDate: new Date().toISOString().split('T')[0],
-        orderPaymentAmount: total.toFixed(2)
+        orderPaymentAmount: total
       }
+
+      //console.log('Order data:', orderData)
 
       // Create order
       const order = await orderService.createOrder(orderData)
 
-      // Create payment
-      console.log(order)
-      toast.success('Đặt hàng thành công!')
+      // Handle successful order creation
+      console.log('Order created:', order)
+      console.log('Payment method:', customerInfo.paymentMethod)
+      console.log('Has payment URL:', !!order.data?.paymentUrl)
+      console.log('Payment URL:', order.data?.paymentUrl)
+      
+      // If payment method is Stripe and we have a payment URL, redirect to Stripe
+      if (customerInfo.paymentMethod === 'STRIPE' && order.data?.paymentUrl) {
+        toast.success('Đặt hàng thành công! Đang chuyển hướng đến trang thanh toán...')
+        // Add a small delay to show the toast before redirecting
+        setTimeout(() => {
+          window.location.href = order.data.paymentUrl
+        }, 1500) // 1.5 second delay
+      } else {
+        // For COD orders, just show success message
+        toast.success('Đặt hàng thành công!')
+        // Optionally redirect to order confirmation page or home
+        // router.push('/orders') // Uncomment if you have an orders page
+      }
     } catch (error) {
       console.error('Checkout error:', error)
       if (error instanceof Error) {
@@ -198,7 +213,7 @@ export default function CartPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
         <BreadcrumbNav items={breadcrumbItems} />
-
+        <ToastContainer position="top-center" autoClose={3000} />
         <div className="mt-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsContent value="cart" className="space-y-6">

@@ -31,16 +31,34 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const cartData = await cartService.getCartByUserId();
-      const items = cartData?.cartItems || [];
-      const totalItems = items.reduce((total, item) => total + item.quantity, 0);
+      const rawItems = cartData?.cartItems || [];
+      const itemsMap = new Map<string, CartItem>();
+      rawItems.forEach(item => {
+        const existingItem = itemsMap.get(item.productId);
+        
+        if (existingItem) {
+          existingItem.quantity += item.quantity;
+        } else {
+          // Add new item to map
+          itemsMap.set(item.productId, {
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.price,
+            productName: item.productName,
+            productImage: item.productImage
+          });
+        }
+      });
       
+      // Convert map values back to array
+      const items = Array.from(itemsMap.values());
+      const totalItems = items.reduce((total, item) => total + item.quantity, 0);
       set({ 
         items, 
         totalItems,
         isLoading: false 
       });
     } catch (error) {
-      console.error("Error fetching cart items:", error);
       set({ 
         error: error instanceof Error ? error.message : "Failed to fetch cart items",
         isLoading: false 

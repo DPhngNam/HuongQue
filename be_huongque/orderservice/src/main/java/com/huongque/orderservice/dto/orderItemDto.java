@@ -17,8 +17,7 @@ public class orderItemDto {
     private int quantity;
     @Schema(description = "Price of the product", example = "50.00")
     private double price;
-    @Schema(description = "Order ID", example = "b3b8c7e2-8e2a-4c2a-9e2a-8e2a4c2a9e2a")
-    private String orderId;
+
     @Schema(description = "Product name", example = "Product A")
     private String productName;
     @Schema(description = "Product image URL", example = "http://example.com/image.jpg")

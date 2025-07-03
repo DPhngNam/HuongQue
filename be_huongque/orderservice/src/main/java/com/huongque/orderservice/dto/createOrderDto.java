@@ -19,8 +19,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class createOrderDto {
-    @Schema(description = "User ID who places the order", example = "b3b8c7e2-8e2a-4c2a-9e2a-8e2a4c2a9e2a")
-    private UUID userId;
     @Schema(description = "Customer name", example = "John Doe")
     private String customerName;
     @Schema(description = "Delivery address", example = "123 Main St")

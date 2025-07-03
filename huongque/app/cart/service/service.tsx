@@ -7,29 +7,33 @@ export interface OrderItem {
   productId: string;
   quantity: number;
   price: number;
-  orderId: string;
   productName: string;
   productImage: string;
 }
 
 export interface Order {
-  userId: string;
   customerName: string;
   deliveryAddress: string;
   customerPhone: string;
   orderItems: OrderItem[];
   orderStatus: 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
-  orderTotal: string;
+  orderTotal: number;
   orderPaymentMethod: 'CASH' | 'CREDIT_CARD' | 'BANK_TRANSFER';
   orderPaymentStatus: 'PAID' | 'PENDING' | 'FAILED';
   orderPaymentDate: string;
-  orderPaymentAmount: string;
+  orderPaymentAmount: number;
 }
 
 export interface PaymentResponse {
   orderId: string;
   paymentUrl: string;
   status: 'SUCCESS' | 'FAILED' | 'PENDING';
+}
+
+export interface OrderCreateResponse {
+  data: PaymentResponse;
+  status: number;
+  statusText: string;
 }
 
 // Cart Types
@@ -74,15 +78,15 @@ export const orderService = {
   url: axiosInstance_BASE_URL + 'orders',
   // Get all orders
   // Create a new order
-  createOrder: async (orderData: Order)=> {
+  createOrder: async (orderData: Order): Promise<OrderCreateResponse> => {
     try {
       const response = await axiosInstance.post(orderService.url ,orderData);
       console.log(response);
 
-      return response.data;
+      return response;
     } catch (error) {
       console.log(error);
-      return error;
+      throw error;
     }
   },
 
