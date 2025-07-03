@@ -2,6 +2,7 @@ package com.huongque.apigateway.config;
 
 import org.springframework.http.HttpHeaders;
 import java.util.Base64;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -24,17 +25,21 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     @Value("${jwt.signing-key}")
     private String secretKey;
 
+    private static final List<String> WHITELIST = List.of(
+        "/authservice",
+        "/userservice/users/internal",
+        "/productservice/top"
+
+    );
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getPath().toString();
 
-        // Bỏ qua filter cho /auth/**
-       if (path.startsWith("/authservice/") || path.equals("/userservice/users/internal")) {
-    return chain.filter(exchange);
-}
-
-        
-
+        // Bỏ qua các đường dẫn trong whitelist
+        if (WHITELIST.stream().anyMatch(path::startsWith)) {
+         return chain.filter(exchange);
+       }
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return this.onError(exchange, "Missing or invalid Authorization header", HttpStatus.UNAUTHORIZED);
