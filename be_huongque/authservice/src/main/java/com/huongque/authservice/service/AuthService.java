@@ -9,12 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.huongque.authservice.client.UserProfileService;
 import com.huongque.authservice.config.JwtUtils;
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
 import com.huongque.authservice.dto.RegisterDto;
-import com.huongque.authservice.dto.UserProfileDto;
 import com.huongque.authservice.entity.EmailVerificationToken;
 import com.huongque.authservice.entity.User;
 import com.huongque.authservice.exception.InvalidPasswordException;
@@ -30,10 +28,11 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
     private final UserRepository userRepository;
+
+
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
-    private final UserProfileService userProfileService;
-    private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+   private final EmailVerificationTokenRepository emailVerificationTokenRepository;
 
     private final EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);

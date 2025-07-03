@@ -57,7 +57,7 @@ export default function SignUp() {
       );
       setErrors({});
       setError(null);
-      const res = await axiosInstance.post(`${url}/auth/register`, {
+      const res = await axiosInstance.post(`/authservice/auth/register`, {
         email,
         password,
         confirmPassword,

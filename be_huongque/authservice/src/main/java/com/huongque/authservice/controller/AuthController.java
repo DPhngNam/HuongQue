@@ -1,7 +1,9 @@
 package com.huongque.authservice.controller;
 
 import com.huongque.authservice.entity.PasswordResetToken;
+import com.huongque.authservice.entity.Role;
 import com.huongque.authservice.repository.PasswordResetTokenRepository;
+import com.huongque.authservice.repository.RoleRepository;
 import com.huongque.authservice.service.EmailService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,10 +32,12 @@ import com.huongque.authservice.dto.RegisterDto;
 import com.huongque.authservice.dto.ResetPasswordRequest;
 import com.huongque.authservice.entity.EmailVerificationToken;
 import com.huongque.authservice.entity.User;
+import com.huongque.authservice.entity.UserRole;
 import com.huongque.authservice.exception.ErrorResponse;
 import com.huongque.authservice.exception.InvalidPasswordException;
 import com.huongque.authservice.repository.EmailVerificationTokenRepository;
 import com.huongque.authservice.repository.UserRepository;
+import com.huongque.authservice.repository.UserRoleRepository;
 import com.huongque.authservice.service.AuthService;
 import com.huongque.authservice.dto.UserProfileDto;
 import com.huongque.authservice.client.UserProfileService;
@@ -61,6 +65,8 @@ public class AuthController {
     @Value("${app.frontend-url}")
     private String frontendUrl;
     private final UserProfileService userProfileService;
+    private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody @Valid RegisterDto request) {
@@ -99,8 +105,18 @@ public class AuthController {
         }
 
         user.setEnabled(true);
+
         userRepository.save(user);
         emailVerificationTokenRepository.delete(verificationToken);
+        Role defaultRole = roleRepository.findByName("USER")
+    .orElseThrow(() -> new RuntimeException("Không tìm thấy vai trò mặc định"));
+
+UserRole userRole = new UserRole();
+userRole.setUser(user);
+userRole.setRole(defaultRole);
+
+
+userRoleRepository.save(userRole);
 
         try {
             UserProfileDto profile = UserProfileDto.builder()
