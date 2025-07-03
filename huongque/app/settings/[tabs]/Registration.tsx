@@ -27,19 +27,12 @@ export default function Registration() {
   const router = useRouter();
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [loading, setLoading] = useState(true);
-  const accessToken = localStorage.getItem("accessToken");
-  if (!accessToken) {
-    console.log("No access token found");
-  }
-
-  const decodedToken = jwtDecode<MyJwtPayload>(accessToken || "");
-  const email = decodedToken.email;
-  console.log("Decoded email:", email);
+  
 
   useEffect(() => {
     const fetchRegistrations = async () => {
       try {
-        const data = await getRegistrationsByUser(email);
+        const data = await getRegistrationsByUser();
         setRegistrations(data);
       } catch (error) {
         console.log("Failed to fetch registrations:", error);

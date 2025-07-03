@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ImageUpload } from "@/components/ui/image-upload";
+import { FileUpload } from "@/components/ui/file-upload";
 import { FormValues } from "./schema";
 
 interface Phase3FormProps {
@@ -20,7 +20,7 @@ export function Phase3Form({ form }: Phase3FormProps) {
   return (
     <div className="space-y-4">
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Thông tin tài khoản ngân hàng</h3>
+        <h2 className="text-lg font-semibold">Thông tin tài khoản ngân hàng</h2>
         <FormField
           control={form.control}
           name="bankAccount.accountNumber"
@@ -87,10 +87,10 @@ export function Phase3Form({ form }: Phase3FormProps) {
             <FormItem>
               <FormLabel>CCCD</FormLabel>
               <FormControl>
-                <ImageUpload
+                <FileUpload
                   value={field.value}
                   onChange={field.onChange}
-                  onRemove={() => field.onChange("")}
+                  onRemove={() => field.onChange(undefined)}
                 />
               </FormControl>
               <FormMessage />
@@ -105,10 +105,10 @@ export function Phase3Form({ form }: Phase3FormProps) {
             <FormItem>
               <FormLabel>Giấy phép đăng ký kinh doanh</FormLabel>
               <FormControl>
-                <ImageUpload
+                <FileUpload
                   value={field.value}
                   onChange={field.onChange}
-                  onRemove={() => field.onChange("")}
+                  onRemove={() => field.onChange(undefined)}
                 />
               </FormControl>
               <FormMessage />
@@ -123,10 +123,10 @@ export function Phase3Form({ form }: Phase3FormProps) {
             <FormItem>
               <FormLabel>Giấy chứng nhận cơ sở đủ điều kiện an toàn thực phẩm</FormLabel>
               <FormControl>
-                <ImageUpload
+                <FileUpload
                   value={field.value}
                   onChange={field.onChange}
-                  onRemove={() => field.onChange("")}
+                  onRemove={() => field.onChange(undefined)}
                 />
               </FormControl>
               <FormMessage />

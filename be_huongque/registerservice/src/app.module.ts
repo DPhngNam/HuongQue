@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { RabbitmqModule } from './module/rabbitmq/rabbitmq.module';
 import { RabbitmqService } from './module/rabbitmq/rabbitmq.service';
 import { RegistrationsModule } from './module/registrations/registrations.module';
+import { Registration } from './module/registrations/entities/registration.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -14,7 +15,7 @@ import { RegistrationsModule } from './module/registrations/registrations.module
       username: process.env.DB_USERNAME || 'registerservice',
       password: process.env.DB_PASSWORD || 'register',
       database: process.env.DB_NAME || 'registerdb',
-      entities: [__dirname + '/../module/registrations/**/*.entity{.ts,.js}'],
+      entities: [Registration],
       synchronize: true,
     }),
     RegistrationsModule,

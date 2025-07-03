@@ -43,17 +43,9 @@ export const formSchema = z.object({
       message: "Địa chỉ không được chỉ chứa khoảng trắng"
     }),
   
-  avatar: z.string()
-    .optional()
-    .refine((val) => !val || val.length > 0, {
-      message: "Vui lòng tải lên ảnh đại diện cửa hàng"
-    }),
+  avatar: z.any().optional(),
   
-  banner: z.string()
-    .optional()
-    .refine((val) => !val || val.length > 0, {
-      message: "Vui lòng tải lên ảnh bìa cửa hàng"
-    }),
+  banner: z.any().optional(),
   
   description: z.string()
     .min(10, "Mô tả phải có ít nhất 10 ký tự")
@@ -94,23 +86,11 @@ export const formSchema = z.object({
       }),
   }),
   
-  idCard: z.string()
-    .min(1, "Vui lòng tải lên CCCD")
-    .refine((val) => val.length > 0, {
-      message: "Vui lòng tải lên CCCD"
-    }),
+  idCard: z.any().optional(),
   
-  businessLicense: z.string()
-    .min(1, "Vui lòng tải lên giấy phép đăng ký kinh doanh")
-    .refine((val) => val.length > 0, {
-      message: "Vui lòng tải lên giấy phép đăng ký kinh doanh"
-    }),
+  businessLicense: z.any().optional(),
   
-  foodSafetyCertificate: z.string()
-    .min(1, "Vui lòng tải lên giấy chứng nhận an toàn thực phẩm")
-    .refine((val) => val.length > 0, {
-      message: "Vui lòng tải lên giấy chứng nhận an toàn thực phẩm"
-    }),
+  foodSafetyCertificate: z.any().optional(),
 });
 
 export type FormValues = z.infer<typeof formSchema>;

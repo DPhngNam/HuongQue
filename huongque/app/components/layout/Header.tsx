@@ -15,7 +15,6 @@ import { NotificationDropdown } from "./NotificationDropdown";
 export default function Header() {
   const router = useRouter();
   const isLogin = useAuthStore((state) => state.isLogin());
-  console.log("isLogin", isLogin);
   useEffect(() => {
     useCartStore.getState().fetchCartItems();
   },[]);

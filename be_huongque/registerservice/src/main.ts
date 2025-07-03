@@ -7,15 +7,8 @@ async function bootstrap() {
   // Create Nest app (with Express)
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Enable CORS with specific configuration
-  app.enableCors({
-    origin: true, // Allow all origins
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: '*',
-    exposedHeaders: '*',
-    credentials: true,
-  });
-
+  // CORS is handled by the API Gateway - no need to configure here
+  
   // Swagger setup with expanded configuration
   const config = new DocumentBuilder()
     .setTitle('Register Service')
