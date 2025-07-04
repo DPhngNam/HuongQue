@@ -30,6 +30,7 @@ import com.huongque.authservice.dto.AuthResponse;
 import com.huongque.authservice.dto.EmailRequest;
 import com.huongque.authservice.dto.RegisterDto;
 import com.huongque.authservice.dto.ResetPasswordRequest;
+import com.huongque.authservice.dto.SystemAuthDto;
 import com.huongque.authservice.entity.EmailVerificationToken;
 import com.huongque.authservice.entity.User;
 import com.huongque.authservice.entity.UserRole;
@@ -239,6 +240,11 @@ userRoleRepository.save(userRole);
             @RequestParam("login_type") String loginType,
             HttpServletRequest request) {
         return ResponseEntity.ok(new AuthResponse("accessToken", "refreshToken"));
+    }
+    @PostMapping("/system-register")
+    public ResponseEntity<String> systemRegister(@RequestBody SystemAuthDto dto) {
+       UUID userId = authService.systemRegister(dto);
+       return ResponseEntity.ok("User registered successfully with ID: " + userId);
     }
 
 }

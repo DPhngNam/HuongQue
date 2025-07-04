@@ -13,12 +13,18 @@ import com.huongque.authservice.config.JwtUtils;
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
 import com.huongque.authservice.dto.RegisterDto;
+import com.huongque.authservice.dto.SystemAuthDto;
 import com.huongque.authservice.entity.EmailVerificationToken;
+import com.huongque.authservice.entity.Role;
 import com.huongque.authservice.entity.User;
+import com.huongque.authservice.entity.UserRole;
+import com.huongque.authservice.entity.UserRoleId;
 import com.huongque.authservice.exception.InvalidPasswordException;
 import com.huongque.authservice.exception.UsernameAlreadyTakenException;
 import com.huongque.authservice.repository.EmailVerificationTokenRepository;
+import com.huongque.authservice.repository.RoleRepository;
 import com.huongque.authservice.repository.UserRepository;
+import com.huongque.authservice.repository.UserRoleRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +34,8 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
     private final UserRepository userRepository;
-
-
+    private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
    private final EmailVerificationTokenRepository emailVerificationTokenRepository;
@@ -107,4 +113,38 @@ public class AuthService {
         }
         return "Đăng xuất thành công";
     }
+
+    @Transactional
+public UUID systemRegister(SystemAuthDto dto) {
+    if (userRepository.existsByEmail(dto.getEmail())) {
+        throw new UsernameAlreadyTakenException("Tên đăng nhập đã được sử dụng!");
+    }
+
+    // 1. Tạo user
+    User user = User.builder()
+            .email(dto.getEmail())
+            .passwordHash(passwordEncoder.encode(dto.getPassword()))
+            .enabled(dto.isEnabled())
+            .build();
+    userRepository.save(user);
+
+    // 2. Tìm role
+    Role role = roleRepository.findByName(dto.getRole())
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy vai trò: " + dto.getRole()));
+
+    // 3. Tạo UserRoleId
+    UserRoleId userRoleId = new UserRoleId(user.getId(), role.getId());
+
+    // 4. Tạo UserRole
+    UserRole userRole = new UserRole();
+    userRole.setId(userRoleId);
+    userRole.setUser(user);
+    userRole.setRole(role);
+
+    userRoleRepository.save(userRole);
+
+    logger.info("✅ Tạo user hệ thống thành công với email: {}", user.getEmail());
+    return user.getId(); // Trả về UUID để service gọi lưu tiếp
+}
+
 }

@@ -5,8 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
-import java.io.Serializable;
-import java.util.UUID;
+
 
 @Entity
 @Data
@@ -29,13 +28,4 @@ public class UserRole {
 
     @CreationTimestamp
     private Timestamp createdAt;
-}
-
-@Embeddable
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-class UserRoleId implements Serializable {
-    private UUID userId;
-    private UUID roleId;
 }
