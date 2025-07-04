@@ -9,11 +9,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.huongque.authservice.client.UserProfileService;
 import com.huongque.authservice.config.JwtUtils;
 import com.huongque.authservice.dto.AuthRequest;
 import com.huongque.authservice.dto.AuthResponse;
 import com.huongque.authservice.dto.RegisterDto;
 import com.huongque.authservice.dto.SystemAuthDto;
+import com.huongque.authservice.dto.UserProfileDto;
 import com.huongque.authservice.entity.EmailVerificationToken;
 import com.huongque.authservice.entity.Role;
 import com.huongque.authservice.entity.User;
@@ -42,7 +44,7 @@ public class AuthService {
 
     private final EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
-
+    private final UserProfileService userProfileService;
     @Transactional
     public void register(RegisterDto request){
 
@@ -143,7 +145,19 @@ public UUID systemRegister(SystemAuthDto dto) {
 
     userRoleRepository.save(userRole);
 
+    // Gọi Feign client lưu user profile vào userservice
+    try {
+        UserProfileDto profile = UserProfileDto.builder()
+            .id(user.getId())
+            .gmail(user.getEmail())
+            .build();
+        userProfileService.createUserProfile("true", profile);
+    } catch (Exception e) {
+        logger.error("Không thể lưu user profile vào userservice: {}", e.getMessage());
+    }
+
     logger.info("✅ Tạo user hệ thống thành công với email: {}", user.getEmail());
+    
     return user.getId(); // Trả về UUID để service gọi lưu tiếp
 }
 

@@ -6,6 +6,7 @@ import { Tenant } from './tenant.entity';
 import { TenantMiddleware } from './tenant.middleware';
 import { SeedService } from './seed.service';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ElasticsearchModule } from '@nestjs/elasticsearch';
     ElasticsearchModule.register({
       node: 'http://elasticsearch:9200',
     }),
+    HttpModule
   ],
   providers: [TenantService, SeedService],
   controllers: [TenantController],

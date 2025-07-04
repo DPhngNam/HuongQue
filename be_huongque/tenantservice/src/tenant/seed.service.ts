@@ -12,9 +12,9 @@ import { HttpService } from '@nestjs/axios';
 export class SeedService implements OnModuleInit {
   constructor(
     @InjectRepository(Tenant)
-    private readonly http: HttpService,
     private tenantRepository: Repository<Tenant>,
     private readonly elasticService: ElasticsearchService,
+    private readonly http: HttpService,
   ) {}
   async onModuleInit() {
     const data = shops;
