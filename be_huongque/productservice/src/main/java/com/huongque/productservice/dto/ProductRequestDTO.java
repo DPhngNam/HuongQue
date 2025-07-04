@@ -20,7 +20,6 @@ public class ProductRequestDTO {
 
     private List<String> image;
 
-    @NotNull
     private UUID categoryId;
 
 }

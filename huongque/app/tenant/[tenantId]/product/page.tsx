@@ -27,6 +27,73 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import AddProductDialog from "./AddProductDialog";
+import { useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+
+type EditProduct = ProductProps & { description?: string };
+
+function EditProductDialog({
+  product,
+  onSuccess,
+  onClose,
+}: {
+  product: EditProduct;
+  onSuccess: () => void;
+  onClose: () => void;
+}) {
+  const { register, handleSubmit, setValue, reset } = useForm<EditProduct>({
+    defaultValues: product,
+  });
+  const { tenantId: id } = useParams();
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (data: any) => {
+    setLoading(true);
+    try {
+      await axiosInstance.patch(`/productservice/${product.id}`, data, {
+        headers: { "X-Tenant-ID": id },
+      });
+      alert("Cập nhật sản phẩm thành công!");
+      onSuccess();
+      onClose();
+    } catch (error) {
+      alert("Cập nhật sản phẩm thất bại!");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-5">
+      <Input
+        className="col-span-2"
+        placeholder="Tên sản phẩm"
+        {...register("name", { required: true })}
+      />
+      <Input
+        placeholder="Giá"
+        {...register("price", { required: true, valueAsNumber: true })}
+      />
+      <div className="col-span-2">
+        <textarea
+          className="w-full h-24 p-2 border border-gray-300 rounded"
+          placeholder="Mô tả"
+          {...register("description")}
+        ></textarea>
+      </div>
+      <div className="col-span-2 flex justify-end">
+        <Button
+          type="submit"
+          disabled={loading}
+          className="col-span-2 bg-blue-600 text-white rounded px-4 py-2 mt-2"
+        >
+          Lưu thay đổi
+        </Button>
+      </div>
+    </form>
+  );
+}
 
 export default function page() {
   const router = useRouter();
@@ -35,6 +102,8 @@ export default function page() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [editProduct, setEditProduct] = useState<ProductProps | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const fetchData = async (loadMore = false) => {
     setLoading(true);
@@ -178,10 +247,21 @@ export default function page() {
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
-                    <Button variant="ghost" className="h-8 w-8 p-0">
+                    <Button
+                      variant="ghost"
+                      className="h-8 w-8 p-0"
+                      onClick={() => {
+                        setEditProduct(item);
+                        setEditDialogOpen(true);
+                      }}
+                    >
                       <Pencil className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDeleteProduct(item.id)}>
+                    <Button
+                      variant="ghost"
+                      className="h-8 w-8 p-0"
+                      onClick={() => handleDeleteProduct(item.id)}
+                    >
                       <Trash className="h-4 w-4" />
                     </Button>
                   </div>
@@ -198,6 +278,20 @@ export default function page() {
       >
         Tải thêm
       </Button>
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Chỉnh sửa sản phẩm</DialogTitle>
+          </DialogHeader>
+          {editProduct && (
+            <EditProductDialog
+              product={editProduct}
+              onSuccess={() => fetchData()}
+              onClose={() => setEditDialogOpen(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

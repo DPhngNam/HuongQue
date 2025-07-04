@@ -87,4 +87,21 @@ public class ProductService {
         return productRepository.findAllByTenantId(tenantId, pageRequest)
                 .map(productMapper::toDto);
     }
+    
+    public ProductResponseDTO updateProduct(UUID id, ProductRequestDTO dto) {
+        UUID tenantId = TenantContext.getTenantId();
+        Product product = productRepository.findByIdAndTenantId(id, tenantId)
+            .orElseThrow(() -> new RuntimeException("Product not found or not belong to tenant"));
+        if (dto.getName() != null) product.setName(dto.getName());
+        if (dto.getDescription() != null) product.setDescription(dto.getDescription());
+        if (dto.getPrice() != null) product.setPrice(dto.getPrice());
+        if (dto.getCategoryId() != null) {
+            Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+            product.setCategory(category);
+        }
+        product.setUpdatedAt(Timestamp.from(Instant.now()));
+        Product saved = productRepository.save(product);
+        return productMapper.toDto(saved);
+    }
 }
