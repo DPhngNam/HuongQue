@@ -11,7 +11,7 @@ const TenantLayout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <>
     <SidebarProvider>
-      <div className="flex">
+      <div className="flex p-10">
         <TenantSidebar />
         <main className="w-full">{children}</main>
       </div>

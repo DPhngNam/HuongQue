@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -8,133 +8,106 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ShoppingCart, Pencil, Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
-
-const mockProducts = [
-  {
-    product: "Apple",
-    productId: "P001",
-    category: "Fruit",
-    remaining: 120,
-    turnover: 5000,
-    increaseBy: 10,
-  },
-  {
-    product: "Banana",
-    productId: "P002",
-    category: "Fruit",
-    remaining: 80,
-    turnover: 3200,
-    increaseBy: 5,
-  },
-  {
-    product: "Carrot",
-    productId: "P003",
-    category: "Vegetable",
-    remaining: 200,
-    turnover: 4100,
-    increaseBy: 20,
-  },
-];
-
-const products = [
-  {
-    product: "Apple",
-    productId: "P001",
-    category: "Fruit",
-    cost: 1.2,
-    extra: 0.5,
-    price: 2.0,
-  },
-  {
-    product: "Banana",
-    productId: "P002",
-    category: "Fruit",
-    cost: 0.8,
-    extra: 0.3,
-    price: 1.5,
-  },
-  {
-    product: "Carrot",
-    productId: "P003",
-    category: "Vegetable",
-    cost: 0.5,
-    extra: 0.2,
-    price: 1.0,
-  },
-  {
-    product: "Broccoli",
-    productId: "P004",
-    category: "Vegetable",
-    cost: 0.7,
-    extra: 0.4,
-    price: 1.8,
-  },
-  {
-    product: "Chicken",
-    productId: "P005",
-    category: "Meat",
-    cost: 3.0,
-    extra: 1.0,
-    price: 5.0,
-  },
-];
+import { useRouter, useParams } from "next/navigation";
+import axiosInstance from "@/lib/axiosInstance";
+import { ProductProps } from "@/app/models/Product.model";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
+import { format } from "date-fns";
 
 export default function page() {
   const router = useRouter();
+  const { tenantId: id } = useParams();
+  const [products, setProducts] = useState<ProductProps[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async (loadMore = false) => {
+      setLoading(true);
+      try {
+        const res = await axiosInstance.get(`/productservice/`, {
+          headers: {
+            "X-Tenant-ID": id,
+          },
+          params: {
+            page: loadMore ? page + 1 : page,
+            size: 10,
+          },
+        });
+        if (loadMore) {
+          setProducts((prev) => [...prev, ...res.data]);
+          setPage((prev) => prev + 1);
+        } else {
+          setProducts(res.data);
+        }
+        setHasMore(res.data.length > 0);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id, page]);
+
+  console.log("Products:", products);
   const handleAddProduct = () => {
     router.push("/tenant/[tenantId]/add-product");
-  }
+  };
   return (
     <div className="flex flex-col items-center  justify-start h-full w-full min-h-screen p-5 px-10">
-      <div className="flex justify-between items-center w-full mb-4">
+      {/* <div className="flex justify-between items-center w-full mb-4">
         <div className="justify-start text-zinc-700 text-xl font-bold font-['Inter'] leading-loose">
-          Best selling product
+          Sản phẩm bán chạy nhất
         </div>
         <button className="justify-start bg-transparent text-blue-800 text-sm font-normal font-['Inter']">
-          See All
+          Xem tất cả
         </button>
       </div>
 
       <Table className="w-full">
         <TableHeader>
           <TableRow>
-            <TableHead>Product</TableHead>
-            <TableHead>ProductId</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Remaining quantity</TableHead>
-            <TableHead>Turn Over</TableHead>
-            <TableHead>Increase By</TableHead>
+            <TableHead>Sản phẩm</TableHead>
+            <TableHead>Mã sản phẩm</TableHead>
+            <TableHead>Danh mục</TableHead>
+            <TableHead>Ngày tạo</TableHead>
+            <TableHead>Tăng thêm</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {mockProducts.map((item) => (
-            <TableRow key={item.productId}>
-              <TableCell>{item.product}</TableCell>
-              <TableCell>{item.productId}</TableCell>
-              <TableCell>{item.category}</TableCell>
-              <TableCell>{item.remaining}</TableCell>
-              <TableCell>{item.turnover}</TableCell>
-              <TableCell>{item.increaseBy}</TableCell>
+          {products.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell>{item.name}</TableCell>
+              <TableCell>{item.categoryName}</TableCell>
+              <TableCell>{item.createAt}</TableCell>
+              <TableCell>{item.price}</TableCell>
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      {/* </Table> */}
       <div className="flex justify-center items-center flex-col w-full  h-full">
         {/*Header */}
         <div className="flex justify-between items-center w-full mt-4">
           <div className="flex justify-start items-center gap-2">
             <ShoppingCart />
-            <text className="justify-start text-Colors-Text-Text-Primary text-base font-semibold font-['Inter'] leading-normal">
-              Products
-            </text>
+            <span className="justify-start text-Colors-Text-Text-Primary text-base font-semibold font-['Inter'] leading-normal">
+              Sản phẩm
+            </span>
           </div>
-          <Button 
-          onClick={handleAddProduct}
-            className="justify-start  text-sm font-normal font-['Inter']">
-            Add Product
+          <Button
+            onClick={handleAddProduct}
+            className="justify-start  text-sm font-normal font-['Inter']"
+          >
+            Thêm sản phẩm
           </Button>
         </div>
 
@@ -142,24 +115,35 @@ export default function page() {
         <Table className="w-full px-5  mt-4">
           <TableHeader>
             <TableRow>
-              <TableHead>Product</TableHead>
-              <TableHead>Id</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Cost</TableHead>
-              <TableHead>Extra</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Edit</TableHead>
+              <TableHead>Sản phẩm</TableHead>
+              <TableHead>Mã sản phẩm</TableHead>
+              <TableHead>Danh mục</TableHead>
+              <TableHead>Giá bán</TableHead>
+              <TableHead>Ngày tạo</TableHead>
+              <TableHead>Chỉnh sửa</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {products.map((item) => (
-              <TableRow key={item.productId}>
-                <TableCell>{item.product}</TableCell>
-                <TableCell>{item.productId}</TableCell>
-                <TableCell>{item.category}</TableCell>
-                <TableCell>{item.cost}</TableCell>
-                <TableCell>{item.extra}</TableCell>
+              <TableRow key={item.id}>
+                <TableCell>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <span>
+                        {item.name.length > 30
+                          ? `${item.name.substring(0, 30)}...`
+                          : item.name}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>{item.name}</TooltipContent>
+                  </Tooltip>
+                </TableCell>
+                <TableCell>{item.id}</TableCell>
+                <TableCell>{item.categoryName}</TableCell>
                 <TableCell>{item.price}</TableCell>
+                <TableCell>
+                  {format(new Date(item.createAt), "dd/MM/yyyy HH:mm")}
+                </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <Button variant="ghost" className="h-8 w-8 p-0">
@@ -176,9 +160,11 @@ export default function page() {
         </Table>
       </div>
       <Button
-        className="justify-start   text-sm font-normal font-['Inter'] mt-4"
+        onClick={() => fetchData(true)}
+        disabled={!hasMore || loading}
+        className="justify-start text-sm font-normal font-['Inter'] mt-4"
       >
-        Load more
+        Tải thêm
       </Button>
     </div>
   );

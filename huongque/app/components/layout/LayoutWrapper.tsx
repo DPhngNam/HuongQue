@@ -14,11 +14,15 @@ export default function LayoutWrapper({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const noHeader = ["/login", "/sign-up", "/forgot-password", "/admin"];
-  const showHeaderFooter = !noHeader.includes(pathname);
+  const noHeader = [
+    "/login",
+    "/sign-up",
+    "/forgot-password",
+    "/admin",
+    "/tenant",
+  ];
+  const showHeaderFooter = !noHeader.some((path) => pathname.startsWith(path));
   const showChatBot = !pathname.startsWith("/admin"); // Show chatbot on all pages except admin
-  const isLogin = useAuthStore((state) => state.isLogin());
-  const totalItems = useCartStore((state) => state.totalItems);
 
   return (
     <>

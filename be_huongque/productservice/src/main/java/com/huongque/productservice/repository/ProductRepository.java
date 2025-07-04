@@ -1,6 +1,8 @@
 package com.huongque.productservice.repository;
 
 import com.huongque.productservice.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,6 +17,5 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     Optional<Product> findById(UUID id);
 
     List<Product> findByCategorySlug(String categorySlug);
- 
-
+    Page<Product> findAllByTenantId(UUID tenantId, Pageable pageable);
 }

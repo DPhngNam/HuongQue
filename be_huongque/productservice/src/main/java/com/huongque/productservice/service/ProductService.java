@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.huongque.productservice.config.TenantContext;
@@ -78,5 +80,11 @@ public class ProductService {
                 .map(productMapper::toDto)
                 .collect(Collectors.toList());
     }
-   
+    
+    public Page<ProductResponseDTO> getProductsForTenantWithPagination(int page, int size) {
+        UUID tenantId = TenantContext.getTenantId();
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return productRepository.findAllByTenantId(tenantId, pageRequest)
+                .map(productMapper::toDto);
+    }
 }

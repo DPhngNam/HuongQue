@@ -3,6 +3,7 @@ package com.huongque.productservice.controller;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,6 +63,12 @@ public class ProductController {
     @GetMapping("/category/{categorySlug}")
     public ResponseEntity<List<ProductResponseDTO>> getAllProductsByCategorySlug(@PathVariable String categorySlug) {
         return ResponseEntity.ok(productService.getAllProductsByCategorySlug(categorySlug));
+    }
+
+    @GetMapping("/paged")
+    public ResponseEntity<Page<ProductResponseDTO>> getProductsForTenantWithPagination(
+            @RequestParam int page, @RequestParam int size) {
+        return ResponseEntity.ok(productService.getProductsForTenantWithPagination(page, size));
     }
 
 

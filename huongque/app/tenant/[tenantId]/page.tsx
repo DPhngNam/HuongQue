@@ -18,16 +18,16 @@ export default function page() {
                 1,352
               </div>
               <div className="justify-start text-Colors-Text-Text-Secondary text-sm font-medium font-['Inter'] leading-normal">
-                Daily Visitors
+                Lượt truy cập hàng ngày
               </div>
             </div>
             <div className="justify-start text-Colors-Text-Text-Primary text-sm font-medium font-['Inter'] leading-normal">
-              Top Visitors
+              Khách truy cập hàng đầu
             </div>
             <Avatar>
               <img
                 src="https://images.unsplash.com/photo-1502685104226-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDJ8fG1hbnxlbnwwfHx8fDE2OTY5NzQ3NTg&ixlib=rb-4.0.3&q=80&w=400"
-                alt="User Avatar"
+                alt="Ảnh đại diện người dùng"
                 className="rounded-full"
               />
             </Avatar>
@@ -57,7 +57,7 @@ export default function page() {
             </div>
 
             <span className="justify-start text-Colors-Text-Text-Secondary text-sm font-medium font-['Inter'] leading-normal">
-              Average Daily Sales
+              Doanh số trung bình hàng ngày
             </span>
           </div>
         </Container>
@@ -82,11 +82,11 @@ export default function page() {
             </div>
 
             <span className="justify-start text-Colors-Text-Text-Secondary text-sm font-medium font-['Inter'] leading-normal">
-              Order this month
+              Đơn hàng trong tháng
             </span>
             <div className="flex justify-between items-center w-full mt-2">
               <span className="justify-start text-Colors-Text-Text-Secondary text-sm font-medium font-['Inter'] leading-normal">
-                1,500 to goal
+                1,500 để đạt mục tiêu
               </span>
               <text className="text-sm font-medium text-[#6B7280]">75%</text>
             </div>
@@ -115,11 +115,11 @@ export default function page() {
             </div>
 
             <span className="justify-start text-Colors-Text-Text-Secondary text-sm font-medium font-['Inter'] leading-normal">
-              Monthly Sales
+              Doanh số hàng tháng
             </span>
             <div className="flex justify-between items-center w-full mt-2">
               <span className="justify-start text-Colors-Text-Text-Secondary text-sm font-medium font-['Inter'] leading-normal">
-                1,500 to goal
+                1,500 để đạt mục tiêu
               </span>
               <text className="text-sm font-medium text-[#6B7280]">75%</text>
             </div>
