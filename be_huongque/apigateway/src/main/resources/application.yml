@@ -4,6 +4,7 @@ server:
 spring:
   application:
     name: apigateway
+
   cloud:
     gateway:
       routes:
@@ -11,12 +12,26 @@ spring:
           uri: ws://notiservice:8092
           predicates:
             - Path=/ws/**
-      
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true
 
+      globalcors:
+        corsConfigurations:
+          '[/**]':  # Áp dụng cho tất cả các route
+            allowedOrigins:
+              - "http://localhost:3000"  # Cho phép origin của frontend
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"  # Cho phép mọi header, bao gồm Authorization, X-Tenant-ID, Content-Type...
+            allowCredentials: true  # Nếu frontend gửi cookie hoặc token
 
 logging:
   level:
@@ -39,5 +54,6 @@ eureka:
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
 jwt:
   signing-key: ${JWT_SIGNING_KEY}
