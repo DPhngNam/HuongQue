@@ -11,7 +11,7 @@ interface CategoryState {
 
 export const useCategoryStore = create<CategoryState>((set) => ({
   categories: [],
-  setCategories: (categories) => set({ categories }),
+  setCategories: (categories) => set({ categories }), 
   selectedCategory: null,
   setSelectedCategory: (slug) => set({ selectedCategory: slug }),
 }));

@@ -19,6 +19,14 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import { format } from "date-fns";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import AddProductDialog from "./AddProductDialog";
 
 export default function page() {
   const router = useRouter();
@@ -28,40 +36,57 @@ export default function page() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async (loadMore = false) => {
-      setLoading(true);
-      try {
-        const res = await axiosInstance.get(`/productservice/`, {
-          headers: {
-            "X-Tenant-ID": id,
-          },
-          params: {
-            page: loadMore ? page + 1 : page,
-            size: 10,
-          },
-        });
-        if (loadMore) {
-          setProducts((prev) => [...prev, ...res.data]);
-          setPage((prev) => prev + 1);
-        } else {
-          setProducts(res.data);
-        }
-        setHasMore(res.data.length > 0);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
+  const fetchData = async (loadMore = false) => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.get(`/productservice/paged`, {
+        headers: {
+          "X-Tenant-ID": id,
+        },
+        params: {
+          page: loadMore ? page : 0, // Backend uses 0-based page index
+          size: 10,
+        },
+      });
+      const { content, last } = res.data; // Extract content and last page indicator
+      if (loadMore) {
+        setProducts((prev) => [...prev, ...content]);
+        setPage((prev) => prev + 1);
+      } else {
+        setProducts(content);
       }
-    };
+      setHasMore(!last); // If last is true, no more pages
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
-  }, [id, page]);
+  }, [id]);
 
   console.log("Products:", products);
   const handleAddProduct = () => {
     router.push("/tenant/[tenantId]/add-product");
   };
+
+  const handleDeleteProduct = async (productId: string) => {
+    if (!confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
+    try {
+      await axiosInstance.delete(`/productservice/${productId}`, {
+        headers: {
+          "X-Tenant-ID": id,
+        },
+      });
+      fetchData();
+    } catch (error) {
+      alert("Xóa sản phẩm thất bại!");
+      console.error(error);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center  justify-start h-full w-full min-h-screen p-5 px-10">
       {/* <div className="flex justify-between items-center w-full mb-4">
@@ -103,12 +128,19 @@ export default function page() {
               Sản phẩm
             </span>
           </div>
-          <Button
-            onClick={handleAddProduct}
-            className="justify-start  text-sm font-normal font-['Inter']"
-          >
-            Thêm sản phẩm
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="justify-start  text-sm font-normal font-['Inter']">
+                Thêm sản phẩm
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Thêm sản phẩm</DialogTitle>
+              </DialogHeader>
+              <AddProductDialog onSuccess={() => fetchData()} />
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/*Table */}
@@ -149,7 +181,7 @@ export default function page() {
                     <Button variant="ghost" className="h-8 w-8 p-0">
                       <Pencil className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
+                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDeleteProduct(item.id)}>
                       <Trash className="h-4 w-4" />
                     </Button>
                   </div>

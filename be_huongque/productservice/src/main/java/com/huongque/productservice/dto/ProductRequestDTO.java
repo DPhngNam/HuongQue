@@ -17,8 +17,6 @@ public class ProductRequestDTO {
     @NotNull
     private Double price;
 
-    @NotNull
-    private Integer quantity;
 
     private List<String> image;
 
