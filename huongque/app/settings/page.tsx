@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Personal from "./[tabs]/personal";
 import Password from "./[tabs]/password";
@@ -20,6 +20,7 @@ import {
   Star,
   MessageSquare,
   UserPlus,
+  Box,
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import Registration from "./[tabs]/Registration";
@@ -33,11 +34,37 @@ import {
 
 import { useRouter } from "next/navigation";
 import { ToastContainer } from "react-toastify";
+import { getAllClaimsFromToken, getRolesFromToken } from "@/lib/jwtUtils";
+import { bool } from "yup";
+import Link from "next/link";
+import axiosInstance from "@/lib/axiosInstance";
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState("personal");
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
-  const { clearTokens } = useAuthStore();
+  const { accessToken, clearTokens } = useAuthStore();
   const router = useRouter();
+
+  const claims = getAllClaimsFromToken(accessToken ?? "");
+  const isTenant = claims?.roles.includes("TENANT") || false;
+
+  const [tenantId, setTenantId] = useState();
+
+  useEffect(() => {
+    const fetchTenant = async () => {
+      if (claims?.sub) {
+        try {
+          const response = await axiosInstance.get(
+            `/tenantservice/tenant/owner/${claims?.sub}`
+          );
+          setTenantId(response.data);
+        } catch (error) {
+          console.error("Error fetching tenant:", error);
+        }
+      }
+    };
+
+    fetchTenant();
+  }, [claims?.sub]);
 
   const handleSignOut = () => {
     clearTokens();
@@ -111,13 +138,39 @@ export default function SettingsPage() {
             >
               <Heart /> Yêu thích
             </Button>
-            <Button
-              variant={activeSection === "registration" ? "default" : "outline"}
-              onClick={() => setActiveSection("registration")}
-              className="w-[261px] h-[45px] px-6 py-3 flex items-center justify-start gap-4 border-0"
-            >
-              <UserPlus /> Đăng ký tài khoản bán hàng
-            </Button>
+
+            {isTenant && (
+              <Link href={`/tenant/${tenantId}`}>
+                <Button
+                  variant={activeSection === "product" ? "default" : "outline"}
+                  className="w-[261px] h-[45px] px-6 py-3 flex items-center justify-start gap-4 border-0"
+                >
+                  <Box /> Quản lý sản phẩm
+                </Button>
+              </Link>
+            )}
+
+            {!isTenant && (
+              <Button
+                variant={activeSection === "review" ? "default" : "outline"}
+                onClick={() => setActiveSection("review")}
+                className="w-[261px] h-[45px] px-6 py-3 flex items-center justify-start gap-4 border-0"
+              >
+                <Star /> Đánh giá
+              </Button>
+            )}
+            {!isTenant && (
+              <Button
+                variant={
+                  activeSection === "registration" ? "default" : "outline"
+                }
+                onClick={() => setActiveSection("registration")}
+                className="w-[261px] h-[45px] px-6 py-3 flex items-center justify-start gap-4 border-0"
+              >
+                <UserPlus /> Đăng ký tài khoản bán hàng
+              </Button>
+            )}
+
             <Button
               variant={activeSection === "logout" ? "default" : "outline"}
               onClick={() => setShowLogoutDialog(true)}

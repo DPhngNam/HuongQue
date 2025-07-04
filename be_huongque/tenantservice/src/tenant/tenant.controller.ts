@@ -53,5 +53,9 @@ export class TenantController {
   async remove(@Param('id') id: string) {
     return this.tenantService.remove(id);
   }
-  
+
+  @Get('owner/:ownerId')
+  async findByOwnerId(@Param('ownerId') ownerId: string) {
+    return this.tenantService.findByOwnerId(ownerId);
+  }
 }

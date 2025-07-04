@@ -29,4 +29,8 @@ export class TenantService {
   async remove(id: string) {
     return this.tenantRepository.delete(id);
   }
+  async findByOwnerId(ownerId: string) {
+    const tenant = await this.tenantRepository.findOne({ where: { owner: ownerId } });
+    return tenant ? tenant.id : null;
+  }
 }

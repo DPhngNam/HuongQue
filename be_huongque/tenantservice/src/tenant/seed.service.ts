@@ -41,8 +41,8 @@ export class SeedService implements OnModuleInit {
         console.error('Error saving tenants to database:', error);
       });
 
-    await this.seedToAuth();
-    console.log('Seed auth users for tenants');
+    // await this.seedToAuth();
+    // console.log('Seed auth users for tenants');
   }
 
   async seedElasticsearch(tenants: Tenant[]) {
@@ -91,7 +91,7 @@ export class SeedService implements OnModuleInit {
       try {
         const res = (await firstValueFrom(
           this.http.post(
-            'http://localhost:8080/authservice/auth/system-register',
+            'http://authservice/auth/system-register',
             dto,
           ),
         )) as { data: { id: string } };
