@@ -69,9 +69,11 @@ export async function createRegistration(payload: RegistrationPayload) {
   return res.data;
 }
 
-export async function getRegistrationsByUser() {
+export async function getRegistrationsByUser(userEmail: string) {
   const res = await axiosInstance.get(API_BASE + `/all/user`, {
-    params: {page: 1, limit: 10 },
+    params: {
+      userEmail: userEmail,
+    },
   });
   console.log(res);
   if (res.status !== 200) {

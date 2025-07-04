@@ -36,8 +36,8 @@ export class RegistrationsService {
     };
   }
 
-  findOne(id: string) {
-    return this.registrationRepository.findOne({ where: { registration_id: id } });
+  findOne(email: string) {
+    return this.registrationRepository.find({ where: { tenant_email: email } });
   }
 
   update(id: string, updateRegistrationDto: UpdateRegistrationDto) {

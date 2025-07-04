@@ -140,8 +140,8 @@ export class RegistrationsController {
     return this.registrationsService.findAll(Number(page), Number(limit));
   }
   @Get('/all/user')
-  async findOne(@Headers('X-User-Id') userId: string) {
-    const registration = await this.registrationsService.findOne(userId);
+  async findOne(@Headers('X-User-Id') userId: string,@Param('userEmail') userEmail: string) {
+    const registration = await this.registrationsService.findOne(userEmail);
     if (!registration) {
       throw new NotFoundException(`Registration with ID ${userId} not found`);
     }
