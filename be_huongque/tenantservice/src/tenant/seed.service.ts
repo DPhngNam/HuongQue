@@ -15,15 +15,15 @@ export class SeedService implements OnModuleInit {
     private tenantRepository: Repository<Tenant>,
     private readonly elasticService: ElasticsearchService,
     private readonly http: HttpService,
-  ) {}
+  ) { }
   async onModuleInit() {
     const data = shops;
-    const tenants = data.map((shop) => ({
+    const tenants = data.map((shop,index) => ({
       id: shop.shop_id && shop.shop_id !== '' ? shop.shop_id : uuidv4(),
       name: shop.shop_name,
       avatar: shop.shop_avatar,
       address: 'Quang Ninh', // or extract address from description if needed
-      phone: '0123456789', // No phone in JSON, set as empty or extract if possible
+      phone: `012345${String(index).padStart(4, '0')}`,
       ShopDescription: shop.description,
       owner: shop.shop_id, // No owner in JSON, set as empty or extract if possible
       organization_info: shop.organization_info, // No organization info in JSON, set as empty or extract if possible
@@ -41,7 +41,9 @@ export class SeedService implements OnModuleInit {
         console.error('Error saving tenants to database:', error);
       });
 
-    // await this.seedToAuth();
+    await this.seedToAuth().then(() => {
+      console.log('Seeded tenants and their auth users successfully.');
+    });
     // console.log('Seed auth users for tenants');
   }
 
@@ -80,33 +82,56 @@ export class SeedService implements OnModuleInit {
   }
   async seedToAuth() {
     const tenants = await this.tenantRepository.find();
+    const maxRetries = 5;
+    const baseDelay = 5000; // 5 seconds
+
     for (const tenant of tenants) {
+      // Generate unique email using tenant ID to avoid conflicts
       const dto = {
-        email: `${tenant.phone}@seed.huongque.vn`,
+        email: `tenant-${tenant.id}@seed.huongque.vn`,
         password: 'HuongQue@123',
         enabled: true,
         role: 'TENANT',
       };
 
-      try {
-        const res = (await firstValueFrom(
-          this.http.post(
-            'http://authservice/auth/system-register',
-            dto,
-          ),
-        )) as { data: { id: string } };
-        const userId = res.data.id;
-        if (userId) {
-          tenant.owner = userId;
-          await this.tenantRepository.save(tenant);
-          console.log(
-            `Seeded user for tenant ${tenant.name}, ownerId: ${userId}`,
+      let attempt = 0;
+      let success = false;
+
+      while (attempt < maxRetries && !success) {
+        try {
+          const res = (await firstValueFrom(
+            this.http.post(
+              'http://authservice:8081/auth/system-register',
+              dto,
+            ),
+          )) as { data: { id: string } };
+
+          const userId = res.data.id;
+          if (userId) {
+            tenant.owner = userId;
+            await this.tenantRepository.save(tenant);
+            console.log(
+              `✅ Seeded user for tenant ${tenant.name}, ownerId: ${userId}`,
+            );
+            success = true;
+          }
+        } catch (error) {
+          attempt++;
+          const delay = baseDelay * Math.pow(2, attempt - 1); // Exponential backoff
+          console.warn(
+            `❌ Attempt ${attempt}/${maxRetries} failed for tenant ${tenant.name}. Retrying in ${delay}ms...`,
+            error.response?.data || error.message
           );
-        } else {
-          console.warn(`Không lấy được userId cho tenant ${tenant.name}`);
+
+          if (attempt < maxRetries) {
+            await new Promise(resolve => setTimeout(resolve, delay));
+          } else {
+            console.error(
+              `💥 Failed to seed user for tenant ${tenant.name} after ${maxRetries} attempts:`,
+              error.response?.data || error.message
+            );
+          }
         }
-      } catch (error) {
-        console.error(`Failed to seed user for tenant ${tenant.name}:`, error);
       }
     }
   }
