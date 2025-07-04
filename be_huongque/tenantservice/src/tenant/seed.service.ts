@@ -5,18 +5,21 @@ import { Repository } from 'typeorm';
 import { shops } from '../data/initialData'; // Adjust the path as necessary
 import { Tenant } from './tenant.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { firstValueFrom } from 'rxjs';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class SeedService implements OnModuleInit {
   constructor(
     @InjectRepository(Tenant)
+    private readonly http: HttpService,
     private tenantRepository: Repository<Tenant>,
     private readonly elasticService: ElasticsearchService,
   ) {}
   async onModuleInit() {
     const data = shops;
     const tenants = data.map((shop) => ({
-      id: shop.shop_id && shop.shop_id !== "" ? shop.shop_id : uuidv4(),
+      id: shop.shop_id && shop.shop_id !== '' ? shop.shop_id : uuidv4(),
       name: shop.shop_name,
       avatar: shop.shop_avatar,
       address: 'Quang Ninh', // or extract address from description if needed
@@ -38,6 +41,8 @@ export class SeedService implements OnModuleInit {
         console.error('Error saving tenants to database:', error);
       });
 
+    await this.seedToAuth();
+    console.log('Seed auth users for tenants');
   }
 
   async seedElasticsearch(tenants: Tenant[]) {
@@ -70,6 +75,38 @@ export class SeedService implements OnModuleInit {
           break;
         }
         await new Promise((res) => setTimeout(res, 3000)); // wait 3 seconds before retry
+      }
+    }
+  }
+  async seedToAuth() {
+    const tenants = await this.tenantRepository.find();
+    for (const tenant of tenants) {
+      const dto = {
+        email: `${tenant.phone}@seed.huongque.vn`,
+        password: 'HuongQue@123',
+        enabled: true,
+        role: 'TENANT',
+      };
+
+      try {
+        const res = (await firstValueFrom(
+          this.http.post(
+            'http://localhost:8080/authservice/auth/system-register',
+            dto,
+          ),
+        )) as { data: { id: string } };
+        const userId = res.data.id;
+        if (userId) {
+          tenant.owner = userId;
+          await this.tenantRepository.save(tenant);
+          console.log(
+            `Seeded user for tenant ${tenant.name}, ownerId: ${userId}`,
+          );
+        } else {
+          console.warn(`Không lấy được userId cho tenant ${tenant.name}`);
+        }
+      } catch (error) {
+        console.error(`Failed to seed user for tenant ${tenant.name}:`, error);
       }
     }
   }

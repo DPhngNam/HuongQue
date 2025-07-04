@@ -169,7 +169,6 @@ services:
       HOSTNAME: tenantservice
     volumes:
       - ./tenantservice:/app
-      - /app/node_modules
   productservice:
     build:
       context: ./productservice

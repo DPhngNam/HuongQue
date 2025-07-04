@@ -53,4 +53,5 @@ export class TenantController {
   async remove(@Param('id') id: string) {
     return this.tenantService.remove(id);
   }
+  
 }

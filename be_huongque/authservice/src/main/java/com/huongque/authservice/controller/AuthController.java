@@ -48,6 +48,7 @@ import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -242,9 +243,9 @@ userRoleRepository.save(userRole);
         return ResponseEntity.ok(new AuthResponse("accessToken", "refreshToken"));
     }
     @PostMapping("/system-register")
-    public ResponseEntity<String> systemRegister(@RequestBody SystemAuthDto dto) {
+    public ResponseEntity<Map<String, String>> systemRegister(@RequestBody SystemAuthDto dto) {
        UUID userId = authService.systemRegister(dto);
-       return ResponseEntity.ok("User registered successfully with ID: " + userId);
+       return ResponseEntity.ok(Map.of("id" , userId.toString()));
     }
 
 }
