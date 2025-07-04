@@ -2,39 +2,41 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Tenant } from 'src/tenant/tenant.entity';
+
+
 @Injectable()
 export class SeederService {
-  constructor(private readonly http: HttpService) {}
+  constructor(
+    private readonly http: HttpService,
+    @InjectRepository(Tenant)
+    private readonly tenantRepository: Repository<Tenant>,
+  ) {}
 
-  async seedUsersFromTenants() {
-    const tenants = await this.tenantRepository.find(); // lấy toàn bộ tenant
-
-    for (const tenant of tenants) {
-      const userPayload = {
-        id: tenant.owner, // UUID
-        email: `${tenant.phone}@seed.huongque.vn`, // tạo email giả định nếu không có
-        phone: tenant.phone,
-        fullName: tenant.name,
-        avatar: tenant.avatar
-      };
-
-      // Gửi sang AuthService
-      try {
-        await firstValueFrom(
-          this.http.post('http://auth-service/internal/users', userPayload),
+  async seedToAuth(){
+    const tenants = await  this.tenantRepository.find();
+    for(const tenant of tenants) {
+      const dto = {
+        email: `${tenant.phone}@seed.huongque.vn`,  
+        password: 'HuongQue@123',                   
+        enabled: true,
+        role: 'TENANT'
+      } 
+      
+      try{
+        const res = await firstValueFrom(
+          this.http.post(
+            'localhost:8080/authservice/auth/system-register',
+            dto,
+          )
         );
-      } catch (err) {
-        console.error(`Failed to sync auth for ${tenant.name}:`, err.message);
+        console.log(`Seeded user for tenant ${tenant.name}:`, res.data);
+      } catch (error) {
+        console.error(`Failed to seed user for tenant ${tenant.name}:`, error);
       }
 
-      // Gửi sang UserService
-      try {
-        await firstValueFrom(
-          this.http.post('http://user-service/internal/user-profile', userPayload),
-        );
-      } catch (err) {
-        console.error(`Failed to sync profile for ${tenant.name}:`, err.message);
-      }
     }
   }
 }
