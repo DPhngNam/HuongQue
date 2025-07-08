@@ -39,14 +39,13 @@ export default function OrderTable() {
   ];
   return (
     <Table>
-      <TableCaption>Recent Orders</TableCaption>
-
+      <TableCaption>Đơn hàng gần đây</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Method</TableHead>
-          <TableHead>Created</TableHead>
-          <TableHead>Total</TableHead>
-          <TableHead>Payment Status</TableHead>
+          <TableHead>Phương thức</TableHead>
+          <TableHead>Ngày tạo</TableHead>
+          <TableHead>Tổng tiền</TableHead>
+          <TableHead>Trạng thái thanh toán</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -55,7 +54,15 @@ export default function OrderTable() {
             <TableCell>{order.method}</TableCell>
             <TableCell>{order.created}</TableCell>
             <TableCell>{order.total}</TableCell>
-            <TableCell>{order.paymentStatus}</TableCell>
+            <TableCell>
+              {order.paymentStatus === "Paid"
+                ? "Đã thanh toán"
+                : order.paymentStatus === "Pending"
+                ? "Chờ thanh toán"
+                : order.paymentStatus === "Failed"
+                ? "Thất bại"
+                : order.paymentStatus}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
