@@ -1,5 +1,3 @@
-I'll create a comprehensive README.md file for the HuongQue repository based on the existing documentation and codebase structure <cite/>.
-
 # HuongQue - Multi-Tenant E-Commerce Platform
 
 A modern, microservices-based e-commerce marketplace platform built with Spring Boot, NestJS, and Next.js, featuring multi-tenant architecture for supporting multiple shops and vendors.
