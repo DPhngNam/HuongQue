@@ -1,11 +1,14 @@
 import { create } from 'zustand'
 import { CartItem } from '../models/cart'
 import { cartService } from '../cart/service/service'
-import { jwtDecode } from 'jwt-decode'
-import { MyJwtPayload } from '../settings/[tabs]/Registration'
+
+// Extended CartItem interface to include cartItemId
+interface CartItemWithId extends CartItem {
+  cartItemId?: string;
+}
 
 interface CartState {
-  items: CartItem[]
+  items: CartItemWithId[]
   totalItems: number
   isLoading: boolean
   error: string | null
@@ -18,6 +21,9 @@ interface CartState {
   clearCart: () => void
 }
 
+// Maximum quantity per item - set to a reasonable high limit
+// This prevents abuse while allowing legitimate bulk purchases
+const MAX_QUANTITY_PER_ITEM = 99;
 
 export const useCartStore = create<CartState>((set, get) => ({
   // Synchronous state properties
@@ -32,20 +38,24 @@ export const useCartStore = create<CartState>((set, get) => ({
     try {
       const cartData = await cartService.getCartByUserId();
       const rawItems = cartData?.cartItems || [];
-      const itemsMap = new Map<string, CartItem>();
+      const itemsMap = new Map<string, CartItemWithId>();
+      
       rawItems.forEach(item => {
         const existingItem = itemsMap.get(item.productId);
         
         if (existingItem) {
-          existingItem.quantity += item.quantity;
+          // If quantity would exceed limit, cap it at MAX_QUANTITY_PER_ITEM
+          const newQuantity = Math.min(existingItem.quantity + item.quantity, MAX_QUANTITY_PER_ITEM);
+          existingItem.quantity = newQuantity;
         } else {
-          // Add new item to map
+          // Add new item to map with cartItemId
           itemsMap.set(item.productId, {
             productId: item.productId,
-            quantity: item.quantity,
+            quantity: Math.min(item.quantity, MAX_QUANTITY_PER_ITEM),
             price: item.price,
             productName: item.productName,
-            productImage: item.productImage
+            productImage: item.productImage,
+            cartItemId: item.cartItemId
           });
         }
       });
@@ -68,17 +78,24 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   // Add an item to the cart
   addItem: async (item: CartItem) => {
-    
-
     const { items } = get();
     const existingItem = items.find(i => i.productId === item.productId);
 
     try {
       if (existingItem) {
+        // Check if adding would exceed the limit
+        const newQuantity = existingItem.quantity + item.quantity;
+        if (newQuantity > MAX_QUANTITY_PER_ITEM) {
+          set({ 
+            error: `Maximum quantity per item is ${MAX_QUANTITY_PER_ITEM}. Cannot add more items.` 
+          });
+          return;
+        }
+
         // If item exists, update quantity
         const updatedItems = items.map(i =>
           i.productId === item.productId
-            ? { ...i, quantity: i.quantity + item.quantity }
+            ? { ...i, quantity: newQuantity }
             : i
         );
 
@@ -87,6 +104,14 @@ export const useCartStore = create<CartState>((set, get) => ({
           totalItems: updatedItems.reduce((total, item) => total + item.quantity, 0)
         });
       } else {
+        // Check if new item quantity exceeds limit
+        if (item.quantity > MAX_QUANTITY_PER_ITEM) {
+          set({ 
+            error: `Maximum quantity per item is ${MAX_QUANTITY_PER_ITEM}. Cannot add more items.` 
+          });
+          return;
+        }
+
         // If item doesn't exist, add it
         const updatedItems = [...items, item];
 
@@ -97,7 +122,7 @@ export const useCartStore = create<CartState>((set, get) => ({
       }
 
       // Sync with backend
-      await cartService.addCartItem( {
+      await cartService.addCartItem({
         productId: item.productId,
         quantity: item.quantity,
         price: item.price,
@@ -116,8 +141,6 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   // Remove an item from the cart
   removeItem: async (productId: string) => {
-    
-
     const { items } = get();
     const itemToRemove = items.find(item => item.productId === productId);
     
@@ -131,8 +154,9 @@ export const useCartStore = create<CartState>((set, get) => ({
         totalItems: updatedItems.reduce((total, item) => total + item.quantity, 0)
       });
 
-      // Sync with backend - you'll need to implement this method in cartService
-      await cartService.removeCartItem(itemToRemove.productId);
+      // Use cartItemId if available, otherwise use productId as fallback
+      const itemIdToRemove = itemToRemove.cartItemId || itemToRemove.productId;
+      await cartService.removeCartItem(itemIdToRemove);
       
       console.log("Item removed from cart successfully");
     } catch (error) {
@@ -145,12 +169,23 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   // Update quantity of an item
   updateQuantity: async (productId: string, quantity: number) => {
-    
-
     const { items } = get();
     const itemToUpdate = items.find(item => item.productId === productId);
     
     if (!itemToUpdate) return;
+
+    // Validate quantity limits
+    if (quantity > MAX_QUANTITY_PER_ITEM) {
+      set({ 
+        error: `Maximum quantity per item is ${MAX_QUANTITY_PER_ITEM}. Cannot set quantity to ${quantity}.` 
+      });
+      return;
+    }
+
+    if (quantity < 1) {
+      set({ error: "Quantity must be at least 1." });
+      return;
+    }
 
     try {
       const updatedItems = items.map(item =>
@@ -164,9 +199,12 @@ export const useCartStore = create<CartState>((set, get) => ({
         totalItems: updatedItems.reduce((total, item) => total + item.quantity, 0)
       });
 
+      // Use cartItemId if available, otherwise use productId as fallback
+      const itemIdToUpdate = itemToUpdate.cartItemId || itemToUpdate.productId;
+      
       // Sync with backend
       await cartService.updateCartItem({
-        cartItemId: itemToUpdate.productId,
+        cartItemId: itemIdToUpdate,
         quantity: quantity
       });
       

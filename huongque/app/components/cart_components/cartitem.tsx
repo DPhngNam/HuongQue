@@ -21,7 +21,10 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
     }
 
     const handleIncrement = () => {
-        onUpdateQuantity(item.productId, item.quantity + 1);
+        // Prevent incrementing beyond maximum quantity (99)
+        if (item.quantity < 99) {
+            onUpdateQuantity(item.productId, item.quantity + 1);
+        }
     };
 
     const handleDecrement = () => {
@@ -67,6 +70,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
                     <button
                         onClick={handleIncrement}
                         className="rounded-md border px-2 py-1 text-sm"
+                        disabled={item.quantity >= 99}
                     >
                         +
                     </button>

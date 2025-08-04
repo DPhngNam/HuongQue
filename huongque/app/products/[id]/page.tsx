@@ -10,9 +10,10 @@ import { useCartStore } from "@/app/stores/cartStore";
 import { useParseProductDescription } from "@/hooks/use-parse-product-description";
 import { useProducts } from "@/hooks/useProduct";
 import axiosInstance from "@/lib/axiosInstance";
+import { AxiosError } from "axios";
 import { Check, Heart, Minus, Plus } from "lucide-react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+
 import { use, useEffect, useState } from "react";
 
 export default function ShopProductPage({
@@ -25,7 +26,7 @@ export default function ShopProductPage({
   const [quantity, setQuantity] = useState(1);
 
   const [addedToCart, setAddedToCart] = useState(false);
-  const searchParams = useSearchParams();
+ 
   const [product, setProduct] = useState<
     ProductProps & { description?: string; color?: string; imageAlt?: string }
   >({
@@ -59,9 +60,9 @@ export default function ShopProductPage({
           `/productservice/${resolvedParams.id}`
         );
         setProduct(res.data);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error fetching product:", error);
-        if (!error.response) {
+        if (error instanceof AxiosError) {
           console.error("Network error or server unavailable");
         }
       }
@@ -80,7 +81,7 @@ export default function ShopProductPage({
   // Handle quantity change
   const handleQuantityChange = (change: number) => {
     const newQuantity = quantity + change;
-    if (newQuantity >= 1) {
+    if (newQuantity >= 1 && newQuantity <= 99) {
       setQuantity(newQuantity);
     }
   };
@@ -88,6 +89,12 @@ export default function ShopProductPage({
   // Handle add to cart
   const handleAddToCart = () => {
     if (!product) return;
+
+    // Validate quantity before adding to cart
+    if (quantity > 99) {
+      console.error("Quantity exceeds maximum limit of 99");
+      return;
+    }
 
     // Create a cart item from the product
     const cartItem: CartItem = {
@@ -170,7 +177,8 @@ export default function ShopProductPage({
                 </span>
                 <button
                   onClick={() => handleQuantityChange(1)}
-                  className="p-2 hover:bg-gray-100"
+                  className="p-2 hover:bg-gray-100 disabled:opacity-50"
+                  disabled={quantity >= 99}
                 >
                   <Plus className="h-4 w-4" />
                 </button>

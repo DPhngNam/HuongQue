@@ -16,7 +16,10 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
     
     const handleIncrement = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent navigation when clicking the increment button
-        onUpdateQuantity(item.productId, item.quantity + 1);
+        // Prevent incrementing beyond maximum quantity (99)
+        if (item.quantity < 99) {
+            onUpdateQuantity(item.productId, item.quantity + 1);
+        }
     };
 
     const handleDecrement = (e: React.MouseEvent) => {
@@ -76,6 +79,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
                     <button
                         onClick={handleIncrement}
                         className="rounded-md border px-2 py-1 text-sm bg-white"
+                        disabled={item.quantity >= 99}
                     >
                         +
                     </button>
