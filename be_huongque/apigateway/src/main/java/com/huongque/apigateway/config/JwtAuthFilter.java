@@ -48,10 +48,10 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         String token = authHeader.substring(7);
         try {
             Claims claims = Jwts.parser()
-                .setSigningKey(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey)))
+                .verifyWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey)))
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
 
             // Optionally, add user info to header
             String userId = claims.getSubject();

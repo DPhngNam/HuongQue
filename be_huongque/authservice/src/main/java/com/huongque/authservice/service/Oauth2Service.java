@@ -7,11 +7,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.huongque.authservice.client.UserProfileService;
-import com.huongque.authservice.dto.UserProfileDto;
 import com.huongque.authservice.entity.User;
 import com.huongque.authservice.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @Service

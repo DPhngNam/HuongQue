@@ -12,17 +12,18 @@
 # EXPOSE 8083
 # ENTRYPOINT ["sh", "-c", "sleep 30 && java -jar app.jar"]
 
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS dev
 
-FROM maven:3.9.9-eclipse-temurin-21-alpine
 WORKDIR /app
 
-# Copy toàn bộ mã nguồn
-COPY . .
+# Copy only pom.xml first to cache dependencies
+COPY pom.xml .
 
-# Download dependencies trước (cache)
-RUN ./mvnw dependency:go-offline
+# Pre-download dependencies
+RUN mvn dependency:go-offline
 
+# Copy the rest of the source code
+COPY src ./src
 
-
-# Cấu hình để chạy với DevTools
-CMD ["./mvnw", "spring-boot:run"]
+# Enable Spring Boot DevTools
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.profiles=dev"]

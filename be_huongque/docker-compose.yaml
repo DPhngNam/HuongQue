@@ -12,6 +12,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./scripts:/docker-entrypoint-initdb.d
+  
   elasticsearch:
     image: elasticsearch:9.0.2
     container_name: elasticsearch
@@ -31,6 +32,7 @@ services:
       - "9300:9300"
     volumes:
       - esdata:/usr/share/elasticsearch/data
+  
   eurekaserver:
     build:
       context: ./eurekaserver
@@ -62,6 +64,7 @@ services:
     restart: unless-stopped
     networks:
       - default
+  
   rabbitmq:
     image: rabbitmq:latest
     ports:
@@ -78,6 +81,7 @@ services:
       retries: 5
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
+  
   apigateway:
     build:
       context: ./apigateway
@@ -224,25 +228,6 @@ services:
     volumes:
       - ./registerservice:/app
       - /app/node_modules
-  # logsservice:
-  #   build:
-  #     context: ./logsservice
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8082:8082"
-  #   depends_on:
-  #     - postgres
-  #     - rabbitmq
-  #     - eurekaserver
-  #   environment:
-  #     DB_HOST: postgres
-  #     DB_PORT: 5432
-  #     DB_USERNAME: logsservice
-  #     DB_PASSWORD: logs
-  #     DB_NAME: logsdb
-  #     PORT: 8082
-  #   volumes:
-  #     - ./logsservice:/app
   s3bucket:
     build:
       context: ./s3bucket
@@ -318,79 +303,11 @@ services:
       RABBITMQ_QUEUE: file.upload
     volumes:
       - ./orderservice:/app
+    networks:
+      - ocop_network
 
-  # searchservice:
-  #   build:
-  #     context: ./searchservice
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8091:8091"
-  #   depends_on:
-  #     - postgres
-  #     - rabbitmq
-  #     - elasticsearch
-  #     - eurekaserver
-  #   environment:
-  #     - PORT=8091
-  #     - ELASTICSEARCH_HOST=elasticsearch
-  #     - ELASTICSEARCH_PORT=9200
-  #     - EUREKA_HOST=eurekaserver
-  #     - EUREKA_PORT=8761
-  #     - JAVA_OPTS=--add-opens java.base/java.util=ALL-UNNAMED
-
-  # chatbotservice:
-  #   build:
-  #     context: ./chatbotservice
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8090:8090"
-  #   depends_on:
-  #     - postgres
-  #     - rabbitmq
-  #     - eurekaserver
-  #   environment:
-  #     DB_HOST: postgres
-  #     DB_PORT: 5432
-  #     DB_USERNAME: chatbotservice
-  #     DB_PASSWORD: chatbot
-  #     DB_NAME: chatbotdb
-  #     PORT: 8090
-  #     RABBITMQ_HOST: rabbitmq
-  #     RABBITMQ_PORT: 5672
-  #     RABBITMQ_USERNAME: adminhuongque
-  #     RABBITMQ_PASSWORD: huongque
-  #     EUREKA_HOST: eurekaserver
-  #     EUREKA_PORT: 8761
-  #   volumes:
-  #     - ./chatbotservice:/app
-
-  # notiservice:
-  #   build:
-  #     context: ./notiservice
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8092:8092"
-  #   depends_on:
-  #     - postgres
-  #     - rabbitmq
-  #     - eurekaserver
-  #   environment:
-  #     DB_HOST: postgres
-  #     DB_PORT: 5432
-  #     DB_USERNAME: notificationservice
-  #     DB_PASSWORD: notification
-  #     DB_NAME: notificationdb
-  #     PORT: 8092
-  #     RABBITMQ_HOST: rabbitmq
-  #     RABBITMQ_PORT: 5672
-  #     RABBITMQ_USERNAME: adminhuongque
-  #     RABBITMQ_PASSWORD: huongque
-  #     EUREKA_HOST: eurekaserver
-  #     EUREKA_PORT: 8761
-  #   volumes:
-  #     - ./notiservice:/app
 networks:
-  default:
+  ocop_network:
     driver: bridge
 
 volumes:

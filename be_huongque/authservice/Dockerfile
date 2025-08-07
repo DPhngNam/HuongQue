@@ -1,15 +1,15 @@
-FROM openjdk:21-jdk-slim
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS dev
 
 WORKDIR /app
 
-COPY mvnw .
-COPY .mvn .mvn
+# Copy only pom.xml first to cache dependencies
 COPY pom.xml .
 
-RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
+# Pre-download dependencies
+RUN mvn dependency:go-offline
 
+# Copy the rest of the source code
+COPY src ./src
 
-
-EXPOSE 8080
-
-CMD ["./mvnw", "spring-boot:run"]
+# Enable Spring Boot DevTools
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.profiles=dev"]

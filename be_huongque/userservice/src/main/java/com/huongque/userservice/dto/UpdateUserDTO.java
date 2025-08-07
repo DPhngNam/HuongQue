@@ -1,9 +1,8 @@
 package com.huongque.userservice.dto;
 
-import jakarta.persistence.Column;
-import lombok.Data;
-
 import java.time.LocalDate;
+
+import lombok.Data;
 
 @Data
 public class UpdateUserDTO {

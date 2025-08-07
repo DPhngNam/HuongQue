@@ -2,7 +2,6 @@ package com.huongque.authservice.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,11 +28,11 @@ public class JwtUtils {
 
     public String generateAccessToken(String email, UUID userId, List<String> roles) {
     return Jwts.builder()
-            .setSubject(userId.toString())
-            .claim("email", email.toString())
+            .subject(userId.toString())
+            .claim("email", email)
             .claim("roles", roles)
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7 ngày
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7 ngày
             .signWith(getSigningKey())
             .compact();
 }
@@ -41,11 +40,11 @@ public class JwtUtils {
 
     public String generateRefreshToken(String email, UUID userId) {
     return Jwts.builder()
-            .setSubject(userId.toString())
-            .claim("email", email.toString())
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7 ngày
-            .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+            .subject(userId.toString())
+            .claim("email", email)
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7 ngày
+            .signWith(getSigningKey())
             .compact();
 }
 
@@ -56,10 +55,10 @@ public class JwtUtils {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(getSigningKey())
+                .verifyWith(getSigningKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     public String extractUsername(String token) {
@@ -77,7 +76,7 @@ public class JwtUtils {
 
     public boolean isTokenValid(String token) {
         try {
-            Jwts.parser().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
+            Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token);
             return true;
         } catch (Exception e) {
             return false;

@@ -1,10 +1,15 @@
 package com.huongque.authservice.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
-
 import java.util.UUID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
@@ -12,8 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Permission {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false, unique = true)

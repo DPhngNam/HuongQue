@@ -24,7 +24,6 @@ public class UserProfile {
     private  String gmail;
     private String phone;
     public UserProfile orElseThrow(Object object) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
     }
 }

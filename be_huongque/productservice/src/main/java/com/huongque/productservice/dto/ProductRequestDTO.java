@@ -18,7 +18,7 @@ public class ProductRequestDTO {
     private Double price;
 
 
-    private List<String> image;
+    private List<String> images;
 
     private UUID categoryId;
 
