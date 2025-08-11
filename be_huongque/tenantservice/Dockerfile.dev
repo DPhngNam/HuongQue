@@ -2,10 +2,12 @@ FROM node:22-slim
 
 WORKDIR /app
 
+# Install app dependencies
 COPY package*.json ./
-RUN npm install -g @nestjs/cli && npm install
+RUN npm ci --include=dev
 
+# Copy source
 COPY . .
 
-# Gắn volume nên không cần build thủ công
+# Start in development mode with hot-reload
 CMD ["npm", "run", "start:dev"]

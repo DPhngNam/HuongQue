@@ -3,10 +3,11 @@ FROM node:22-slim AS builder
 
 WORKDIR /app
 
-# Install only production dependencies initially
+# Copy package files
 COPY package*.json ./
-# 👇 Install nest CLI globally
-RUN npm install -g @nestjs/cli && npm install
+
+# Install ALL dependencies (including dev) for building
+RUN npm ci --include=dev
 
 # Copy source files
 COPY . .
@@ -15,14 +16,25 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Create a minimal runtime image
-FROM node:22-slim
+FROM node:22-slim AS production
 
 WORKDIR /app
 
-# Only copy what's necessary
+# Copy package files
+COPY package*.json ./
+
+# Install ONLY production dependencies
+RUN npm ci --omit=dev && npm cache clean --force
+
+# Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
+
+# Create non-root user for security
+RUN groupadd -r nestapp && useradd -r -g nestapp nestapp
+RUN chown -R nestapp:nestapp /app
+USER nestapp
+
 EXPOSE 8084
 
+# Use node directly instead of npm for better signal handling
 CMD ["node", "dist/main.js"]

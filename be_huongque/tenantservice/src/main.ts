@@ -3,17 +3,21 @@ import { AppModule } from './app.module';
 import { Eureka } from 'eureka-js-client';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 8084;
   await app.listen(port);
   // Register with Eureka - with delay to ensure Eureka server is ready
   console.log('Waiting for Eureka server to be ready before registering...');
   setTimeout(() => {
     const eurekaHost = process.env.EUREKA_HOST ?? 'localhost';
-    const eurekaPort = process.env.EUREKA_PORT ? parseInt(process.env.EUREKA_PORT, 10) : 8761;
+    const eurekaPort = process.env.EUREKA_PORT
+      ? parseInt(process.env.EUREKA_PORT, 10)
+      : 8761;
     const hostName = process.env.HOSTNAME ?? 'localhost';
-    
-    console.log(`Attempting to register with Eureka at ${eurekaHost}:${eurekaPort}`);
-    
+
+    console.log(
+      `Attempting to register with Eureka at ${eurekaHost}:${eurekaPort}`,
+    );
+
     const client = new Eureka({
       instance: {
         app: 'tenantservice',
@@ -21,7 +25,7 @@ async function bootstrap() {
         hostName: hostName,
         ipAddr: hostName,
         port: {
-          '$': port,
+          $: port,
           '@enabled': true,
         },
         vipAddress: 'tenantservice',
@@ -36,14 +40,14 @@ async function bootstrap() {
         host: eurekaHost,
         port: eurekaPort,
         servicePath: '/eureka/apps/',
-        maxRetries: 10,         // Increased retries
+        maxRetries: 10, // Increased retries
         requestRetryDelay: 10000, // Longer delay between retries
         registryFetchInterval: 30000,
-        preferIpAddress: true
+        preferIpAddress: true,
       },
     });
 
-    client.start((error) => {
+    client.start((error: any) => {
       if (error) {
         console.error('Eureka registration failed:', error);
       } else {
