@@ -1,34 +1,47 @@
-# # Build stage
-# FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
-# WORKDIR /app
-# COPY pom.xml .
-# COPY src ./src
-# RUN mvn clean package -DskipTests
+# Stage 1: Build the application
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
+WORKDIR /app
 
-# # Run stage
-# FROM eclipse-temurin:21-jre-alpine
-# WORKDIR /app
-# # Copy the built JAR from the build stage
-# COPY --from=build /app/target/eurekaserver-0.0.1-SNAPSHOT.jar app.jar
+# Copy Maven wrapper, .mvn directory, and pom.xml
+COPY mvnw pom.xml ./
+COPY .mvn/ .mvn/
+COPY src ./src
 
-# # Expose the port the application runs on
-# EXPOSE 8761
+# Ensure mvnw is executable and has correct line endings
+RUN chmod +x mvnw && sed -i 's/\r$//' mvnw
 
-# # Command to run the application
-# ENTRYPOINT ["java", "-jar", "app.jar"]
+# Build the application
+RUN mvn clean install -DskipTests -B
 
-FROM eclipse-temurin:21-jdk-alpine
+# Stage 2: Create runtime image
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
-# Cài các tiện ích (nếu cần wget, curl, etc.)
-RUN apk add --no-cache bash curl
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
 
-# Copy toàn bộ code (bao gồm cả .mvn và mvnw)
-COPY . .
+# Create non-root user for security
+RUN addgroup -S springapp && adduser -S -G springapp springapp
 
-# Cấp quyền cho mvnw
-RUN chmod +x mvnw
+# Copy the built JAR from build stage
+COPY --from=build /app/target/*.jar app.jar
 
-# Chạy ứng dụng ở chế độ dev
-CMD ["./mvnw", "spring-boot:run"]
+# Change ownership to non-root user
+RUN chown -R springapp:springapp /app
+USER springapp
+
+# Expose port
+EXPOSE 8761
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8761/actuator/health || exit 1
+
+# Set production profile and JVM options
+ENV SPRING_PROFILES_ACTIVE=prod
+ENV JAVA_OPTS="-Xmx512m -Xms256m -XX:+UseG1GC -XX:+UseContainerSupport"
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

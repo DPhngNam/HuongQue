@@ -1,29 +1,52 @@
-# # Build stage
-# FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
-# WORKDIR /app
-# COPY pom.xml .
-# COPY src ./src
-# RUN mvn clean package -DskipTests
-
-# # Run stage
-# FROM eclipse-temurin:21-alpine
-# WORKDIR /app
-# COPY --from=build /app/target/userservice-0.0.1-SNAPSHOT.jar app.jar
-# EXPOSE 8083
-# ENTRYPOINT ["sh", "-c", "sleep 30 && java -jar app.jar"]
-
-FROM maven:3.9.9-eclipse-temurin-21-alpine AS dev
+# Stage 1: Build the application
+FROM eclipse-temurin:21-jre-noble AS builder
 
 WORKDIR /app
 
-# Copy only pom.xml first to cache dependencies
-COPY pom.xml .
+# Copy Maven wrapper and pom.xml
+COPY mvnw pom.xml ./
+COPY .mvn .mvn
 
-# Pre-download dependencies
-RUN mvn dependency:go-offline
+# Download dependencies
+RUN ./mvnw dependency:go-offline -B
 
-# Copy the rest of the source code
+# Copy source code
 COPY src ./src
 
-# Enable Spring Boot DevTools
-CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.profiles=dev"]
+# Build the application
+RUN ./mvnw clean package -DskipTests -B
+
+# Stage 2: Create runtime image
+FROM eclipse-temurin:21-jre-noble AS production
+
+WORKDIR /app
+
+# Install dumb-init for proper signal handling
+RUN apt-get update && apt-get install -y \
+    dumb-init \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for security
+RUN groupadd -r springapp && useradd -r -g springapp springapp
+
+# Copy the built JAR from builder stage
+COPY --from=builder /app/target/*.jar app.jar
+
+# Change ownership to non-root user
+RUN chown -R springapp:springapp /app
+USER springapp
+
+# Expose port
+EXPOSE 8083
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8083/actuator/health || exit 1
+
+# Set production profile and JVM options
+ENV SPRING_PROFILES_ACTIVE=prod
+ENV JAVA_OPTS="-Xmx512m -Xms256m -XX:+UseG1GC -XX:+UseContainerSupport"
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
