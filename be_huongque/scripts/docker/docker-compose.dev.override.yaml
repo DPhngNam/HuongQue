@@ -1,0 +1,162 @@
+
+
+services:
+  postgres:
+    container_name: postgres-dev
+    volumes:
+      - pgdata-dev:/var/lib/postgresql/data
+      - ./scripts:/docker-entrypoint-initdb.d
+
+  elasticsearch:
+    container_name: elasticsearch-dev
+    volumes:
+      - esdata-dev:/usr/share/elasticsearch/data
+
+  rabbitmq:
+    container_name: rabbitmq-dev
+    volumes:
+      - rabbitmq-data-dev:/var/lib/rabbitmq
+
+  eurekaserver:
+    container_name: eurekaserver-dev
+    environment:
+      JAVA_OPTS: >-
+        -Xms256m -Xmx512m
+        -Dlogging.level.org.glassfish.jersey.server.ServerRuntime=DEBUG
+        -Dlogging.level.org.apache.catalina.connector=DEBUG
+    networks:
+      - dev_network
+
+  apigateway:
+    container_name: apigateway-dev
+    environment:
+      JWT_SIGNING_KEY: ${JWT_SIGNING_KEY}
+      SPRING_PROFILES_ACTIVE: dev
+    volumes:
+      - ../../apigateway:/app
+      - /app/target
+    networks:
+      - dev_network
+
+  authservice:
+    container_name: authservice-dev
+    build:
+      dockerfile: Dockerfile.dev
+    environment:
+      JWT_SIGNING_KEY: ${JWT_SIGNING_KEY}
+      FRONTEND_URL: ${FRONTEND_URL}
+      RESEND_KEY: ${RESEND_KEY}
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+    volumes:
+      - ../../authservice:/app
+      - /app/target
+    networks:
+      - dev_network
+
+  userservice:
+    container_name: userservice-dev
+    build:
+      dockerfile: Dockerfile.dev
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+    volumes:
+      - ../../userservice:/app
+      - /app/target
+    networks:
+      - dev_network
+
+  # tenantservice:
+  #   container_name: tenantservice-dev
+  #   build:
+  #     dockerfile: Dockerfile.dev
+  #   environment:
+  #     NODE_ENV: development
+  #     EUREKA_HOST: eurekaserver
+  #     EUREKA_PORT: 8761
+  #   volumes:
+  #     - ./tenantservice:/app
+  #     - /app/node_modules
+  #   networks:
+  #     - dev_network
+
+  # productservice:
+  #   container_name: productservice-dev
+  #   build:
+  #     dockerfile: Dockerfile.dev
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: dev
+  #     EUREKA_SERVER_HOST: eurekaserver
+  #     EUREKA_PORT: 8761
+  #   volumes:
+  #     - ./productservice:/app
+  #     - /app/target
+  #   networks:
+  #     - dev_network
+
+  # registerservice:
+  #   container_name: registerservice-dev
+  #   environment:
+  #     NODE_ENV: development
+  #     EUREKA_HOST: eurekaserver
+  #     EUREKA_PORT: 8761
+  #   volumes:
+  #     - ./registerservice:/app
+  #     - /app/node_modules
+  #   networks:
+  #     - dev_network
+
+  # s3bucket:
+  #   container_name: s3bucket-dev
+  #   build:
+  #     dockerfile: Dockerfile.dev
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: dev
+  #     API_KEY: ${API_KEY}
+  #     ENDPOINT: ${ENDPOINT}
+  #   volumes:
+  #     - ./s3bucket:/app
+  #     - /app/target
+  #   networks:
+  #     - dev_network
+
+  # checkoutservice:
+  #   container_name: checkoutservice-dev
+  #   build:
+  #     dockerfile: Dockerfile.dev
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: dev
+  #     STRIPE_KEY: ${STRIPE_KEY}
+  #     EUREKA_HOST: eurekaserver
+  #     EUREKA_PORT: 8761
+  #   volumes:
+  #     - ./checkoutservice:/app
+  #     - /app/target
+  #   networks:
+  #     - dev_network
+
+  # orderservice:
+  #   container_name: orderservice-dev
+  #   build:
+  #     dockerfile: Dockerfile.dev
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: dev
+  #     EUREKA_HOST: eurekaserver
+  #     EUREKA_PORT: 8761
+  #   volumes:
+  #     - ./orderservice:/app
+  #     - /app/target
+  #   networks:
+  #     - dev_network
+
+networks:
+  dev_network:
+    driver: bridge
+
+volumes:
+  pgdata-dev:
+  rabbitmq-data-dev:
+  esdata-dev:

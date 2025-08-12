@@ -85,7 +85,7 @@ services:
   apigateway:
     build:
       context: ./apigateway
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "8080:8080"
     depends_on:
@@ -93,14 +93,10 @@ services:
         condition: service_healthy
     environment:
       JWT_SIGNING_KEY: ${JWT_SIGNING_KEY}
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USERNAME: adminhuongque
-      RABBITMQ_PASSWORD: huongque
-      RABBITMQ_QUEUE: file.upload
       EUREKA_SERVER_HOST: eurekaserver
     volumes:
       - ./apigateway:/app
+  
   authservice:
     build:
       context: ./authservice
@@ -123,6 +119,7 @@ services:
       PORT: 8081
     volumes:
       - ./authservice:/app
+ 
   userservice:
     build:
       context: ./userservice
@@ -150,6 +147,7 @@ services:
       RABBITMQ_QUEUE_RESPONSE: file.upload.response
     volumes:
       - ./userservice:/app
+  
   tenantservice:
     build:
       context: ./tenantservice

@@ -1,0 +1,49 @@
+
+
+services:
+  eurekaserver:
+    build:
+      context: ../../eurekaserver
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    environment:
+      EUREKA_HOSTNAME: eurekaserver
+      JAVA_OPTS: >-
+        -Xms512m -Xmx1g
+        -Dserver.tomcat.connection-timeout=20000
+        -Dserver.tomcat.keep-alive-timeout=20000
+        -Dserver.tomcat.max-keep-alive-requests=100
+        -Dlogging.level.org.glassfish.jersey.server.ServerRuntime=WARN
+        -Dlogging.level.org.apache.catalina.connector=WARN
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--spider",
+          "--quiet",
+          "http://localhost:8761/eureka/apps/",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - default
+
+  apigateway:
+    build:
+      context: ../../apigateway
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      eurekaserver:
+        condition: service_healthy
+    environment:
+      JWT_SIGNING_KEY: ${JWT_SIGNING_KEY}
+      EUREKA_SERVER_HOST: eurekaserver
+    volumes:
+      - ./apigateway:/app

@@ -1,0 +1,213 @@
+
+
+services:
+  authservice:
+    build:
+      context: ../../authservice
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+      - eurekaserver
+      - apigateway
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: authservice
+      DB_PASSWORD: auth
+      DB_NAME: authdb
+      JWT_SIGNING_KEY: ${JWT_SIGNING_KEY}
+      FRONTEND_URL: ${FRONTEND_URL}
+      RESEND_KEY: ${RESEND_KEY}
+      PORT: 8081
+    volumes:
+      - ./authservice:/app
+
+  userservice:
+    build:
+      context: ../../userservice
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - eurekaserver
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: userservice
+      DB_PASSWORD: user
+      DB_NAME: userdb
+      PORT: 8083
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: adminhuongque
+      RABBITMQ_PASSWORD: huongque
+      RABBITMQ_QUEUE: file.upload
+      RABBITMQ_QUEUE_RESPONSE: file.upload.response
+    volumes:
+      - ./userservice:/app
+
+  # tenantservice:
+  #   build:
+  #     context: ./tenantservice
+  #     dockerfile: Dockerfile.dev
+  #   ports:
+  #     - "8084:8084"
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #     - eurekaserver
+  #     - elasticsearch
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USERNAME: tenantservice
+  #     DB_PASSWORD: tenant
+  #     DB_NAME: tenantdb
+  #     PORT: 8084
+  #     EUREKA_HOST: eurekaserver
+  #     EUREKA_PORT: 8761
+  #     HOSTNAME: tenantservice
+  #   volumes:
+  #     - ./tenantservice:/app
+
+  # productservice:
+  #   build:
+  #     context: ./productservice
+  #     dockerfile: Dockerfile
+  #   container_name: productservice
+  #   restart: on-failure
+  #   ports:
+  #     - "8085:8085"
+  #     - "35729:35729"
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #     - eurekaserver
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USERNAME: productservice
+  #     DB_PASSWORD: product
+  #     DB_NAME: productdb
+  #     PORT: 8085
+  #     EUREKA_SERVER_HOST: eurekaserver
+  #     EUREKA_PORT: 8761
+  #     HOSTNAME: productservice
+  #   volumes:
+  #     - ./productservice:/app
+
+  # registerservice:
+  #   build:
+  #     context: ./registerservice
+  #     dockerfile: Dockerfile
+  #   restart: on-failure
+  #   ports:
+  #     - "8086:8086"
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #     - eurekaserver
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USERNAME: registerservice
+  #     DB_PASSWORD: register
+  #     DB_NAME: registerdb
+  #     PORT: 8086
+  #     RABBITMQ_HOST: rabbitmq
+  #     RABBITMQ_PORT: 5672
+  #     RABBITMQ_USERNAME: adminhuongque
+  #     RABBITMQ_PASSWORD: huongque
+  #     RABBITMQ_QUEUE: file.upload
+  #     RABBITMQ_QUEUE_RESPONSE: file.upload.response
+  #     EUREKA_HOST: eurekaserver
+  #     EUREKA_PORT: 8761
+  #     HOSTNAME: registerservice
+  #   volumes:
+  #     - ./registerservice:/app
+  #     - /app/node_modules
+
+  # s3bucket:
+  #   build:
+  #     context: ./s3bucket
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8087:8087"
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #     - eurekaserver
+  #   environment:
+  #     RABBITMQ_HOST: rabbitmq
+  #     RABBITMQ_PORT: 5672
+  #     RABBITMQ_USERNAME: adminhuongque
+  #     RABBITMQ_PASSWORD: huongque
+  #     RABBITMQ_QUEUE: file.upload
+  #     RABBITMQ_QUEUE_RESPONSE: file.upload.response
+  #     API_KEY: ${API_KEY}
+  #     ENDPOINT: ${ENDPOINT}
+  #   volumes:
+  #     - ./s3bucket:/app
+
+  # checkoutservice:
+  #   build:
+  #     context: ./checkoutservice
+  #     dockerfile: Dockerfile.dev
+  #   ports:
+  #     - "8088:8088"
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #     - eurekaserver
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USERNAME: paymentservice
+  #     DB_PASSWORD: payment
+  #     DB_NAME: paymentdb
+  #     PORT: 8088
+  #     RABBITMQ_HOST: rabbitmq
+  #     RABBITMQ_PORT: 5672
+  #     RABBITMQ_USERNAME: adminhuongque
+  #     RABBITMQ_PASSWORD: huongque
+  #     RABBITMQ_QUEUE: file.upload
+  #     EUREKA_HOST: eurekaserver
+  #     EUREKA_PORT: 8761
+  #     STRIPE_KEY: ${STRIPE_KEY}
+  #   volumes:
+  #     - ./checkoutservice:/app
+
+  # orderservice:
+  #   build:
+  #     context: ./orderservice
+  #     dockerfile: Dockerfile.dev
+  #   ports:
+  #     - "8089:8089"
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #     - eurekaserver
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USERNAME: orderservice
+  #     DB_PASSWORD: order
+  #     DB_NAME: orderdb
+  #     PORT: 8089
+  #     EUREKA_HOST: eurekaserver
+  #     EUREKA_PORT: 8761
+  #     RABBITMQ_HOST: rabbitmq
+  #     RABBITMQ_PORT: 5672
+  #     RABBITMQ_USERNAME: adminhuongque
+  #     RABBITMQ_PASSWORD: huongque
+  #     RABBITMQ_QUEUE: file.upload
+  #   volumes:
+  #     - ./orderservice:/app
+  #   networks:
+  #     - ocop_network
